@@ -1,0 +1,24 @@
+storage: /verdaccio/storage
+auth:
+  htpasswd:
+    file: /verdaccio/conf/htpasswd
+    max_users: 1000
+uplinks:
+  npmjs:
+    url: https://registry.npmjs.org/
+packages:
+  '@aignostics/*':
+    access: $anonymous $all
+    publish: $anonymous $all
+    unpublish: $anonymous $all
+  '**':
+    access: $authenticated
+    publish: $authenticated
+    unpublish: $authenticated
+    proxy: npmjs
+server:
+  keepAliveTimeout: 60
+logs:
+  type: stdout
+  format: pretty
+  level: info

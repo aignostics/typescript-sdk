@@ -1,0 +1,20 @@
+{
+  "entryPoints": ["src/index.ts"],
+  "out": "docs",
+  "exclude": ["**/*.test.ts", "**/*.spec.ts", "src/generated/**"],
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeExternals": true,
+  "includeVersion": true,
+  "sort": ["source-order"],
+  "gitRevision": "main",
+  "readme": "README.md",
+  "name": "Aignostics Platform TypeScript SDK",
+  "theme": "default",
+  "githubPages": true,
+  "hideGenerator": false,
+  "navigation": {
+    "includeCategories": true,
+    "includeGroups": true
+  }
+}
