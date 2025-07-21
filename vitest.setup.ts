@@ -23,7 +23,14 @@ console.log(`🌍 Running tests with timezone: ${process.env.TZ}`);
 // Start the mock server before all tests
 beforeAll(() => {
   server.listen({
-    onUnhandledRequest: 'warn', // Log warnings for unhandled requests
+    onUnhandledRequest(request, print) {
+      // Ignore localhost requests (used by OAuth callback server tests)
+      if (request.url.includes('localhost')) {
+        return;
+      }
+      // Warn about other unhandled requests
+      print.warning();
+    },
   });
 });
 
