@@ -1,10 +1,8 @@
 import { main } from './cli.js';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 
 // Get current file path for ESM compatibility
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 // Check if this module is being run directly
 const isMainModule = process.argv[1] === __filename || process.argv[1]?.endsWith('/cli/index.cjs');
