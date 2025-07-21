@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import readline from 'node:readline';
 import crypto from 'node:crypto';
 
@@ -7,8 +5,8 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { Issuer, generators } from 'openid-client';
 
-import { handleInfo, testApi, listApplications } from './cli-functions';
-import { saveToken, loadToken, removeToken, hasValidToken } from '../utils/token-storage';
+import { handleInfo, testApi, listApplications } from './cli-functions.js';
+import { saveToken, loadToken, removeToken, hasValidToken } from '../utils/token-storage.js';
 
 const codeVerifier = crypto.randomBytes(32).toString('hex');
 const REDIRECT_URI = 'http://localhost:8989';

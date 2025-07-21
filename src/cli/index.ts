@@ -1,13 +1,19 @@
-#!/usr/bin/env node
+import { main } from './cli.js';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
-import { main } from './cli';
+// Get current file path for ESM compatibility
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-// Only run if this file is executed directly
-if (require.main === module) {
+// Check if this module is being run directly
+const isMainModule = process.argv[1] === __filename || process.argv[1]?.endsWith('/cli/index.cjs');
+
+if (isMainModule) {
   main().catch(error => {
     console.error('CLI Error:', error);
     process.exit(1);
   });
 }
 
-export * from './cli';
+export * from './cli.js';

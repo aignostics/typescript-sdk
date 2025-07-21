@@ -2,10 +2,20 @@
   "name": "@aignostics/platform-typescript-sdk",
   "version": "0.0.0-development",
   "description": "The TypeScript SDK for the Aignostics Platform",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
   "bin": {
-    "aignostics-platform": "dist/cli/index.js"
+    "aignostics-platform": "./dist/cli/index.cjs"
   },
   "files": [
     "dist",
@@ -14,10 +24,10 @@
   ],
   "scripts": {
     "build": "npm run codegen && npm run compile",
-    "compile": "tsc",
+    "compile": "tsup",
     "codegen": "npm run codegen:clean && npm run codegen:generate",
     "codegen:clean": "rm -rf src/generated",
-    "codegen:generate": "docker run --rm -v ${PWD}:/local --user $(id -u):$(id -g) openapitools/openapi-generator-cli:v7.14.0 generate -i https://raw.githubusercontent.com/aignostics/python-sdk/refs/heads/main/codegen/in/api.json -g typescript-axios -o /local/src/generated --additional-properties=supportsES6=true,withInterfaces=true,typescriptThreePlus=true,useSingleRequestParameter=true",
+    "codegen:generate": "docker run --rm -v ${PWD}:/local --user $(id -u):$(id -g) openapitools/openapi-generator-cli:v7.14.0 generate -i https://raw.githubusercontent.com/aignostics/python-sdk/refs/heads/main/codegen/in/api.json -g typescript-axios -o /local/src/generated --additional-properties=supportsES6=true,withInterfaces=true,typescriptThreePlus=true,useSingleRequestParameter=true,importFileExtension=.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -70,6 +80,7 @@
     "msw": "^2.10.4",
     "prettier": "^3.4.2",
     "semantic-release": "^21.1.2",
+    "tsup": "^8.5.0",
     "typedoc": "^0.28.7",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"

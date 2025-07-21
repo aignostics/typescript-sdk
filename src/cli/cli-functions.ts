@@ -1,5 +1,5 @@
-import { PlatformSDKHttp } from '../platform-sdk';
-import packageJson from '../../package.json';
+import { PlatformSDKHttp } from '../platform-sdk.js';
+import packageJson from '../../package.json' with { type: 'json' };
 
 export async function handleInfo(): Promise<void> {
   console.log('Aignostics Platform SDK');

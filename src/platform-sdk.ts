@@ -1,6 +1,6 @@
-import packageJson from '../package.json';
-import { ApplicationReadResponse, PublicApi } from './generated';
-import { getCurrentToken } from './utils/token-storage';
+import packageJson from '../package.json' with { type: 'json' };
+import { ApplicationReadResponse, PublicApi } from './generated/index.js';
+import { getCurrentToken } from './utils/token-storage.js';
 /**
  * Configuration options for the Platform SDK
  */
