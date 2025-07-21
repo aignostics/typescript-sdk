@@ -8,8 +8,12 @@ export default defineConfig({
     restoreMocks: true,
     mockReset: true,
     setupFiles: ['./vitest.setup.ts'],
-    coverage: {
+    typecheck: {
       enabled: true,
+      tsconfig: './tsconfig.json',
+      include: ['src/**/*.{test,spec}.ts'],
+    },
+    coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
       include: ['src/**/*.ts'],

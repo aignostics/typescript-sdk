@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, MockInstance } from 'vitest';
 import { handleLogin, handleLogout, handleStatus } from './cli.js';
 import * as auth from '../utils/auth.js';
 
@@ -7,10 +7,10 @@ vi.mock('../utils/auth.js');
 
 describe('CLI Handler Functions', () => {
   let consoleSpy: {
-    log: ReturnType<typeof vi.spyOn>;
-    error: ReturnType<typeof vi.spyOn>;
+    log: MockInstance<typeof console.log>;
+    error: MockInstance<typeof console.error>;
   };
-  let mockExit: ReturnType<typeof vi.spyOn>;
+  let mockExit: MockInstance<typeof process.exit>;
 
   beforeEach(() => {
     consoleSpy = {
@@ -18,9 +18,9 @@ describe('CLI Handler Functions', () => {
       error: vi.spyOn(console, 'error').mockImplementation(() => {}),
     };
 
-    mockExit = vi.spyOn(process, 'exit').mockImplementation((() => {
+    mockExit = vi.spyOn(process, 'exit').mockImplementation(() => {
       throw new Error('process.exit called');
-    }) as unknown as () => never);
+    });
 
     // Clear all mocks
     vi.clearAllMocks();
@@ -73,13 +73,16 @@ describe('CLI Handler Functions', () => {
 
   describe('handleStatus', () => {
     it('should display authenticated status with token details', async () => {
+      const expiresAt = new Date('2024-12-31T23:59:59Z');
+      const storedAt = new Date('2024-01-01T00:00:00Z');
+
       const mockAuthState = {
         isAuthenticated: true,
         token: {
           type: 'Bearer',
           scope: 'openid profile email',
-          expiresAt: new Date('2024-12-31T23:59:59Z'),
-          storedAt: new Date('2024-01-01T00:00:00Z'),
+          expiresAt,
+          storedAt,
         },
       };
 
@@ -92,8 +95,8 @@ describe('CLI Handler Functions', () => {
       expect(consoleSpy.log).toHaveBeenCalledWith('Token details:');
       expect(consoleSpy.log).toHaveBeenCalledWith('  - Type: Bearer');
       expect(consoleSpy.log).toHaveBeenCalledWith('  - Scope: openid profile email');
-      expect(consoleSpy.log).toHaveBeenCalledWith('  - Expires: 1/1/2025, 12:59:59 AM');
-      expect(consoleSpy.log).toHaveBeenCalledWith('  - Stored: 1/1/2024, 1:00:00 AM');
+      expect(consoleSpy.log).toHaveBeenCalledWith(`  - Expires: ${expiresAt.toLocaleString()}`);
+      expect(consoleSpy.log).toHaveBeenCalledWith(`  - Stored: ${storedAt.toLocaleString()}`);
     });
 
     it('should display authenticated status with non-expiring token', async () => {
