@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { PlatformSDKHttp } from './platform-sdk';
 import { setMockScenario } from './test-utils/http-mocks';
-import { loadData } from './utils/token-storage';
+import { getValidAccessToken } from './utils/auth';
 
-vi.mock('./utils/token-storage');
+vi.mock('./utils/auth');
 
 describe('PlatformSDK', () => {
   let sdk: PlatformSDKHttp;
@@ -41,12 +41,8 @@ describe('PlatformSDK', () => {
   });
 
   it('should test connection successfully', async () => {
-    // Mock loadData to return a valid token structure
-    vi.mocked(loadData).mockResolvedValue({
-      access_token: 'mocked-token',
-      stored_at: Date.now(),
-      expires_in: 3600, // 1 hour from now
-    });
+    // Mock getValidAccessToken to return a valid token
+    vi.mocked(getValidAccessToken).mockResolvedValue('mocked-token');
 
     // Use mock server with successful response
     setMockScenario('success');
@@ -63,12 +59,8 @@ describe('PlatformSDK', () => {
   });
 
   it('should handle expired token correctly', async () => {
-    // Mock loadData to return an expired token
-    vi.mocked(loadData).mockResolvedValue({
-      access_token: 'expired-token',
-      stored_at: Date.now() - 7200 * 1000, // 2 hours ago
-      expires_in: 3600, // 1 hour expiry (so it's expired)
-    });
+    // Mock getValidAccessToken to return null (indicating expired/invalid token)
+    vi.mocked(getValidAccessToken).mockResolvedValue(null);
 
     await expect(sdk.testConnection()).rejects.toThrow(
       'No API key or access token provided. Please login first.'
@@ -76,10 +68,8 @@ describe('PlatformSDK', () => {
   });
 
   it('should handle invalid token data correctly', async () => {
-    // Mock loadData to return invalid token structure
-    vi.mocked(loadData).mockResolvedValue({
-      not_a_token: 'invalid',
-    });
+    // Mock getValidAccessToken to return null (indicating invalid token)
+    vi.mocked(getValidAccessToken).mockResolvedValue(null);
 
     await expect(sdk.testConnection()).rejects.toThrow(
       'No API key or access token provided. Please login first.'

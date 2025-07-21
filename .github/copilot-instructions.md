@@ -52,6 +52,8 @@ This is a TypeScript SDK for the Aignostics Platform with automated OpenAPI code
 ```bash
 npm run build    # codegen + compile (required before testing)
 npm run codegen  # Docker-based OpenAPI generation
+npm run lint     # ESLint check for code quality
+npm run lint:fix # Auto-fix linting issues
 npm test         # Vitest with 85% coverage requirement
 npm run docs     # TypeDoc excluding generated code
 ```
@@ -108,6 +110,7 @@ npm run docs     # TypeDoc excluding generated code
 - **Never**: Edit `src/generated/` files directly
 - **Don't**: Import generated types directly in CLI - use SDK wrapper
 - **Avoid**: Running tests without `npm run build` first
+- **Always**: Run `npm run lint` before committing changes
 - **Warning**: Docker daemon required for code generation and compatibility testing
 
 ## Quick Debug Commands
@@ -116,6 +119,10 @@ npm run docs     # TypeDoc excluding generated code
 npm run build && node dist/cli.js info
 # Quick compatibility test
 npm run test:quick
+# Check for linting issues
+npm run lint
+# Auto-fix linting issues
+npm run lint:fix
 # Check generated API structure
 ls -la src/generated/
 ```
