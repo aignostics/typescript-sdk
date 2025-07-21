@@ -1,7 +1,7 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as os from 'node:os';
-import * as keytar from 'keytar';
+import { Entry } from '@napi-rs/keyring';
 
 /**
  * Cross-platform token storage utility using OS-native secure storage
@@ -26,6 +26,8 @@ export interface TokenData {
   stored_at: number; // Unix timestamp
 }
 
+const entry = new Entry(SERVICE_NAME, ACCOUNT_NAME);
+
 /**
  * Save token data securely using OS keychain/credential manager
  */
@@ -37,7 +39,7 @@ export async function saveToken(tokenData: Omit<TokenData, 'stored_at'>): Promis
 
   try {
     const serializedData = JSON.stringify(dataToStore);
-    await keytar.setPassword(SERVICE_NAME, ACCOUNT_NAME, serializedData);
+    entry.setPassword(serializedData);
     console.log(`✅ Token saved securely to OS keychain`);
   } catch (error) {
     // Fallback to file-based storage if keytar fails
@@ -51,7 +53,7 @@ export async function saveToken(tokenData: Omit<TokenData, 'stored_at'>): Promis
  */
 export async function loadToken(): Promise<TokenData | null> {
   try {
-    const serializedData = await keytar.getPassword(SERVICE_NAME, ACCOUNT_NAME);
+    const serializedData = await entry.getPassword();
 
     if (!serializedData) {
       // Try fallback file storage
@@ -96,7 +98,7 @@ export async function hasValidToken(): Promise<boolean> {
  */
 export async function removeToken(): Promise<void> {
   try {
-    const success = await keytar.deletePassword(SERVICE_NAME, ACCOUNT_NAME);
+    const success = await entry.deletePassword();
     if (success) {
       console.log('✅ Token removed from OS keychain');
     }

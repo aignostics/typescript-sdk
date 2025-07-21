@@ -75,6 +75,7 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
+    "@napi-rs/keyring": "^1.1.8",
     "axios": "^1.7.9",
     "express": "^5.1.0",
     "keytar": "^7.9.0",
