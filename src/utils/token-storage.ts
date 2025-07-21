@@ -4,128 +4,116 @@ import * as os from 'node:os';
 import { Entry } from '@napi-rs/keyring';
 
 /**
- * Cross-platform token storage utility using OS-native secure storage
- * Uses keytar for secure storage in OS keychain/credential manager:
+ * Cross-platform secure storage utility using OS-native secure storage
+ * Uses @napi-rs/keyring for secure storage in OS keychain/credential manager:
  * - macOS: Keychain
  * - Linux: libsecret (GNOME Keyring, KWallet)
  * - Windows: Credential Manager
+ *
+ * This is a generic storage service that can store any JSON-serializable data.
+ * Token validation, expiration checking, and refresh logic should be handled by the caller.
+ *
+ * Recommended usage with validation:
+ * ```typescript
+ * import { z } from 'zod';
+ * import { loadData, saveData } from './token-storage.js';
+ *
+ * const TokenSchema = z.object({
+ *   access_token: z.string(),
+ *   refresh_token: z.string().optional(),
+ *   expires_in: z.number().optional(),
+ *   stored_at: z.number(),
+ * });
+ *
+ * async function getValidatedToken() {
+ *   const data = await loadData();
+ *   const result = TokenSchema.safeParse(data);
+ *   if (!result.success) {
+ *     return null;
+ *   }
+ *
+ *   const token = result.data;
+ *   // Check expiration
+ *   if (token.expires_in && Date.now() > token.stored_at + token.expires_in * 1000) {
+ *     return null;
+ *   }
+ *
+ *   return token;
+ * }
+ * ```
  */
 
 const SERVICE_NAME = 'aignostics-platform';
 const ACCOUNT_NAME = 'default';
 
-/**
- * Token data structure
- */
-export interface TokenData {
-  access_token: string;
-  refresh_token?: string;
-  expires_in?: number;
-  token_type?: string;
-  scope?: string;
-  stored_at: number; // Unix timestamp
-}
-
 const entry = new Entry(SERVICE_NAME, ACCOUNT_NAME);
 
 /**
- * Save token data securely using OS keychain/credential manager
+ * Save data securely using OS keychain/credential manager
+ * @param data - Any JSON-serializable data to store
  */
-export async function saveToken(tokenData: Omit<TokenData, 'stored_at'>): Promise<void> {
-  const dataToStore: TokenData = {
-    ...tokenData,
-    stored_at: Date.now(),
-  };
-
+export async function saveData(data: unknown): Promise<void> {
   try {
-    const serializedData = JSON.stringify(dataToStore);
+    const serializedData = JSON.stringify(data);
     entry.setPassword(serializedData);
-    console.log(`✅ Token saved securely to OS keychain`);
+    console.log(`✅ Data saved securely to OS keychain`);
   } catch (error) {
-    // Fallback to file-based storage if keytar fails
+    // Fallback to file-based storage if keyring fails
     console.warn('Warning: Could not save to OS keychain, falling back to file storage');
-    await saveTokenToFile(dataToStore);
+    await saveDataToFile(data);
   }
 }
 
 /**
- * Load token data from OS keychain/credential manager
+ * Load data from OS keychain/credential manager
+ * @returns The stored data as unknown, or null if not found
  */
-export async function loadToken(): Promise<TokenData | null> {
+export async function loadData(): Promise<unknown> {
   try {
     const serializedData = await entry.getPassword();
 
     if (!serializedData) {
       // Try fallback file storage
-      return await loadTokenFromFile();
+      return await loadDataFromFile();
     }
 
-    const tokenData: TokenData = JSON.parse(serializedData);
-    return tokenData;
+    const data: unknown = JSON.parse(serializedData);
+    return data;
   } catch (error) {
-    console.warn(`Warning: Could not load token from keychain: ${error}`);
+    console.warn(`Warning: Could not load data from keychain: ${error}`);
     // Try fallback file storage
-    return await loadTokenFromFile();
+    return await loadDataFromFile();
   }
 }
 
 /**
- * Check if a token exists and is valid (not expired)
+ * Check if data exists in storage
  */
-export async function hasValidToken(): Promise<boolean> {
-  const tokenData = await loadToken();
-
-  if (!tokenData) {
-    return false;
-  }
-
-  // Check if token has expiration and if it's expired
-  if (tokenData.expires_in) {
-    const expirationTime = tokenData.stored_at + tokenData.expires_in * 1000;
-    const now = Date.now();
-
-    if (now >= expirationTime) {
-      console.log('Token has expired');
-      return false;
-    }
-  }
-
-  return true;
+export async function hasData(): Promise<boolean> {
+  const data = await loadData();
+  return data !== null && data !== undefined;
 }
 
 /**
- * Remove the stored token from OS keychain/credential manager
+ * Remove the stored data from OS keychain/credential manager
  */
-export async function removeToken(): Promise<void> {
+export async function removeData(): Promise<void> {
   try {
     const success = await entry.deletePassword();
     if (success) {
-      console.log('✅ Token removed from OS keychain');
+      console.log('✅ Data removed from OS keychain');
     }
 
     // Also try to remove from fallback file storage
-    await removeTokenFromFile();
+    await removeDataFromFile();
   } catch (error) {
-    console.warn(`Warning: Could not remove token from keychain: ${error}`);
+    console.warn(`Warning: Could not remove data from keychain: ${error}`);
     // Try fallback file storage
-    await removeTokenFromFile();
+    await removeDataFromFile();
   }
 }
 
-/**
- * Get the current token if it exists and is valid
- */
-export async function getCurrentToken(): Promise<string | null> {
-  const tokenData = await loadToken();
-
-  if (!tokenData || !(await hasValidToken())) {
-    return null;
-  }
-
-  return tokenData.access_token;
-}
-
-// Fallback file-based storage functions for when keytar is not available
+// Fallback file-based storage functions for when keyring is not available
 
 /**
  * Get the appropriate config directory for the current OS (fallback)
@@ -161,58 +149,58 @@ function ensureConfigDir(): string {
 }
 
 /**
- * Get the full path to the token file (fallback)
+ * Get the full path to the data file (fallback)
  */
-function getTokenFilePath(): string {
+function getDataFilePath(): string {
   const configDir = ensureConfigDir();
-  return path.join(configDir, 'auth.json');
+  return path.join(configDir, 'data.json');
 }
 
 /**
- * Save token data to file (fallback)
+ * Save data to file (fallback)
  */
-async function saveTokenToFile(tokenData: TokenData): Promise<void> {
-  const tokenFilePath = getTokenFilePath();
+async function saveDataToFile(data: unknown): Promise<void> {
+  const dataFilePath = getDataFilePath();
 
   try {
-    await fs.promises.writeFile(tokenFilePath, JSON.stringify(tokenData, null, 2), { mode: 0o600 });
-    console.log(`✅ Token saved to file: ${tokenFilePath}`);
+    await fs.promises.writeFile(dataFilePath, JSON.stringify(data, null, 2), { mode: 0o600 });
+    console.log(`✅ Data saved to file: ${dataFilePath}`);
   } catch (error) {
-    throw new Error(`Failed to save token to file: ${error}`);
+    throw new Error(`Failed to save data to file: ${error}`);
   }
 }
 
 /**
- * Load token data from file (fallback)
+ * Load data from file (fallback)
  */
-async function loadTokenFromFile(): Promise<TokenData | null> {
-  const tokenFilePath = getTokenFilePath();
+async function loadDataFromFile(): Promise<unknown> {
+  const dataFilePath = getDataFilePath();
 
   try {
-    if (!fs.existsSync(tokenFilePath)) {
+    if (!fs.existsSync(dataFilePath)) {
       return null;
     }
 
-    const fileData = await fs.promises.readFile(tokenFilePath, 'utf8');
-    const tokenData: TokenData = JSON.parse(fileData);
+    const fileData = await fs.promises.readFile(dataFilePath, 'utf8');
+    const data: unknown = JSON.parse(fileData);
 
-    return tokenData;
+    return data;
   } catch (error) {
-    console.warn(`Warning: Could not load token from file: ${error}`);
+    console.warn(`Warning: Could not load data from file: ${error}`);
     return null;
   }
 }
 
 /**
- * Remove token file (fallback)
+ * Remove data file (fallback)
  */
-async function removeTokenFromFile(): Promise<void> {
-  const tokenFilePath = getTokenFilePath();
+async function removeDataFromFile(): Promise<void> {
+  const dataFilePath = getDataFilePath();
 
   try {
-    if (fs.existsSync(tokenFilePath)) {
-      await fs.promises.unlink(tokenFilePath);
-      console.log('✅ Token file removed');
+    if (fs.existsSync(dataFilePath)) {
+      await fs.promises.unlink(dataFilePath);
+      console.log('✅ Data file removed');
     }
   } catch (error) {
     // Ignore file removal errors

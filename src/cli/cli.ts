@@ -5,9 +5,78 @@ import { URL } from 'node:url';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { Issuer, generators } from 'openid-client';
+import { z } from 'zod';
 
 import { handleInfo, testApi, listApplications } from './cli-functions.js';
-import { saveToken, loadToken, removeToken, hasValidToken } from '../utils/token-storage.js';
+import { saveData, loadData, removeData } from '../utils/token-storage.js';
+
+/**
+ * Token data schema for CLI validation
+ */
+const TokenSchema = z.object({
+  access_token: z.string(),
+  refresh_token: z.string().optional(),
+  expires_in: z.number().optional(),
+  token_type: z.string().optional(),
+  scope: z.string().optional(),
+  stored_at: z.number(),
+});
+
+type TokenData = z.infer<typeof TokenSchema>;
+
+/**
+ * Save token data with timestamp
+ */
+async function saveToken(tokenData: Omit<TokenData, 'stored_at'>): Promise<void> {
+  const dataToStore: TokenData = {
+    ...tokenData,
+    stored_at: Date.now(),
+  };
+  return saveData(dataToStore);
+}
+
+/**
+ * Load and validate token data
+ */
+async function loadToken(): Promise<TokenData | null> {
+  try {
+    const data = await loadData();
+    const result = TokenSchema.safeParse(data);
+
+    if (!result.success) {
+      return null;
+    }
+
+    return result.data;
+  } catch (error) {
+    console.warn(`Warning: Could not load token: ${error}`);
+    return null;
+  }
+}
+
+/**
+ * Check if a token exists and is valid (not expired)
+ */
+async function hasValidToken(): Promise<boolean> {
+  const tokenData = await loadToken();
+
+  if (!tokenData) {
+    return false;
+  }
+
+  // Check if token has expiration and if it's expired
+  if (tokenData.expires_in) {
+    const expirationTime = tokenData.stored_at + tokenData.expires_in * 1000;
+    const now = Date.now();
+
+    if (now >= expirationTime) {
+      console.log('Token has expired');
+      return false;
+    }
+  }
+
+  return true;
+}
 
 const codeVerifier = crypto.randomBytes(32).toString('hex');
 
@@ -275,7 +344,7 @@ async function waitForCallback(server: http.Server): Promise<string> {
 
 export async function handleLogout(): Promise<void> {
   try {
-    await removeToken();
+    await removeData();
     console.log('✅ Logged out successfully. Token removed.');
   } catch (error) {
     console.error('❌ Error during logout:', error);

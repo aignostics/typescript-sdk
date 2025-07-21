@@ -1,6 +1,20 @@
 import packageJson from '../package.json' with { type: 'json' };
+import { z } from 'zod';
 import { ApplicationReadResponse, PublicApi } from './generated/index.js';
-import { getCurrentToken } from './utils/token-storage.js';
+import { loadData } from './utils/token-storage.js';
+
+/**
+ * Token data schema for validation
+ */
+const TokenSchema = z.object({
+  access_token: z.string(),
+  refresh_token: z.string().optional(),
+  expires_in: z.number().optional(),
+  token_type: z.string().optional(),
+  scope: z.string().optional(),
+  stored_at: z.number(),
+});
+
 /**
  * Configuration options for the Platform SDK
  */
@@ -46,19 +60,52 @@ export class PlatformSDKHttp implements PlatformSDK {
     };
   }
 
+  /**
+   * Get a valid access token from storage
+   * @returns Valid access token or null if not found/expired
+   */
+  async #getValidToken(): Promise<string | null> {
+    try {
+      const data = await loadData();
+      const result = TokenSchema.safeParse(data);
+
+      if (!result.success) {
+        return null;
+      }
+
+      const token = result.data;
+
+      // Check if token is expired
+      if (token.expires_in) {
+        const expirationTime = token.stored_at + token.expires_in * 1000;
+        const now = Date.now();
+
+        if (now >= expirationTime) {
+          console.log('Token has expired');
+          return null;
+        }
+      }
+
+      return token.access_token;
+    } catch (error) {
+      console.warn(`Warning: Could not retrieve token: ${error}`);
+      return null;
+    }
+  }
+
   async #ensureClient(): Promise<PublicApi> {
     if (!this.#client) {
-      // Try to get stored token first, fallback to provided apiKey, then fallback to hardcoded token
+      // Try to get stored token first, fallback to provided apiKey
       let accessToken = this.#config.apiKey;
 
       if (!accessToken) {
-        const storedToken = await getCurrentToken();
+        const storedToken = await this.#getValidToken();
         if (storedToken) {
           accessToken = storedToken;
         }
       }
 
-      // Fallback to hardcoded token for backward compatibility (should be removed in production)
+      // Throw error if no token is available
       if (!accessToken) {
         throw new Error('No API key or access token provided. Please login first.');
       }
