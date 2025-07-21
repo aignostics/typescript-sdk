@@ -1,4 +1,4 @@
-import { PlatformSDK } from '../index';
+import { PlatformSDKHttp } from '../platform-sdk';
 import packageJson from '../../package.json';
 
 export async function handleInfo(): Promise<void> {
@@ -7,7 +7,7 @@ export async function handleInfo(): Promise<void> {
 }
 
 export async function testApi(endpoint: string): Promise<void> {
-  const sdk = new PlatformSDK({ baseURL: endpoint });
+  const sdk = new PlatformSDKHttp({ baseURL: endpoint });
   try {
     const success = await sdk.testConnection();
     if (success) {
@@ -22,7 +22,7 @@ export async function testApi(endpoint: string): Promise<void> {
 }
 
 export async function listApplications(endpoint: string): Promise<void> {
-  const sdk = new PlatformSDK({ baseURL: endpoint });
+  const sdk = new PlatformSDKHttp({ baseURL: endpoint });
   const response = await sdk.listApplications();
   console.log('Applications:', JSON.stringify(response, null, 2));
 }

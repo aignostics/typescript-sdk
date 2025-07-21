@@ -1,16 +1,19 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { PlatformSDK } from './index';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { PlatformSDKHttp } from './platform-sdk';
 import { setMockScenario } from './test-utils/http-mocks';
+import { getCurrentToken } from './utils/token-storage';
+
+vi.mock('./utils/token-storage');
 
 describe('PlatformSDK', () => {
-  let sdk: PlatformSDK;
+  let sdk: PlatformSDKHttp;
 
   beforeEach(() => {
-    sdk = new PlatformSDK();
+    sdk = new PlatformSDKHttp();
   });
 
   it('should create an instance with default configuration', () => {
-    expect(sdk).toBeInstanceOf(PlatformSDK);
+    expect(sdk).toBeInstanceOf(PlatformSDKHttp);
     const config = sdk.getConfig();
     expect(config.baseURL).toBe('https://api.aignostics.com');
     expect(config.timeout).toBe(10000);
@@ -23,7 +26,7 @@ describe('PlatformSDK', () => {
       timeout: 5000,
     };
 
-    const customSDK = new PlatformSDK(customConfig);
+    const customSDK = new PlatformSDKHttp(customConfig);
     const config = customSDK.getConfig();
 
     expect(config.baseURL).toBe('https://custom.api.com');
@@ -38,6 +41,7 @@ describe('PlatformSDK', () => {
   });
 
   it('should test connection successfully', async () => {
+    vi.mocked(getCurrentToken).mockResolvedValue('mocked-token');
     // Use mock server with successful response
     setMockScenario('success');
 

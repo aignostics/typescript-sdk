@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { handleInfo, testApi, listApplications } from './cli-functions';
-import { setMockScenario, mockResponses } from '../test-utils/http-mocks';
+import { PlatformSDK, PlatformSDKHttp } from '../platform-sdk';
 
 // Mock process.exit to prevent test runner from exiting
 const mockExit = vi.fn();
@@ -8,6 +8,15 @@ vi.stubGlobal('process', {
   ...process,
   exit: mockExit,
 });
+
+vi.mock('../platform-sdk');
+
+const platformSDKMock = {
+  testConnection: vi.fn(),
+  listApplications: vi.fn(),
+  getConfig: vi.fn(),
+  getVersion: vi.fn(),
+} satisfies PlatformSDK;
 
 // Mock package.json
 vi.mock('../../package.json', () => ({
@@ -27,6 +36,9 @@ describe('CLI Functions Unit Tests', () => {
       log: vi.spyOn(console, 'log').mockImplementation(() => {}),
       error: vi.spyOn(console, 'error').mockImplementation(() => {}),
     };
+    vi.mocked(PlatformSDKHttp).mockImplementation(
+      () => platformSDKMock as unknown as PlatformSDKHttp
+    );
   });
 
   describe('handleInfo', () => {
@@ -41,7 +53,7 @@ describe('CLI Functions Unit Tests', () => {
   describe('testApi', () => {
     it('should test API connection successfully', async () => {
       // Set up mock server for successful response
-      setMockScenario('success');
+      platformSDKMock.testConnection.mockResolvedValue(true);
 
       await testApi('https://api.example.com');
 
@@ -50,7 +62,7 @@ describe('CLI Functions Unit Tests', () => {
 
     it('should handle API connection failure', async () => {
       // Set up mock server for error response
-      setMockScenario('error');
+      platformSDKMock.testConnection.mockRejectedValue(new Error('Connection failed'));
 
       await testApi('https://api.example.com');
 
@@ -60,7 +72,7 @@ describe('CLI Functions Unit Tests', () => {
 
     it('should handle network errors', async () => {
       // Set up mock server for network error
-      setMockScenario('networkError');
+      platformSDKMock.testConnection.mockRejectedValue(new Error('Network error'));
 
       await testApi('https://api.example.com');
 
@@ -71,32 +83,39 @@ describe('CLI Functions Unit Tests', () => {
 
   describe('listApplications', () => {
     it('should list applications successfully', async () => {
+      const listApplicationsResponse = {
+        applications: [
+          { id: 'app1', name: 'Application 1' },
+          { id: 'app2', name: 'Application 2' },
+        ],
+      };
       // Set up mock server for successful response
-      setMockScenario('success');
+      platformSDKMock.listApplications.mockResolvedValue(listApplicationsResponse);
 
       await listApplications('https://api.example.com');
 
       expect(consoleSpy.log).toHaveBeenCalledWith(
         'Applications:',
-        JSON.stringify(mockResponses.applicationsSuccess, null, 2)
+        JSON.stringify(listApplicationsResponse, null, 2)
       );
     });
 
     it('should handle empty applications list', async () => {
+      const listApplicationsResponse = { applications: [] };
       // Set up mock server for empty response
-      setMockScenario('empty');
+      platformSDKMock.listApplications.mockResolvedValue(listApplicationsResponse);
 
       await listApplications('https://api.example.com');
 
       expect(consoleSpy.log).toHaveBeenCalledWith(
         'Applications:',
-        JSON.stringify(mockResponses.applicationsEmpty, null, 2)
+        JSON.stringify(listApplicationsResponse, null, 2)
       );
     });
 
     it('should throw error when API fails', async () => {
       // Set up mock server for error response
-      setMockScenario('error');
+      platformSDKMock.listApplications.mockRejectedValue(new Error('API error'));
 
       await expect(listApplications('https://api.example.com')).rejects.toThrow();
     });
