@@ -46,13 +46,12 @@ import { Entry } from '@napi-rs/keyring';
 const SERVICE_NAME = 'aignostics-platform';
 const ACCOUNT_NAME = 'default';
 
-const entry = new Entry(SERVICE_NAME, ACCOUNT_NAME);
-
 /**
  * Save data securely using OS keychain/credential manager
  * @param data - Any JSON-serializable data to store
  */
 export async function saveData(data: unknown): Promise<void> {
+  const entry = new Entry(SERVICE_NAME, ACCOUNT_NAME);
   try {
     const serializedData = JSON.stringify(data);
     entry.setPassword(serializedData);
@@ -69,16 +68,22 @@ export async function saveData(data: unknown): Promise<void> {
  * @returns The stored data as unknown, or null if not found
  */
 export async function loadData(): Promise<unknown> {
+  const entry = new Entry(SERVICE_NAME, ACCOUNT_NAME);
   try {
-    const serializedData = await entry.getPassword();
+    const serializedData = entry.getPassword();
 
     if (!serializedData) {
       // Try fallback file storage
       return await loadDataFromFile();
     }
 
-    const data: unknown = JSON.parse(serializedData);
-    return data;
+    try {
+      const data: unknown = JSON.parse(serializedData);
+      return data;
+    } catch (parseError) {
+      console.warn(`Warning: Could not parse data from keychain: ${parseError}`);
+      return null;
+    }
   } catch (error) {
     console.warn(`Warning: Could not load data from keychain: ${error}`);
     // Try fallback file storage
@@ -98,8 +103,9 @@ export async function hasData(): Promise<boolean> {
  * Remove the stored data from OS keychain/credential manager
  */
 export async function removeData(): Promise<void> {
+  const entry = new Entry(SERVICE_NAME, ACCOUNT_NAME);
   try {
-    const success = await entry.deletePassword();
+    const success = entry.deletePassword();
     if (success) {
       console.log('✅ Data removed from OS keychain');
     }

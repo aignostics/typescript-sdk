@@ -1,9 +1,8 @@
 import crypto from 'node:crypto';
-import http from 'node:http';
-import { URL } from 'node:url';
 import { z } from 'zod';
 import { Issuer, generators } from 'openid-client';
 import { saveData, loadData, removeData } from './token-storage.js';
+import { startCallbackServer, waitForCallback } from './oauth-callback-server.js';
 
 /**
  * Authentication utilities for the Aignostics Platform SDK
@@ -238,124 +237,4 @@ export async function logout(): Promise<void> {
     console.error('❌ Error during logout:', error);
     throw error;
   }
-}
-
-/**
- * Start a local HTTP server to handle OAuth callbacks
- */
-async function startCallbackServer(): Promise<http.Server> {
-  return new Promise((resolve, reject) => {
-    const server = http.createServer();
-
-    server.listen(8989, 'localhost', () => {
-      resolve(server);
-    });
-
-    server.on('error', (error: NodeJS.ErrnoException) => {
-      if (error.code === 'EADDRINUSE') {
-        // Try a random port if 8989 is in use
-        server.listen(0, 'localhost', () => {
-          resolve(server);
-        });
-      } else {
-        reject(error);
-      }
-    });
-  });
-}
-
-/**
- * Wait for OAuth callback and extract authorization code
- */
-async function waitForCallback(server: http.Server): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const timeout = setTimeout(
-      () => {
-        reject(new Error('Authentication timeout - no callback received within 5 minutes'));
-      },
-      5 * 60 * 1000
-    ); // 5 minutes timeout
-
-    server.on('request', (req, res) => {
-      try {
-        const url = new URL(req.url!, `http://${req.headers.host}`);
-
-        // Handle OAuth callback
-        if (url.pathname === '/') {
-          const code = url.searchParams.get('code');
-          const error = url.searchParams.get('error');
-          const errorDescription = url.searchParams.get('error_description');
-
-          if (error) {
-            const errorMsg = errorDescription || error;
-
-            // Send error response to browser
-            res.writeHead(400, { 'Content-Type': 'text/html' });
-            res.end(`
-              <!DOCTYPE html>
-              <html>
-                <head>
-                  <title>Authentication Failed - Aignostics Platform SDK</title>
-                  <style>
-                    body { font-family: Arial, sans-serif; margin: 40px; text-align: center; }
-                    .error { color: #d32f2f; }
-                    .container { max-width: 600px; margin: 0 auto; }
-                  </style>
-                </head>
-                <body>
-                  <div class="container">
-                    <h1 class="error">❌ Authentication Failed</h1>
-                    <p>Error: ${errorMsg}</p>
-                    <p>Please try again or check your authentication settings.</p>
-                    <p>You can close this browser window.</p>
-                  </div>
-                </body>
-              </html>
-            `);
-
-            clearTimeout(timeout);
-            reject(new Error(`Authentication failed: ${errorMsg}`));
-            return;
-          }
-
-          if (code) {
-            // Send success response to browser
-            res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.end(`
-              <!DOCTYPE html>
-              <html>
-                <head>
-                  <title>Authentication Successful - Aignostics Platform SDK</title>
-                  <style>
-                    body { font-family: Arial, sans-serif; margin: 40px; text-align: center; }
-                    .success { color: #2e7d32; }
-                    .container { max-width: 600px; margin: 0 auto; }
-                  </style>
-                </head>
-                <body>
-                  <div class="container">
-                    <h1 class="success">✅ Authentication Successful!</h1>
-                    <p>You have successfully authenticated with the Aignostics Platform.</p>
-                    <p>You can now close this browser window and return to your terminal.</p>
-                    <p>The SDK is ready to use! 🚀</p>
-                  </div>
-                </body>
-              </html>
-            `);
-
-            clearTimeout(timeout);
-            resolve(code);
-            return;
-          }
-        }
-
-        // Handle other paths (favicon, etc.)
-        res.writeHead(404, { 'Content-Type': 'text/plain' });
-        res.end('Not found');
-      } catch (error) {
-        clearTimeout(timeout);
-        reject(error);
-      }
-    });
-  });
 }

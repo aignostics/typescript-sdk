@@ -75,4 +75,25 @@ describe('PlatformSDK', () => {
       'No API key or access token provided. Please login first.'
     );
   });
+
+  it('should list applications successfully', async () => {
+    // Mock getValidAccessToken to return a valid token
+    vi.mocked(getValidAccessToken).mockResolvedValue('mocked-token');
+
+    // Use mock server with successful response
+    setMockScenario('success');
+
+    const result = await sdk.listApplications();
+    expect(Array.isArray(result)).toBe(true);
+  });
+
+  it('should handle list applications failure', async () => {
+    // Mock getValidAccessToken to return a valid token
+    vi.mocked(getValidAccessToken).mockResolvedValue('mocked-token');
+
+    // Use mock server with error response
+    setMockScenario('error');
+
+    await expect(sdk.listApplications()).rejects.toThrow('list applications failed');
+  });
 });
