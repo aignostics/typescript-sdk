@@ -16,7 +16,7 @@ const REDIRECT_URI = 'http://localhost:8989';
  * CLI for the Aignostics Platform SDK
  */
 export async function main() {
-  const argv = await yargs(hideBin(process.argv))
+  await yargs(hideBin(process.argv))
     .strict()
     .scriptName('aignostics-platform')
     .usage('Usage: $0 <command> [options]')

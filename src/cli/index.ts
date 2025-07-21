@@ -4,7 +4,7 @@ import { main } from './cli';
 
 // Only run if this file is executed directly
 if (require.main === module) {
-  main().catch((error: any) => {
+  main().catch(error => {
     console.error('CLI Error:', error);
     process.exit(1);
   });

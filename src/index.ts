@@ -1,5 +1,6 @@
 import { ApplicationReadResponse, PublicApi } from './generated/api';
 import { getCurrentToken } from './utils/token-storage';
+import packageJson from '../package.json';
 
 /**
  * Configuration options for the Platform SDK
@@ -96,7 +97,7 @@ export class PlatformSDK {
    * Get SDK version
    */
   getVersion(): string {
-    return require('../package.json').version;
+    return packageJson.version;
   }
 
   /**

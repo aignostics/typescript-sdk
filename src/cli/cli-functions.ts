@@ -1,8 +1,9 @@
 import { PlatformSDK } from '../index';
+import packageJson from '../../package.json';
 
 export async function handleInfo(): Promise<void> {
   console.log('Aignostics Platform SDK');
-  console.log('Version:', require('../../package.json').version);
+  console.log('Version:', packageJson.version);
 }
 
 export async function testApi(endpoint: string): Promise<void> {

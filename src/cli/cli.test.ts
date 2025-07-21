@@ -1,6 +1,4 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import yargs from 'yargs';
-import { hideBin } from 'yargs/helpers';
 import { main } from './cli';
 
 // Mock the CLI functions to avoid side effects
@@ -117,7 +115,7 @@ describe('CLI Integration Tests', () => {
 
       try {
         await main();
-      } catch (error: any) {
+      } catch (error) {
         expect(error.message).toContain('process.exit');
       }
 
@@ -135,7 +133,7 @@ describe('CLI Integration Tests', () => {
 
       try {
         await main();
-      } catch (error: any) {
+      } catch (error) {
         expect(error.message).toContain('process.exit');
       }
 
@@ -150,7 +148,7 @@ describe('CLI Integration Tests', () => {
         await main();
         // If we reach here, the test should fail because we expected an error
         expect.fail('Expected main() to throw an error when no command is provided');
-      } catch (error: any) {
+      } catch (error) {
         // Yargs calls process.exit(1) when validation fails
         // The exact error message format depends on how the mock is set up
         expect(error.message).toMatch(/process\.exit.*1/);
