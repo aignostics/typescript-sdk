@@ -1,6 +1,10 @@
 import packageJson from '../package.json' with { type: 'json' };
 import { ApplicationReadResponse, PublicApi } from './generated/index.js';
-import { getValidAccessToken } from './utils/auth.js';
+
+/**
+ * Token provider function that returns a valid access token
+ */
+export type TokenProvider = () => Promise<string | null> | string | null;
 
 /**
  * Configuration options for the Platform SDK
@@ -12,9 +16,10 @@ export interface PlatformSDKConfig {
   baseURL?: string;
 
   /**
-   * API key for authentication
+   * Token provider function for dynamic token retrieval
+   * This function will be called when a token is needed
    */
-  apiKey?: string;
+  tokenProvider?: TokenProvider;
 
   /**
    * Request timeout in milliseconds
@@ -49,20 +54,20 @@ export class PlatformSDKHttp implements PlatformSDK {
 
   async #ensureClient(): Promise<PublicApi> {
     if (!this.#client) {
-      // Try to get stored token first, fallback to provided apiKey
-      let accessToken = this.#config.apiKey;
+      let accessToken: string | null = null;
 
-      if (!accessToken) {
-        const storedToken = await getValidAccessToken();
-        if (storedToken) {
-          accessToken = storedToken;
-        }
+      // Get token from provider
+      if (this.#config.tokenProvider) {
+        accessToken = await this.#config.tokenProvider();
       }
 
       // Throw error if no token is available
       if (!accessToken) {
-        throw new Error('No API key or access token provided. Please login first.');
+        throw new Error(
+          'No access token available. Please provide a tokenProvider in the SDK configuration that returns a valid token.'
+        );
       }
+
       this.#client = new PublicApi({
         basePath: this.#config.baseURL,
         isJsonMime: mime => mime === 'application/json',
