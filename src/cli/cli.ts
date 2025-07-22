@@ -2,7 +2,15 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
 import { handleInfo, testApi, listApplications } from './cli-functions.js';
-import { login, logout, getAuthState, type LoginConfig } from '../utils/auth.js';
+import {
+  loginWithCallback,
+  completeLogin,
+  logout,
+  getAuthState,
+  type LoginWithCallbackConfig,
+} from '../utils/auth.js';
+import { startCallbackServer, waitForCallback } from '../utils/oauth-callback-server.js';
+import crypto from 'crypto';
 
 /**
  * CLI for the Aignostics Platform SDK
@@ -76,14 +84,46 @@ export async function main() {
 }
 
 export async function handleLogin(issuerURL: string, clientID: string) {
-  const config: LoginConfig = {
+  const codeVerifier = crypto.randomBytes(32).toString('hex');
+
+  // Start local server to handle OAuth callback
+  console.log('🔐 Starting authentication process...');
+  const server = await startCallbackServer();
+  const address = server.address();
+  const actualPort = typeof address === 'object' && address !== null ? address.port : 8989;
+  const redirectUri = `http://localhost:${actualPort}`;
+
+  const config: LoginWithCallbackConfig = {
     issuerURL,
     clientID,
+    redirectUri,
+    codeVerifier,
     audience: 'https://aignostics-platform-samia',
     scope: 'openid profile email offline_access',
   };
 
-  await login(config);
+  try {
+    // Start the OAuth flow (opens browser)
+    await loginWithCallback(config);
+
+    // Wait for the callback
+    console.log('⏳ Waiting for authentication callback...');
+    const authCode = await waitForCallback(server);
+
+    console.log('✅ Authentication callback received!');
+
+    // Complete the login (exchange code for tokens)
+    await completeLogin(config, authCode);
+
+    console.log('🎉 Login successful! Token saved securely.');
+    console.log('🔑 You are now authenticated and can use the SDK.');
+  } catch (error) {
+    console.error('❌ Authentication failed:', error);
+    throw error;
+  } finally {
+    // Always close the server
+    server.close();
+  }
 }
 
 export async function handleLogout(): Promise<void> {

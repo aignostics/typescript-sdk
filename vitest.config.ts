@@ -28,11 +28,23 @@ export default defineConfig({
         '**/types.ts',
         '**/*.d.ts',
       ],
+      watermarks: {
+        lines: [70, 85],
+        statements: [70, 85],
+        functions: [80, 95],
+      },
       thresholds: {
         branches: 85,
         functions: 85,
-        lines: 85,
+        lines: 95,
         statements: 85,
+        '**/*.ts': {
+          lines: 70,
+        },
+        // add exception for this executable index file
+        'src/cli/index.ts': {
+          lines: 50,
+        },
       },
     },
   },

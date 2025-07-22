@@ -48,6 +48,101 @@ export interface LoginConfig {
 }
 
 /**
+ * OAuth login configuration with callback URL
+ */
+export interface LoginWithCallbackConfig extends LoginConfig {
+  redirectUri: string;
+  codeVerifier: string;
+}
+
+/**
+ * Perform OAuth2 PKCE login flow with external callback handling
+ */
+export async function loginWithCallback(config: LoginWithCallbackConfig): Promise<string> {
+  const open = (await import('open')).default;
+
+  console.log('🔐 Starting authentication process...');
+
+  try {
+    const issuer = await Issuer.discover(config.issuerURL);
+    const client = new issuer.Client({
+      client_id: config.clientID,
+      redirect_uris: [config.redirectUri],
+      response_types: ['code'],
+      scope: config.scope || 'openid profile email offline_access',
+      audience: config.audience || 'https://aignostics-platform-samia',
+      token_endpoint_auth_method: 'none',
+    });
+
+    const codeChallenge = generators.codeChallenge(config.codeVerifier);
+
+    const authorizationUrl = client.authorizationUrl({
+      scope: config.scope || 'openid profile email offline_access',
+      audience: config.audience || 'https://aignostics-platform-samia',
+      code_challenge: codeChallenge,
+      code_challenge_method: 'S256',
+    });
+
+    console.log('🌐 Opening browser for authentication...');
+    console.log("📝 If the browser doesn't open automatically, visit:");
+    console.log(`   ${authorizationUrl}`);
+    console.log('');
+    console.log('⏳ Waiting for authentication callback...');
+
+    await open(authorizationUrl);
+
+    return authorizationUrl;
+  } catch (error) {
+    console.error('❌ Authentication setup failed:', error);
+    throw error;
+  }
+}
+
+/**
+ * Complete the OAuth flow with authorization code
+ */
+export async function completeLogin(
+  config: LoginWithCallbackConfig,
+  authCode: string
+): Promise<void> {
+  try {
+    const issuer = await Issuer.discover(config.issuerURL);
+    const client = new issuer.Client({
+      client_id: config.clientID,
+      redirect_uris: [config.redirectUri],
+      response_types: ['code'],
+      scope: config.scope || 'openid profile email offline_access',
+      audience: config.audience || 'https://aignostics-platform-samia',
+      token_endpoint_auth_method: 'none',
+    });
+
+    console.log('✅ Authentication callback received!');
+
+    // Exchange authorization code for tokens
+    const tokenSet = await client.callback(
+      config.redirectUri,
+      { code: authCode },
+      { code_verifier: config.codeVerifier }
+    );
+
+    // Save the token securely
+    await saveToken({
+      access_token: tokenSet.access_token!,
+      refresh_token: tokenSet.refresh_token,
+      expires_in: tokenSet.expires_in,
+      token_type: tokenSet.token_type,
+      scope: tokenSet.scope,
+    });
+
+    console.log('🎉 Login successful! Token saved securely.');
+    console.log('🔑 You are now authenticated and can use the SDK.');
+  } catch (error) {
+    console.error('❌ Token exchange failed:', error);
+    throw error;
+  }
+}
+
+/**
  * Save token data with timestamp
  */
 async function saveToken(tokenData: Omit<TokenData, 'stored_at'>): Promise<void> {
@@ -153,12 +248,10 @@ export async function getAuthState(): Promise<AuthState> {
 
 /**
  * Perform OAuth2 PKCE login flow
+ * @deprecated Use loginWithCallback and completeLogin for better server lifecycle management
  */
 export async function login(config: LoginConfig): Promise<void> {
-  const open = (await import('open')).default;
   const codeVerifier = crypto.randomBytes(32).toString('hex');
-
-  console.log('🔐 Starting authentication process...');
 
   // Start local server to handle OAuth callback
   const server = await startCallbackServer();
@@ -167,56 +260,25 @@ export async function login(config: LoginConfig): Promise<void> {
   const redirectUri = `http://localhost:${actualPort}`;
 
   try {
-    const issuer = await Issuer.discover(config.issuerURL);
-    const client = new issuer.Client({
-      client_id: config.clientID,
-      redirect_uris: [redirectUri],
-      response_types: ['code'],
-      scope: config.scope || 'openid profile email offline_access',
-      audience: config.audience || 'https://aignostics-platform-samia',
-      token_endpoint_auth_method: 'none',
+    // Start the OAuth flow
+    await loginWithCallback({
+      ...config,
+      redirectUri,
+      codeVerifier,
     });
-
-    const codeChallenge = generators.codeChallenge(codeVerifier);
-
-    const authorizationUrl = client.authorizationUrl({
-      scope: config.scope || 'openid profile email offline_access',
-      audience: config.audience || 'https://aignostics-platform-samia',
-      code_challenge: codeChallenge,
-      code_challenge_method: 'S256',
-    });
-
-    console.log('🌐 Opening browser for authentication...');
-    console.log("📝 If the browser doesn't open automatically, visit:");
-    console.log(`   ${authorizationUrl}`);
-    console.log('');
-    console.log('⏳ Waiting for authentication callback...');
-
-    await open(authorizationUrl);
 
     // Wait for the callback
     const authCode = await waitForCallback(server);
 
-    console.log('✅ Authentication callback received!');
-
-    // Exchange authorization code for tokens
-    const tokenSet = await client.callback(
-      redirectUri,
-      { code: authCode },
-      { code_verifier: codeVerifier }
+    // Complete the login
+    await completeLogin(
+      {
+        ...config,
+        redirectUri,
+        codeVerifier,
+      },
+      authCode
     );
-
-    // Save the token securely
-    await saveToken({
-      access_token: tokenSet.access_token!,
-      refresh_token: tokenSet.refresh_token,
-      expires_in: tokenSet.expires_in,
-      token_type: tokenSet.token_type,
-      scope: tokenSet.scope,
-    });
-
-    console.log('🎉 Login successful! Token saved securely.');
-    console.log('🔑 You are now authenticated and can use the SDK.');
   } catch (error) {
     console.error('❌ Authentication failed:', error);
     throw error;
