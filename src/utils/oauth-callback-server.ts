@@ -62,7 +62,7 @@ export async function waitForCallback(
             const errorMsg = errorDescription || error;
 
             // Send error response to browser
-            res.writeHead(400, { 'Content-Type': 'text/html' });
+            res.writeHead(400, { 'Content-Type': 'text/html; charset=utf-8' });
             res.end(generateErrorPage(errorMsg));
 
             cleanup();
@@ -72,7 +72,7 @@ export async function waitForCallback(
 
           if (code) {
             // Send success response to browser
-            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
             res.end(generateSuccessPage());
 
             cleanup();

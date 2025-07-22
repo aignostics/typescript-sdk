@@ -183,45 +183,63 @@ describe('OAuth Callback Server', () => {
   });
 
   describe('HTML responses', () => {
-    it('should return success HTML for valid authorization code', async () => {
+    it('should return success HTML with UTF-8 charset for valid authorization code', async () => {
       const testServer = await startCallbackServer(0);
       const callbackPromise = waitForCallback(testServer, 2000);
 
       const address = testServer.address();
       const port = typeof address === 'object' && address !== null ? address.port : 8989;
 
-      // Make request and wait for callback to complete
+      let responseHeaders: http.IncomingHttpHeaders = {};
+
+      // Make request and capture headers
       setTimeout(() => {
-        const req = http.request({
-          hostname: 'localhost',
-          port,
-          path: '/?code=test-code',
-          method: 'GET',
-        });
+        const req = http.request(
+          {
+            hostname: 'localhost',
+            port,
+            path: '/?code=test-code',
+            method: 'GET',
+          },
+          res => {
+            responseHeaders = res.headers;
+            expect(res.statusCode).toBe(200);
+            expect(res.headers['content-type']).toBe('text/html; charset=utf-8');
+          }
+        );
         req.end();
       }, 100);
 
-      // The waitForCallback should resolve with the code and handle the response
+      // The waitForCallback should resolve with the code
       const result = await callbackPromise;
       expect(result).toBe('test-code');
 
       testServer.close();
     });
 
-    it('should return error HTML for OAuth errors', async () => {
+    it('should return error HTML with UTF-8 charset for OAuth errors', async () => {
       const testServer = await startCallbackServer(0);
       const callbackPromise = waitForCallback(testServer, 2000);
 
       const address = testServer.address();
       const port = typeof address === 'object' && address !== null ? address.port : 8989;
 
+      let responseHeaders: http.IncomingHttpHeaders = {};
+
       setTimeout(() => {
-        const req = http.request({
-          hostname: 'localhost',
-          port,
-          path: '/?error=access_denied&error_description=User%20cancelled',
-          method: 'GET',
-        });
+        const req = http.request(
+          {
+            hostname: 'localhost',
+            port,
+            path: '/?error=access_denied&error_description=User%20cancelled',
+            method: 'GET',
+          },
+          res => {
+            responseHeaders = res.headers;
+            expect(res.statusCode).toBe(400);
+            expect(res.headers['content-type']).toBe('text/html; charset=utf-8');
+          }
+        );
         req.end();
       }, 100);
 
