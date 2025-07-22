@@ -190,8 +190,6 @@ describe('OAuth Callback Server', () => {
       const address = testServer.address();
       const port = typeof address === 'object' && address !== null ? address.port : 8989;
 
-      let responseHeaders: http.IncomingHttpHeaders = {};
-
       // Make request and capture headers
       setTimeout(() => {
         const req = http.request(
@@ -202,7 +200,6 @@ describe('OAuth Callback Server', () => {
             method: 'GET',
           },
           res => {
-            responseHeaders = res.headers;
             expect(res.statusCode).toBe(200);
             expect(res.headers['content-type']).toBe('text/html; charset=utf-8');
           }
@@ -224,8 +221,6 @@ describe('OAuth Callback Server', () => {
       const address = testServer.address();
       const port = typeof address === 'object' && address !== null ? address.port : 8989;
 
-      let responseHeaders: http.IncomingHttpHeaders = {};
-
       setTimeout(() => {
         const req = http.request(
           {
@@ -235,7 +230,6 @@ describe('OAuth Callback Server', () => {
             method: 'GET',
           },
           res => {
-            responseHeaders = res.headers;
             expect(res.statusCode).toBe(400);
             expect(res.headers['content-type']).toBe('text/html; charset=utf-8');
           }

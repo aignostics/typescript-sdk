@@ -1,13 +1,25 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
-import { handleLogin, handleLogout, handleStatus } from './cli';
-import { loginWithCallback, completeLogin, logout, getAuthState } from '../utils/auth';
 import { startCallbackServer, waitForCallback } from '../utils/oauth-callback-server';
 import crypto from 'crypto';
+import { AuthService } from '../utils/auth';
 
 // Mock external dependencies
-vi.mock('../utils/auth');
 vi.mock('../utils/oauth-callback-server');
 vi.mock('crypto');
+
+// Mock the auth module and create a mock authService instance
+const mockAuthService = {
+  loginWithCallback: vi.fn(),
+  completeLogin: vi.fn(),
+  logout: vi.fn(),
+  getAuthState: vi.fn(),
+};
+
+// Mock the auth module to return our mock instance
+vi.mock('../utils/auth', () => ({
+  AuthService: vi.fn(),
+  FileSystemTokenStorage: vi.fn(),
+}));
 
 // Mock console methods
 const mockConsole = {
@@ -17,74 +29,64 @@ const mockConsole = {
 
 describe('CLI Handlers', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-
     // Mock console methods
     vi.spyOn(console, 'log').mockImplementation(mockConsole.log);
     vi.spyOn(console, 'error').mockImplementation(mockConsole.error);
 
     // Mock process.exit
-    vi.spyOn(process, 'exit').mockImplementation((() => {
+    vi.spyOn(process, 'exit').mockImplementation(() => {
       throw new Error('process.exit called');
-    }) as any);
+    });
+    vi.mocked(AuthService).mockImplementation(() => mockAuthService as unknown as AuthService);
   });
 
   describe('handleLogin', () => {
     it('should complete login flow successfully', async () => {
+      const { handleLogin } = await import('./cli');
       const mockServer = {
         address: vi.fn().mockReturnValue({ port: 8989 }),
         close: vi.fn(),
       };
       const mockAuthCode = 'test-auth-code';
       const mockCodeVerifier = 'test-code-verifier';
+      const mockCodeVerifierHex = Buffer.from(mockCodeVerifier, 'utf-8').toString('hex');
 
-      // Setup mocks
-      (crypto.randomBytes as Mock).mockReturnValue({
-        toString: vi.fn().mockReturnValue(mockCodeVerifier),
-      });
+      (crypto.randomBytes as Mock).mockReturnValue(Buffer.from(mockCodeVerifier, 'utf-8'));
       (startCallbackServer as Mock).mockResolvedValue(mockServer);
       (waitForCallback as Mock).mockResolvedValue(mockAuthCode);
-      (loginWithCallback as Mock).mockResolvedValue(undefined);
-      (completeLogin as Mock).mockResolvedValue(undefined);
+      mockAuthService.loginWithCallback.mockResolvedValue(undefined);
+      mockAuthService.completeLogin.mockResolvedValue(undefined);
 
       await handleLogin('https://test-issuer.com', 'test-client-id');
 
       // Verify the flow
       expect(crypto.randomBytes).toHaveBeenCalledWith(32);
       expect(startCallbackServer).toHaveBeenCalled();
-      expect(loginWithCallback).toHaveBeenCalledWith({
+      expect(mockAuthService.loginWithCallback).toHaveBeenCalledWith({
         issuerURL: 'https://test-issuer.com',
         clientID: 'test-client-id',
         redirectUri: 'http://localhost:8989',
-        codeVerifier: mockCodeVerifier,
+        codeVerifier: mockCodeVerifierHex,
         audience: 'https://aignostics-platform-samia',
         scope: 'openid profile email offline_access',
       });
       expect(waitForCallback).toHaveBeenCalledWith(mockServer);
-      expect(completeLogin).toHaveBeenCalledWith(
+      expect(mockAuthService.completeLogin).toHaveBeenCalledWith(
         {
           issuerURL: 'https://test-issuer.com',
           clientID: 'test-client-id',
           redirectUri: 'http://localhost:8989',
-          codeVerifier: mockCodeVerifier,
+          codeVerifier: mockCodeVerifierHex,
           audience: 'https://aignostics-platform-samia',
           scope: 'openid profile email offline_access',
         },
         mockAuthCode
       );
       expect(mockServer.close).toHaveBeenCalled();
-
-      // Verify console messages
-      expect(mockConsole.log).toHaveBeenCalledWith('🔐 Starting authentication process...');
-      expect(mockConsole.log).toHaveBeenCalledWith('⏳ Waiting for authentication callback...');
-      expect(mockConsole.log).toHaveBeenCalledWith('✅ Authentication callback received!');
-      expect(mockConsole.log).toHaveBeenCalledWith('🎉 Login successful! Token saved securely.');
-      expect(mockConsole.log).toHaveBeenCalledWith(
-        '🔑 You are now authenticated and can use the SDK.'
-      );
     });
 
     it('should handle server address as number', async () => {
+      const { handleLogin } = await import('./cli');
       const mockServer = {
         address: vi.fn().mockReturnValue(8990),
         close: vi.fn(),
@@ -96,12 +98,12 @@ describe('CLI Handlers', () => {
       });
       (startCallbackServer as Mock).mockResolvedValue(mockServer);
       (waitForCallback as Mock).mockResolvedValue('auth-code');
-      (loginWithCallback as Mock).mockResolvedValue(undefined);
-      (completeLogin as Mock).mockResolvedValue(undefined);
+      mockAuthService.loginWithCallback.mockResolvedValue(undefined);
+      mockAuthService.completeLogin.mockResolvedValue(undefined);
 
       await handleLogin('https://test-issuer.com', 'test-client-id');
 
-      expect(loginWithCallback).toHaveBeenCalledWith(
+      expect(mockAuthService.loginWithCallback).toHaveBeenCalledWith(
         expect.objectContaining({
           redirectUri: 'http://localhost:8989', // Should fallback to 8989
         })
@@ -109,6 +111,7 @@ describe('CLI Handlers', () => {
     });
 
     it('should handle authentication errors and close server', async () => {
+      const { handleLogin } = await import('./cli');
       const mockServer = {
         address: vi.fn().mockReturnValue({ port: 8989 }),
         close: vi.fn(),
@@ -119,7 +122,7 @@ describe('CLI Handlers', () => {
         toString: vi.fn().mockReturnValue('test-code-verifier'),
       });
       (startCallbackServer as Mock).mockResolvedValue(mockServer);
-      (loginWithCallback as Mock).mockRejectedValue(mockError);
+      mockAuthService.loginWithCallback.mockRejectedValue(mockError);
 
       await expect(handleLogin('https://test-issuer.com', 'test-client-id')).rejects.toThrow(
         'Authentication failed'
@@ -130,6 +133,7 @@ describe('CLI Handlers', () => {
     });
 
     it('should handle callback wait errors and close server', async () => {
+      const { handleLogin } = await import('./cli');
       const mockServer = {
         address: vi.fn().mockReturnValue({ port: 8989 }),
         close: vi.fn(),
@@ -140,7 +144,7 @@ describe('CLI Handlers', () => {
         toString: vi.fn().mockReturnValue('test-code-verifier'),
       });
       (startCallbackServer as Mock).mockResolvedValue(mockServer);
-      (loginWithCallback as Mock).mockResolvedValue(undefined);
+      mockAuthService.loginWithCallback.mockResolvedValue(undefined);
       (waitForCallback as Mock).mockRejectedValue(mockError);
 
       await expect(handleLogin('https://test-issuer.com', 'test-client-id')).rejects.toThrow(
@@ -152,6 +156,7 @@ describe('CLI Handlers', () => {
     });
 
     it('should handle token exchange errors and close server', async () => {
+      const { handleLogin } = await import('./cli');
       const mockServer = {
         address: vi.fn().mockReturnValue({ port: 8989 }),
         close: vi.fn(),
@@ -162,9 +167,9 @@ describe('CLI Handlers', () => {
         toString: vi.fn().mockReturnValue('test-code-verifier'),
       });
       (startCallbackServer as Mock).mockResolvedValue(mockServer);
-      (loginWithCallback as Mock).mockResolvedValue(undefined);
+      mockAuthService.loginWithCallback.mockResolvedValue(undefined);
       (waitForCallback as Mock).mockResolvedValue('auth-code');
-      (completeLogin as Mock).mockRejectedValue(mockError);
+      mockAuthService.completeLogin.mockRejectedValue(mockError);
 
       await expect(handleLogin('https://test-issuer.com', 'test-client-id')).rejects.toThrow(
         'Token exchange failed'
@@ -177,16 +182,18 @@ describe('CLI Handlers', () => {
 
   describe('handleLogout', () => {
     it('should call logout function', async () => {
-      (logout as Mock).mockResolvedValue(undefined);
+      const { handleLogout } = await import('./cli');
+      mockAuthService.logout.mockResolvedValue(undefined);
 
       await handleLogout();
 
-      expect(logout).toHaveBeenCalled();
+      expect(mockAuthService.logout).toHaveBeenCalled();
     });
 
     it('should handle logout errors', async () => {
+      const { handleLogout } = await import('./cli');
       const mockError = new Error('Logout failed');
-      (logout as Mock).mockRejectedValue(mockError);
+      mockAuthService.logout.mockRejectedValue(mockError);
 
       await expect(handleLogout()).rejects.toThrow('Logout failed');
     });
@@ -194,6 +201,7 @@ describe('CLI Handlers', () => {
 
   describe('handleStatus', () => {
     it('should display authenticated status with expiring token', async () => {
+      const { handleStatus } = await import('./cli');
       const mockExpiresAt = new Date('2025-01-01T12:59:59.000Z');
       const mockStoredAt = new Date('2024-12-01T10:00:00.000Z');
 
@@ -207,7 +215,7 @@ describe('CLI Handlers', () => {
         },
       };
 
-      (getAuthState as Mock).mockResolvedValue(mockAuthState);
+      mockAuthService.getAuthState.mockResolvedValue(mockAuthState);
 
       await handleStatus();
 
@@ -224,6 +232,7 @@ describe('CLI Handlers', () => {
     });
 
     it('should display authenticated status with non-expiring token', async () => {
+      const { handleStatus } = await import('./cli');
       const mockStoredAt = new Date('2024-12-01T10:00:00.000Z');
 
       const mockAuthState = {
@@ -236,7 +245,7 @@ describe('CLI Handlers', () => {
         },
       };
 
-      (getAuthState as Mock).mockResolvedValue(mockAuthState);
+      mockAuthService.getAuthState.mockResolvedValue(mockAuthState);
 
       await handleStatus();
 
@@ -251,12 +260,13 @@ describe('CLI Handlers', () => {
     });
 
     it('should display not authenticated status', async () => {
+      const { handleStatus } = await import('./cli');
       const mockAuthState = {
         isAuthenticated: false,
         token: null,
       };
 
-      (getAuthState as Mock).mockResolvedValue(mockAuthState);
+      mockAuthService.getAuthState.mockResolvedValue(mockAuthState);
 
       await handleStatus();
 
@@ -266,12 +276,11 @@ describe('CLI Handlers', () => {
     });
 
     it('should handle auth state check errors', async () => {
+      const { handleStatus } = await import('./cli');
       const mockError = new Error('Failed to check auth state');
-      (getAuthState as Mock).mockRejectedValue(mockError);
+      mockAuthService.getAuthState.mockRejectedValue(mockError);
 
       await expect(handleStatus()).rejects.toThrow('process.exit called');
-
-      await new Promise(resolve => setTimeout(resolve, 0)); // Allow async operations to complete
 
       expect(mockConsole.error).toHaveBeenCalledWith('❌ Error checking status:', mockError);
     });

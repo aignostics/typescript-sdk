@@ -3,14 +3,15 @@ import { hideBin } from 'yargs/helpers';
 
 import { handleInfo, testApi, listApplications } from './cli-functions.js';
 import {
-  loginWithCallback,
-  completeLogin,
-  logout,
-  getAuthState,
+  AuthService,
+  FileSystemTokenStorage,
   type LoginWithCallbackConfig,
 } from '../utils/auth.js';
 import { startCallbackServer, waitForCallback } from '../utils/oauth-callback-server.js';
 import crypto from 'crypto';
+
+// Create a shared auth service instance for the CLI
+const authService = new AuthService(new FileSystemTokenStorage());
 
 /**
  * CLI for the Aignostics Platform SDK
@@ -104,7 +105,7 @@ export async function handleLogin(issuerURL: string, clientID: string) {
 
   try {
     // Start the OAuth flow (opens browser)
-    await loginWithCallback(config);
+    await authService.loginWithCallback(config);
 
     // Wait for the callback
     console.log('⏳ Waiting for authentication callback...');
@@ -113,7 +114,7 @@ export async function handleLogin(issuerURL: string, clientID: string) {
     console.log('✅ Authentication callback received!');
 
     // Complete the login (exchange code for tokens)
-    await completeLogin(config, authCode);
+    await authService.completeLogin(config, authCode);
 
     console.log('🎉 Login successful! Token saved securely.');
     console.log('🔑 You are now authenticated and can use the SDK.');
@@ -127,12 +128,12 @@ export async function handleLogin(issuerURL: string, clientID: string) {
 }
 
 export async function handleLogout(): Promise<void> {
-  await logout();
+  await authService.logout();
 }
 
 export async function handleStatus(): Promise<void> {
   try {
-    const authState = await getAuthState();
+    const authState = await authService.getAuthState();
 
     if (authState.isAuthenticated && authState.token) {
       console.log('✅ Authenticated');

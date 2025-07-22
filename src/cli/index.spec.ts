@@ -4,20 +4,20 @@ describe('CLI Entry Point', () => {
   it('should export main function from cli module', async () => {
     // This test verifies that the exports work correctly
     const indexModule = await import('./index.js');
-    
+
     expect(indexModule.main).toBeDefined();
     expect(typeof indexModule.main).toBe('function');
   });
 
   it('should export all CLI handler functions', async () => {
     const indexModule = await import('./index.js');
-    
+
     expect(indexModule.handleLogin).toBeDefined();
     expect(typeof indexModule.handleLogin).toBe('function');
-    
+
     expect(indexModule.handleLogout).toBeDefined();
     expect(typeof indexModule.handleLogout).toBe('function');
-    
+
     expect(indexModule.handleStatus).toBeDefined();
     expect(typeof indexModule.handleStatus).toBe('function');
   });
@@ -25,32 +25,32 @@ describe('CLI Entry Point', () => {
   it('should check if module is main using fileURLToPath', () => {
     // Test the logic for determining if this is the main module
     const testFilename = '/test/cli/index.js';
-    
+
     // Mock scenarios
     const scenarios = [
       {
         argv1: testFilename,
         filename: testFilename,
         expected: true,
-        description: 'exact match'
+        description: 'exact match',
       },
       {
         argv1: '/test/cli/index.cjs',
         filename: testFilename,
         expected: true,
-        description: '.cjs extension match'
+        description: '.cjs extension match',
       },
       {
         argv1: '/different/file.js',
         filename: testFilename,
         expected: false,
-        description: 'different file'
-      }
+        description: 'different file',
+      },
     ];
 
     scenarios.forEach(scenario => {
-      const isMainModule = scenario.argv1 === scenario.filename || 
-                          scenario.argv1?.endsWith('/cli/index.cjs');
+      const isMainModule =
+        scenario.argv1 === scenario.filename || scenario.argv1?.endsWith('/cli/index.cjs');
       expect(isMainModule).toBe(scenario.expected);
     });
   });
@@ -94,24 +94,24 @@ describe('CLI Entry Point', () => {
   it('should test actual main execution when run as main module', async () => {
     // Mock console and process before testing
     const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const mockExit = vi.spyOn(process, 'exit').mockImplementation((() => {
+    const mockExit = vi.spyOn(process, 'exit').mockImplementation(() => {
       throw new Error('process.exit called');
-    }) as any);
+    });
 
     // Store original argv
     const originalArgv = process.argv;
 
     try {
       // Test successful main execution
-      const { main } = await import('./cli.js');
+      await import('./cli.js');
       const mockMain = vi.fn().mockResolvedValue(undefined);
-      
+
       // Temporarily replace main with our mock for testing
       vi.doMock('./cli.js', () => ({ main: mockMain }));
 
       // Create a mock filename that would trigger the main execution
       vi.doMock('url', () => ({
-        fileURLToPath: vi.fn().mockReturnValue('/test/cli/index.js')
+        fileURLToPath: vi.fn().mockReturnValue('/test/cli/index.js'),
       }));
 
       // Set argv to trigger main execution
@@ -120,7 +120,7 @@ describe('CLI Entry Point', () => {
       // Test the error handler directly since the actual execution happens at import time
       const mockError = new Error('CLI execution failed');
       const mainPromise = Promise.reject(mockError);
-      
+
       // Simulate the catch handler
       try {
         await mainPromise;
