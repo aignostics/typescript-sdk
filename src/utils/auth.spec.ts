@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getValidAccessToken, getAuthState, login, logout } from './auth.js';
+import { AuthService, FileSystemTokenStorage } from './auth.js';
 import * as tokenStorage from './token-storage.js';
 import http from 'node:http';
 
@@ -40,7 +40,14 @@ vi.mock('node:http', () => ({
   },
 }));
 
-describe('Auth Module', () => {
+describe('AuthService', () => {
+  let authService: AuthService;
+  let mockTokenStorage: {
+    save: ReturnType<typeof vi.fn>;
+    load: ReturnType<typeof vi.fn>;
+    remove: ReturnType<typeof vi.fn>;
+    exists: ReturnType<typeof vi.fn>;
+  };
   let consoleSpy: {
     log: ReturnType<typeof vi.spyOn>;
     warn: ReturnType<typeof vi.spyOn>;
@@ -48,6 +55,17 @@ describe('Auth Module', () => {
   };
 
   beforeEach(() => {
+    // Create mock token storage
+    mockTokenStorage = {
+      save: vi.fn(),
+      load: vi.fn(),
+      remove: vi.fn(),
+      exists: vi.fn(),
+    };
+
+    // Create auth service with mock storage
+    authService = new AuthService(mockTokenStorage);
+
     consoleSpy = {
       log: vi.spyOn(console, 'log').mockImplementation(() => {}),
       warn: vi.spyOn(console, 'warn').mockImplementation(() => {}),
@@ -66,19 +84,11 @@ describe('Auth Module', () => {
         stored_at: Date.now() - 1000, // stored 1 second ago
       };
 
-      vi.mocked(tokenStorage.loadData).mockResolvedValue(mockTokenData);
+      mockTokenStorage.load.mockResolvedValue(mockTokenData);
 
-      const result = await getValidAccessToken();
+      const result = await authService.getValidAccessToken();
 
       expect(result).toBe('valid-token');
-    });
-
-    it('should return null when no token exists', async () => {
-      vi.mocked(tokenStorage.loadData).mockResolvedValue(null);
-
-      const result = await getValidAccessToken();
-
-      expect(result).toBeNull();
     });
 
     it('should return null when token is expired', async () => {
@@ -88,38 +98,47 @@ describe('Auth Module', () => {
         stored_at: Date.now() - 7200000, // stored 2 hours ago
       };
 
-      vi.mocked(tokenStorage.loadData).mockResolvedValue(mockTokenData);
+      mockTokenStorage.load.mockResolvedValue(mockTokenData);
 
-      const result = await getValidAccessToken();
+      const result = await authService.getValidAccessToken();
 
       expect(result).toBeNull();
     });
 
-    it('should return token when no expiration is set', async () => {
+    it('should return null when no token exists', async () => {
+      mockTokenStorage.load.mockResolvedValue(null);
+
+      const result = await authService.getValidAccessToken();
+
+      expect(result).toBeNull();
+    });
+
+    it('should return access token when token has no expiration', async () => {
       const mockTokenData = {
         access_token: 'non-expiring-token',
+        token_type: 'Bearer',
         stored_at: Date.now(),
       };
 
-      vi.mocked(tokenStorage.loadData).mockResolvedValue(mockTokenData);
+      mockTokenStorage.load.mockResolvedValue(mockTokenData);
 
-      const result = await getValidAccessToken();
+      const result = await authService.getValidAccessToken();
 
       expect(result).toBe('non-expiring-token');
     });
 
     it('should handle invalid token data gracefully', async () => {
-      vi.mocked(tokenStorage.loadData).mockResolvedValue({ invalid: 'data' });
+      mockTokenStorage.load.mockResolvedValue({ invalid: 'data' });
 
-      const result = await getValidAccessToken();
+      const result = await authService.getValidAccessToken();
 
       expect(result).toBeNull();
     });
 
     it('should handle storage errors gracefully', async () => {
-      vi.mocked(tokenStorage.loadData).mockRejectedValue(new Error('Storage error'));
+      mockTokenStorage.load.mockRejectedValue(new Error('Storage error'));
 
-      const result = await getValidAccessToken();
+      const result = await authService.getValidAccessToken();
 
       expect(result).toBeNull();
       expect(consoleSpy.warn).toHaveBeenCalledWith(
@@ -139,9 +158,9 @@ describe('Auth Module', () => {
         stored_at: storedAt,
       };
 
-      vi.mocked(tokenStorage.loadData).mockResolvedValue(mockTokenData);
+      mockTokenStorage.load.mockResolvedValue(mockTokenData);
 
-      const result = await getAuthState();
+      const result = await authService.getAuthState();
 
       expect(result.isAuthenticated).toBe(true);
       expect(result.token).toEqual({
@@ -153,9 +172,9 @@ describe('Auth Module', () => {
     });
 
     it('should return unauthenticated state when no token exists', async () => {
-      vi.mocked(tokenStorage.loadData).mockResolvedValue(null);
+      mockTokenStorage.load.mockResolvedValue(null);
 
-      const result = await getAuthState();
+      const result = await authService.getAuthState();
 
       expect(result.isAuthenticated).toBe(false);
       expect(result.token).toBeUndefined();
@@ -168,45 +187,24 @@ describe('Auth Module', () => {
         stored_at: Date.now() - 7200000, // stored 2 hours ago
       };
 
-      vi.mocked(tokenStorage.loadData).mockResolvedValue(mockTokenData);
+      mockTokenStorage.load.mockResolvedValue(mockTokenData);
 
-      const result = await getAuthState();
+      const result = await authService.getAuthState();
 
       expect(result.isAuthenticated).toBe(false);
+      expect(result.token).toBeUndefined();
     });
 
-    it('should handle token without expiration', async () => {
-      const storedAt = Date.now();
+    it('should handle token with default values', async () => {
+      const storedAt = Date.now() - 1000;
       const mockTokenData = {
-        access_token: 'non-expiring-token',
-        token_type: 'Custom',
-        scope: 'custom-scope',
+        access_token: 'valid-token',
         stored_at: storedAt,
       };
 
-      vi.mocked(tokenStorage.loadData).mockResolvedValue(mockTokenData);
+      mockTokenStorage.load.mockResolvedValue(mockTokenData);
 
-      const result = await getAuthState();
-
-      expect(result.isAuthenticated).toBe(true);
-      expect(result.token).toEqual({
-        type: 'Custom',
-        scope: 'custom-scope',
-        expiresAt: undefined,
-        storedAt: new Date(storedAt),
-      });
-    });
-
-    it('should use default values for missing token fields', async () => {
-      const storedAt = Date.now();
-      const mockTokenData = {
-        access_token: 'minimal-token',
-        stored_at: storedAt,
-      };
-
-      vi.mocked(tokenStorage.loadData).mockResolvedValue(mockTokenData);
-
-      const result = await getAuthState();
+      const result = await authService.getAuthState();
 
       expect(result.isAuthenticated).toBe(true);
       expect(result.token?.type).toBe('Bearer');
@@ -214,9 +212,9 @@ describe('Auth Module', () => {
     });
 
     it('should handle storage errors gracefully', async () => {
-      vi.mocked(tokenStorage.loadData).mockRejectedValue(new Error('Storage error'));
+      mockTokenStorage.load.mockRejectedValue(new Error('Storage error'));
 
-      const result = await getAuthState();
+      const result = await authService.getAuthState();
 
       expect(result.isAuthenticated).toBe(false);
       expect(consoleSpy.warn).toHaveBeenCalledWith(
@@ -227,22 +225,22 @@ describe('Auth Module', () => {
 
   describe('logout', () => {
     it('should remove token data and log success', async () => {
-      vi.mocked(tokenStorage.removeData).mockResolvedValue();
+      mockTokenStorage.remove.mockResolvedValue(undefined);
 
-      await logout();
+      await authService.logout();
 
-      expect(tokenStorage.removeData).toHaveBeenCalled();
+      expect(mockTokenStorage.remove).toHaveBeenCalled();
       expect(consoleSpy.log).toHaveBeenCalledWith('✅ Logged out successfully. Token removed.');
     });
 
     it('should handle storage errors and throw an error', async () => {
-      vi.mocked(tokenStorage.removeData).mockRejectedValue(new Error('Storage error'));
+      mockTokenStorage.remove.mockRejectedValue(new Error('Storage error'));
 
       try {
-        await logout();
+        await authService.logout();
         expect.fail('Expected logout to throw');
-      } catch (error) {
-        expect(error.message).toContain('Storage error');
+      } catch (error: unknown) {
+        expect((error as Error).message).toContain('Storage error');
       }
 
       expect(consoleSpy.error).toHaveBeenCalledWith('❌ Error during logout:', expect.any(Error));
@@ -269,44 +267,40 @@ describe('Auth Module', () => {
         clientID: 'test-client-id',
       };
 
-      await expect(login(config)).rejects.toThrow('Network error');
+      await expect(authService.login(config)).rejects.toThrow('Network error');
 
       // Verify server was closed even on error
       expect(mockServer.close).toHaveBeenCalled();
     });
 
-    it('should complete successful OAuth flow and save token', async () => {
-      const { Issuer } = await import('openid-client');
+    it('should complete OAuth flow successfully', async () => {
+      const { Issuer, generators } = await import('openid-client');
       const { startCallbackServer, waitForCallback } = await import('./oauth-callback-server.js');
 
-      // Mock the OAuth server discovery
+      // Mock server
+      const mockServer = {
+        address: vi.fn(() => ({ port: 8989 })),
+        close: vi.fn(),
+      };
+      vi.mocked(startCallbackServer).mockResolvedValue(mockServer as unknown as http.Server);
+      vi.mocked(waitForCallback).mockResolvedValue('test-auth-code');
+
+      // Mock OAuth client and token exchange
       const mockClient = {
-        authorizationUrl: vi.fn(() => 'https://auth.example.com/authorize?code_challenge=test'),
-        callback: vi.fn().mockResolvedValue({
+        authorizationUrl: vi.fn(() => 'https://example.com/auth?code_challenge=...'),
+        callback: vi.fn(() => ({
           access_token: 'test-access-token',
           refresh_token: 'test-refresh-token',
           expires_in: 3600,
           token_type: 'Bearer',
           scope: 'openid profile email',
-        }),
+        })),
       };
-
       const mockIssuer = {
         Client: vi.fn(() => mockClient),
       };
-
-      vi.mocked(Issuer.discover).mockResolvedValue(
-        mockIssuer as unknown as Awaited<ReturnType<typeof Issuer.discover>>
-      );
-
-      // Mock the callback server
-      const mockServer = {
-        address: vi.fn(() => ({ port: 8989 })),
-        close: vi.fn(),
-      };
-
-      vi.mocked(startCallbackServer).mockResolvedValue(mockServer as unknown as http.Server);
-      vi.mocked(waitForCallback).mockResolvedValue('test-auth-code');
+      vi.mocked(Issuer.discover).mockResolvedValue(mockIssuer as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+      vi.mocked(generators.codeChallenge).mockReturnValue('mock-code-challenge');
 
       // Mock open function
       const { default: open } = await import('open');
@@ -314,17 +308,17 @@ describe('Auth Module', () => {
       vi.mocked(open).mockResolvedValue({} as any);
 
       // Mock tokenStorage.saveData
-      vi.mocked(tokenStorage.saveData).mockResolvedValue();
+      mockTokenStorage.save.mockResolvedValue(undefined);
 
       const config = {
         issuerURL: 'https://example.com/oauth',
         clientID: 'test-client-id',
       };
 
-      await login(config);
+      await authService.login(config);
 
-      // Verify that saveData was called with the token
-      expect(tokenStorage.saveData).toHaveBeenCalledWith({
+      // Verify that save was called with the token
+      expect(mockTokenStorage.save).toHaveBeenCalledWith({
         access_token: 'test-access-token',
         refresh_token: 'test-refresh-token',
         expires_in: 3600,
@@ -336,9 +330,57 @@ describe('Auth Module', () => {
       // Verify server was closed
       expect(mockServer.close).toHaveBeenCalled();
     });
+  });
+});
 
-    // Note: Full OAuth flow testing would require more complex mocking
-    // of HTTP servers, callbacks, etc. This is a minimal test to ensure
-    // the function handles basic error cases.
+describe('FileSystemTokenStorage', () => {
+  let storage: FileSystemTokenStorage;
+
+  beforeEach(() => {
+    storage = new FileSystemTokenStorage();
+  });
+
+  describe('save', () => {
+    it('should delegate to token-storage saveData', async () => {
+      const testData = { token: 'test-token' };
+      vi.mocked(tokenStorage.saveData).mockResolvedValue(undefined);
+
+      await storage.save(testData);
+
+      expect(tokenStorage.saveData).toHaveBeenCalledWith(testData);
+    });
+  });
+
+  describe('load', () => {
+    it('should delegate to token-storage loadData', async () => {
+      const testData = { token: 'test-token' };
+      vi.mocked(tokenStorage.loadData).mockResolvedValue(testData);
+
+      const result = await storage.load();
+
+      expect(tokenStorage.loadData).toHaveBeenCalled();
+      expect(result).toBe(testData);
+    });
+  });
+
+  describe('remove', () => {
+    it('should delegate to token-storage removeData', async () => {
+      vi.mocked(tokenStorage.removeData).mockResolvedValue(undefined);
+
+      await storage.remove();
+
+      expect(tokenStorage.removeData).toHaveBeenCalled();
+    });
+  });
+
+  describe('exists', () => {
+    it('should delegate to token-storage hasData', async () => {
+      vi.mocked(tokenStorage.hasData).mockResolvedValue(true);
+
+      const result = await storage.exists();
+
+      expect(tokenStorage.hasData).toHaveBeenCalled();
+      expect(result).toBe(true);
+    });
   });
 });
