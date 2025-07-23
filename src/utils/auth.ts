@@ -179,7 +179,7 @@ export class AuthService {
 
       return result.data;
     } catch (error) {
-      console.warn(`Warning: Could not load token: ${error}`);
+      console.warn(`Warning: Could not load token: ${String(error)}`);
       return null;
     }
   }
@@ -187,7 +187,7 @@ export class AuthService {
   /**
    * Check if a token exists and is valid (not expired)
    */
-  private async isTokenValid(tokenData: TokenData): Promise<boolean> {
+  private isTokenValid(tokenData: TokenData): boolean {
     // Check if token has expiration and if it's expired
     if (tokenData.expires_in) {
       const expirationTime = tokenData.stored_at + tokenData.expires_in * 1000;
@@ -213,13 +213,13 @@ export class AuthService {
         return null;
       }
 
-      if (!(await this.isTokenValid(tokenData))) {
+      if (!this.isTokenValid(tokenData)) {
         return null;
       }
 
       return tokenData.access_token;
     } catch (error) {
-      console.warn(`Warning: Could not retrieve token: ${error}`);
+      console.warn(`Warning: Could not retrieve token: ${String(error)}`);
       return null;
     }
   }
@@ -235,7 +235,7 @@ export class AuthService {
         return { isAuthenticated: false };
       }
 
-      const isValid = await this.isTokenValid(tokenData);
+      const isValid = this.isTokenValid(tokenData);
 
       if (!isValid) {
         return { isAuthenticated: false };
@@ -253,7 +253,7 @@ export class AuthService {
         },
       };
     } catch (error) {
-      console.warn(`Warning: Could not get auth state: ${error}`);
+      console.warn(`Warning: Could not get auth state: ${String(error)}`);
       return { isAuthenticated: false };
     }
   }

@@ -116,27 +116,32 @@ describe('OAuth Callback Server', () => {
       const address = server!.address();
       const port = typeof address === 'object' && address !== null ? address.port : 8989;
 
-      setTimeout(async () => {
-        // Request to /favicon.ico should get 404
-        const req = http.request({
-          hostname: 'localhost',
-          port,
-          path: '/favicon.ico',
-          method: 'GET',
+      // Request to /favicon.ico should get 404
+      const req = http.request({
+        hostname: 'localhost',
+        port,
+        path: '/favicon.ico',
+        method: 'GET',
+      });
+      await new Promise<void>(resolve => {
+        req.end(() => {
+          resolve();
         });
-        req.end();
+      });
 
-        // Then send valid callback
-        setTimeout(() => {
-          const validReq = http.request({
-            hostname: 'localhost',
-            port,
-            path: '/?code=test-code',
-            method: 'GET',
-          });
-          validReq.end();
-        }, 50);
-      }, 100);
+      // Then send valid callback
+
+      const validReq = http.request({
+        hostname: 'localhost',
+        port,
+        path: '/?code=test-code',
+        method: 'GET',
+      });
+      await new Promise<void>(resolve => {
+        validReq.end(() => {
+          resolve();
+        });
+      });
 
       const result = await callbackPromise;
       expect(result).toBe('test-code');
@@ -250,9 +255,9 @@ describe('OAuth Callback Server', () => {
       const port = typeof address === 'object' && address !== null ? address.port : 8989;
 
       // First make a request to a non-root path, then a valid callback
-      setTimeout(async () => {
+      setTimeout(() => {
         // Request to /favicon.ico should get 404
-        await new Promise<void>(resolve => {
+        new Promise<void>(resolve => {
           const req = http.request(
             {
               hostname: 'localhost',
@@ -273,18 +278,21 @@ describe('OAuth Callback Server', () => {
             }
           );
           req.end();
-        });
+        })
+          .then(() => {
+            // Then send valid callback to complete the test
 
-        // Then send valid callback to complete the test
-        setTimeout(() => {
-          const validReq = http.request({
-            hostname: 'localhost',
-            port,
-            path: '/?code=test-code',
-            method: 'GET',
+            const validReq = http.request({
+              hostname: 'localhost',
+              port,
+              path: '/?code=test-code',
+              method: 'GET',
+            });
+            validReq.end();
+          })
+          .catch(() => {
+            expect.fail('Request to /favicon.ico should not throw');
           });
-          validReq.end();
-        }, 50);
       }, 100);
 
       const result = await callbackPromise;

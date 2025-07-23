@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { AuthService } from './auth.js';
 import http from 'node:http';
+import { BaseClient, Issuer } from 'openid-client';
+import { ChildProcess } from 'node:child_process';
 
 // Mock external dependencies
 vi.mock('open', () => ({
@@ -24,9 +26,9 @@ vi.mock('./oauth-callback-server.js', () => ({
 vi.mock('node:http', () => ({
   default: {
     createServer: vi.fn(() => ({
-      listen: vi.fn((port, host, callback) => {
-        if (typeof callback === 'function') {
-          callback();
+      listen: vi.fn((port, host, callback: unknown) => {
+        if (callback && typeof callback === 'function') {
+          (callback as () => void)();
         }
       }),
       on: vi.fn(),
@@ -256,6 +258,7 @@ describe('AuthService', () => {
       vi.mocked(startCallbackServer).mockResolvedValue(mockServer as unknown as http.Server);
 
       // Then mock the OAuth discovery to fail
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       vi.mocked(Issuer.discover).mockRejectedValue(new Error('Network error'));
 
       const config = {
@@ -295,13 +298,15 @@ describe('AuthService', () => {
       const mockIssuer = {
         Client: vi.fn(() => mockClient),
       };
-      vi.mocked(Issuer.discover).mockResolvedValue(mockIssuer as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      vi.mocked(Issuer.discover).mockResolvedValue(mockIssuer as unknown as Issuer<BaseClient>);
+
       vi.mocked(generators.codeChallenge).mockReturnValue('mock-code-challenge');
 
       // Mock open function
       const { default: open } = await import('open');
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      vi.mocked(open).mockResolvedValue({} as any);
+
+      vi.mocked(open).mockResolvedValue({} as ChildProcess);
 
       // Mock tokenStorage.saveData
       mockTokenStorage.save.mockResolvedValue(undefined);
@@ -320,6 +325,7 @@ describe('AuthService', () => {
         expires_in: 3600,
         token_type: 'Bearer',
         scope: 'openid profile email',
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         stored_at: expect.any(Number),
       });
 

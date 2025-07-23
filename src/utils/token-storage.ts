@@ -1,5 +1,5 @@
 import * as fs from 'node:fs';
-import * as path from 'node:path';
+import path from 'node:path';
 import * as os from 'node:os';
 import { Entry } from '@napi-rs/keyring';
 import { type TokenStorage } from './auth.js';
@@ -57,7 +57,7 @@ export async function saveData(data: unknown): Promise<void> {
     const serializedData = JSON.stringify(data);
     entry.setPassword(serializedData);
     console.log(`✅ Data saved securely to OS keychain`);
-  } catch (error) {
+  } catch {
     // Fallback to file-based storage if keyring fails
     console.warn('Warning: Could not save to OS keychain, falling back to file storage');
     await saveDataToFile(data);
@@ -82,11 +82,11 @@ export async function loadData(): Promise<unknown> {
       const data: unknown = JSON.parse(serializedData);
       return data;
     } catch (parseError) {
-      console.warn(`Warning: Could not parse data from keychain: ${parseError}`);
+      console.warn(`Warning: Could not parse data from keychain: ${String(parseError)}`);
       return null;
     }
   } catch (error) {
-    console.warn(`Warning: Could not load data from keychain: ${error}`);
+    console.warn(`Warning: Could not load data from keychain: ${String(error)}`);
     // Try fallback file storage
     return await loadDataFromFile();
   }
@@ -114,7 +114,7 @@ export async function removeData(): Promise<void> {
     // Also try to remove from fallback file storage
     await removeDataFromFile();
   } catch (error) {
-    console.warn(`Warning: Could not remove data from keychain: ${error}`);
+    console.warn(`Warning: Could not remove data from keychain: ${String(error)}`);
     // Try fallback file storage
     await removeDataFromFile();
   }
@@ -173,7 +173,7 @@ async function saveDataToFile(data: unknown): Promise<void> {
     await fs.promises.writeFile(dataFilePath, JSON.stringify(data, null, 2), { mode: 0o600 });
     console.log(`✅ Data saved to file: ${dataFilePath}`);
   } catch (error) {
-    throw new Error(`Failed to save data to file: ${error}`);
+    throw new Error(`Failed to save data to file: ${String(error)}`);
   }
 }
 
@@ -193,7 +193,7 @@ async function loadDataFromFile(): Promise<unknown> {
 
     return data;
   } catch (error) {
-    console.warn(`Warning: Could not load data from file: ${error}`);
+    console.warn(`Warning: Could not load data from file: ${String(error)}`);
     return null;
   }
 }
@@ -209,7 +209,7 @@ async function removeDataFromFile(): Promise<void> {
       await fs.promises.unlink(dataFilePath);
       console.log('✅ Data file removed');
     }
-  } catch (error) {
+  } catch {
     // Ignore file removal errors
   }
 }

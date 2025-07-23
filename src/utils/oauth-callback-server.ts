@@ -26,7 +26,7 @@ export async function startCallbackServer(preferredPort: number = 8989): Promise
           resolve(server);
         });
       } else {
-        reject(error);
+        reject(error instanceof Error ? error : new Error(String(error)));
       }
     });
   });
@@ -86,7 +86,7 @@ export async function waitForCallback(
         res.end('Not found');
       } catch (error) {
         cleanup();
-        reject(error);
+        reject(error instanceof Error ? error : new Error(String(error)));
       }
     };
 

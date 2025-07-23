@@ -1,15 +1,18 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { main } from './cli';
+import { main } from './cli.js';
 
 // Mock the CLI functions to avoid side effects
 vi.mock('./cli-functions', () => ({
+  // eslint-disable-next-line @typescript-eslint/require-await
   handleInfo: vi.fn(async () => {
     console.log('Aignostics Platform SDK');
     console.log('Version:', '0.0.0-development');
   }),
+  // eslint-disable-next-line @typescript-eslint/require-await
   testApi: vi.fn(async () => {
     console.log('✅ API connection successful');
   }),
+  // eslint-disable-next-line @typescript-eslint/require-await
   listApplications: vi.fn(async () => {
     console.log(
       'Applications:',

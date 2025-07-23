@@ -86,7 +86,7 @@ export class PlatformSDKHttp implements PlatformSDK {
       const response = await client.listApplicationsV1ApplicationsGet();
       return response.status === 200;
     } catch (error) {
-      throw new Error(`Connection test failed: ${error}`);
+      throw new Error(`Connection test failed: ${String(error)}`);
     }
   }
 
@@ -99,7 +99,7 @@ export class PlatformSDKHttp implements PlatformSDK {
       }
       return response.data;
     } catch (error) {
-      throw new Error(`list applications failed: ${error}`);
+      throw new Error(`list applications failed: ${String(error)}`);
     }
   }
 

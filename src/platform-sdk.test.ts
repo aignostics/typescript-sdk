@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { PlatformSDKHttp } from './platform-sdk';
-import { setMockScenario } from './test-utils/http-mocks';
+import { PlatformSDKHttp } from './platform-sdk.js';
+import { setMockScenario } from './test-utils/http-mocks.js';
 
 describe('PlatformSDK', () => {
   let sdk: PlatformSDKHttp;

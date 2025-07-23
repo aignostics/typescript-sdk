@@ -2,7 +2,7 @@ import { PlatformSDKHttp } from '../platform-sdk.js';
 import packageJson from '../../package.json' with { type: 'json' };
 import { AuthService } from '../utils/auth.js';
 
-export async function handleInfo(): Promise<void> {
+export function handleInfo(): void {
   console.log('Aignostics Platform SDK');
   console.log('Version:', packageJson.version);
 }

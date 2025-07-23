@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { handleInfo, testApi, listApplications } from './cli-functions';
-import { PlatformSDK, PlatformSDKHttp } from '../platform-sdk';
+import { handleInfo, testApi, listApplications } from './cli-functions.js';
+import { PlatformSDK, PlatformSDKHttp } from '../platform-sdk.js';
+import { AuthService } from '../utils/auth.js';
 
 // Mock process.exit to prevent test runner from exiting
 const mockExit = vi.fn();
@@ -17,6 +18,17 @@ const platformSDKMock = {
   getConfig: vi.fn(),
   getVersion: vi.fn(),
 } satisfies PlatformSDK;
+
+// Mock AuthService
+const mockAuthService = {
+  getValidAccessToken: vi.fn().mockResolvedValue('mock-token'),
+  loginWithCallback: vi.fn(),
+  completeLogin: vi.fn(),
+  refreshToken: vi.fn(),
+  logout: vi.fn(),
+  getStoredToken: vi.fn(),
+  isAuthenticated: vi.fn(),
+} as unknown as AuthService;
 
 // Mock package.json
 vi.mock('../../package.json', () => ({
@@ -42,8 +54,8 @@ describe('CLI Functions Unit Tests', () => {
   });
 
   describe('handleInfo', () => {
-    it('should display SDK information', async () => {
-      await handleInfo();
+    it('should display SDK information', () => {
+      handleInfo();
 
       expect(consoleSpy.log).toHaveBeenCalledWith('Aignostics Platform SDK');
       expect(consoleSpy.log).toHaveBeenCalledWith('Version:', '0.0.0-development');
@@ -55,7 +67,7 @@ describe('CLI Functions Unit Tests', () => {
       // Set up mock server for successful response
       platformSDKMock.testConnection.mockResolvedValue(true);
 
-      await testApi('https://api.example.com');
+      await testApi('https://api.example.com', mockAuthService);
 
       expect(consoleSpy.log).toHaveBeenCalledWith('✅ API connection successful');
     });
@@ -64,7 +76,7 @@ describe('CLI Functions Unit Tests', () => {
       // Set up mock server for error response
       platformSDKMock.testConnection.mockRejectedValue(new Error('Connection failed'));
 
-      await testApi('https://api.example.com');
+      await testApi('https://api.example.com', mockAuthService);
 
       expect(consoleSpy.error).toHaveBeenCalledWith('❌ API connection failed:', expect.any(Error));
       expect(mockExit).toHaveBeenCalledWith(1);
@@ -74,7 +86,7 @@ describe('CLI Functions Unit Tests', () => {
       // Set up mock server for network error
       platformSDKMock.testConnection.mockRejectedValue(new Error('Network error'));
 
-      await testApi('https://api.example.com');
+      await testApi('https://api.example.com', mockAuthService);
 
       expect(consoleSpy.error).toHaveBeenCalledWith('❌ API connection failed:', expect.any(Error));
       expect(mockExit).toHaveBeenCalledWith(1);
@@ -92,7 +104,7 @@ describe('CLI Functions Unit Tests', () => {
       // Set up mock server for successful response
       platformSDKMock.listApplications.mockResolvedValue(listApplicationsResponse);
 
-      await listApplications('https://api.example.com');
+      await listApplications('https://api.example.com', mockAuthService);
 
       expect(consoleSpy.log).toHaveBeenCalledWith(
         'Applications:',
@@ -105,7 +117,7 @@ describe('CLI Functions Unit Tests', () => {
       // Set up mock server for empty response
       platformSDKMock.listApplications.mockResolvedValue(listApplicationsResponse);
 
-      await listApplications('https://api.example.com');
+      await listApplications('https://api.example.com', mockAuthService);
 
       expect(consoleSpy.log).toHaveBeenCalledWith(
         'Applications:',
@@ -117,7 +129,7 @@ describe('CLI Functions Unit Tests', () => {
       // Set up mock server for error response
       platformSDKMock.listApplications.mockRejectedValue(new Error('API error'));
 
-      await expect(listApplications('https://api.example.com')).rejects.toThrow();
+      await expect(listApplications('https://api.example.com', mockAuthService)).rejects.toThrow();
     });
   });
 });

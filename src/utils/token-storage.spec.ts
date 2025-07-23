@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { describe, it, expect, vi, beforeEach, MockInstance } from 'vitest';
 import { saveData, loadData, hasData, removeData } from './token-storage.js';
 import * as fs from 'node:fs';
@@ -35,7 +36,9 @@ describe('Token Storage Module', () => {
     // Mock os and path functions
     vi.mocked(os.platform).mockReturnValue('linux');
     vi.mocked(os.homedir).mockReturnValue('/home/testuser');
-    vi.mocked(path.join).mockImplementation((...segments) => segments.join('/'));
+    vi.mocked(path.join).mockImplementation((...segments) => {
+      return segments.join('/');
+    });
 
     // Mock fs functions
     vi.mocked(fs.existsSync).mockReturnValue(true);

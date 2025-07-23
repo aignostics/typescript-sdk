@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
-import { startCallbackServer, waitForCallback } from '../utils/oauth-callback-server';
+import { startCallbackServer, waitForCallback } from '../utils/oauth-callback-server.js';
 import crypto from 'crypto';
-import { AuthService } from '../utils/auth';
+import { AuthService } from '../utils/auth.js';
 
 // Mock external dependencies
 vi.mock('../utils/oauth-callback-server');
@@ -42,7 +42,7 @@ describe('CLI Handlers', () => {
 
   describe('handleLogin', () => {
     it('should complete login flow successfully', async () => {
-      const { handleLogin } = await import('./cli');
+      const { handleLogin } = await import('./cli.js');
       const mockServer = {
         address: vi.fn().mockReturnValue({ port: 8989 }),
         close: vi.fn(),
@@ -86,7 +86,7 @@ describe('CLI Handlers', () => {
     });
 
     it('should handle server address as number', async () => {
-      const { handleLogin } = await import('./cli');
+      const { handleLogin } = await import('./cli.js');
       const mockServer = {
         address: vi.fn().mockReturnValue(8990),
         close: vi.fn(),
@@ -111,7 +111,7 @@ describe('CLI Handlers', () => {
     });
 
     it('should handle authentication errors and close server', async () => {
-      const { handleLogin } = await import('./cli');
+      const { handleLogin } = await import('./cli.js');
       const mockServer = {
         address: vi.fn().mockReturnValue({ port: 8989 }),
         close: vi.fn(),
@@ -133,7 +133,7 @@ describe('CLI Handlers', () => {
     });
 
     it('should handle callback wait errors and close server', async () => {
-      const { handleLogin } = await import('./cli');
+      const { handleLogin } = await import('./cli.js');
       const mockServer = {
         address: vi.fn().mockReturnValue({ port: 8989 }),
         close: vi.fn(),
@@ -156,7 +156,7 @@ describe('CLI Handlers', () => {
     });
 
     it('should handle token exchange errors and close server', async () => {
-      const { handleLogin } = await import('./cli');
+      const { handleLogin } = await import('./cli.js');
       const mockServer = {
         address: vi.fn().mockReturnValue({ port: 8989 }),
         close: vi.fn(),
@@ -182,7 +182,7 @@ describe('CLI Handlers', () => {
 
   describe('handleLogout', () => {
     it('should call logout function', async () => {
-      const { handleLogout } = await import('./cli');
+      const { handleLogout } = await import('./cli.js');
       mockAuthService.logout.mockResolvedValue(undefined);
 
       await handleLogout();
@@ -191,7 +191,7 @@ describe('CLI Handlers', () => {
     });
 
     it('should handle logout errors', async () => {
-      const { handleLogout } = await import('./cli');
+      const { handleLogout } = await import('./cli.js');
       const mockError = new Error('Logout failed');
       mockAuthService.logout.mockRejectedValue(mockError);
 
@@ -201,7 +201,7 @@ describe('CLI Handlers', () => {
 
   describe('handleStatus', () => {
     it('should display authenticated status with expiring token', async () => {
-      const { handleStatus } = await import('./cli');
+      const { handleStatus } = await import('./cli.js');
       const mockExpiresAt = new Date('2025-01-01T12:59:59.000Z');
       const mockStoredAt = new Date('2024-12-01T10:00:00.000Z');
 
@@ -232,7 +232,7 @@ describe('CLI Handlers', () => {
     });
 
     it('should display authenticated status with non-expiring token', async () => {
-      const { handleStatus } = await import('./cli');
+      const { handleStatus } = await import('./cli.js');
       const mockStoredAt = new Date('2024-12-01T10:00:00.000Z');
 
       const mockAuthState = {
@@ -260,7 +260,7 @@ describe('CLI Handlers', () => {
     });
 
     it('should display not authenticated status', async () => {
-      const { handleStatus } = await import('./cli');
+      const { handleStatus } = await import('./cli.js');
       const mockAuthState = {
         isAuthenticated: false,
         token: null,
@@ -276,7 +276,7 @@ describe('CLI Handlers', () => {
     });
 
     it('should handle auth state check errors', async () => {
-      const { handleStatus } = await import('./cli');
+      const { handleStatus } = await import('./cli.js');
       const mockError = new Error('Failed to check auth state');
       mockAuthService.getAuthState.mockRejectedValue(mockError);
 
