@@ -99,4 +99,154 @@ describe('PlatformSDK', () => {
 
     await expect(sdk.listApplications()).rejects.toThrow('list applications failed');
   });
+
+  it('should list application versions successfully', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with successful response
+    setMockScenario('success');
+
+    const result = await sdk.listApplicationVersions('test-app-id');
+    expect(Array.isArray(result)).toBe(true);
+    expect(result.length).toBeGreaterThan(0);
+    expect(result[0]).toHaveProperty('application_version_id');
+    expect(result[0]).toHaveProperty('version');
+    expect(result[0]).toHaveProperty('application_id');
+  });
+
+  it('should handle list application versions failure', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with error response
+    setMockScenario('error');
+
+    await expect(sdk.listApplicationVersions('test-app-id')).rejects.toThrow(
+      'list application versions failed'
+    );
+  });
+
+  it('should list application runs successfully', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with successful response
+    setMockScenario('success');
+
+    const result = await sdk.listApplicationRuns();
+    expect(Array.isArray(result)).toBe(true);
+    expect(result.length).toBeGreaterThan(0);
+    expect(result[0]).toHaveProperty('application_run_id');
+    expect(result[0]).toHaveProperty('status');
+  });
+
+  it('should list application runs with filters successfully', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with successful response
+    setMockScenario('success');
+
+    const result = await sdk.listApplicationRuns({
+      applicationId: 'test-app-id',
+      applicationVersion: 'v1.0.0',
+    });
+    expect(Array.isArray(result)).toBe(true);
+  });
+
+  it('should handle list application runs failure', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with error response
+    setMockScenario('error');
+
+    await expect(sdk.listApplicationRuns()).rejects.toThrow('list application runs failed');
+  });
+
+  it('should get run successfully', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with successful response
+    setMockScenario('success');
+
+    const result = await sdk.getRun('test-run-id');
+    expect(result).toHaveProperty('application_run_id');
+    expect(result).toHaveProperty('status');
+    expect(result).toHaveProperty('application_version_id');
+  });
+
+  it('should handle get run failure', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with error response
+    setMockScenario('error');
+
+    await expect(sdk.getRun('test-run-id')).rejects.toThrow('get run failed');
+  });
+
+  it('should cancel application run successfully', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with successful response
+    setMockScenario('success');
+
+    // Should not throw an error for successful cancellation
+    await expect(sdk.cancelApplicationRun('test-run-id')).resolves.toBeUndefined();
+  });
+
+  it('should handle cancel application run failure', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with error response
+    setMockScenario('error');
+
+    await expect(sdk.cancelApplicationRun('test-run-id')).rejects.toThrow(
+      'cancel application run failed'
+    );
+  });
+
+  it('should list run results successfully', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with successful response
+    setMockScenario('success');
+
+    const result = await sdk.listRunResults('test-run-id');
+    expect(Array.isArray(result)).toBe(true);
+    expect(result.length).toBeGreaterThan(0);
+    expect(result[0]).toHaveProperty('item_id');
+    expect(result[0]).toHaveProperty('status');
+    expect(result[0]).toHaveProperty('reference');
+  });
+
+  it('should handle list run results failure', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with error response
+    setMockScenario('error');
+
+    await expect(sdk.listRunResults('test-run-id')).rejects.toThrow('list run results failed');
+  });
+
+  it('should handle no token for new methods', async () => {
+    // Mock token provider to return null
+    mockTokenProvider.mockResolvedValue(null);
+
+    const errorMessage =
+      'No access token available. Please provide a tokenProvider in the SDK configuration that returns a valid token.';
+
+    await expect(sdk.listApplicationVersions('test-app-id')).rejects.toThrow(errorMessage);
+    await expect(sdk.listApplicationRuns()).rejects.toThrow(errorMessage);
+    await expect(sdk.getRun('test-run-id')).rejects.toThrow(errorMessage);
+    await expect(sdk.cancelApplicationRun('test-run-id')).rejects.toThrow(errorMessage);
+    await expect(sdk.listRunResults('test-run-id')).rejects.toThrow(errorMessage);
+  });
 });

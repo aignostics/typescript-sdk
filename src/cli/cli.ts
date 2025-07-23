@@ -1,7 +1,16 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
-import { handleInfo, testApi, listApplications } from './cli-functions.js';
+import {
+  handleInfo,
+  testApi,
+  listApplications,
+  listApplicationVersions,
+  listApplicationRuns,
+  getRun,
+  cancelApplicationRun,
+  listRunResults,
+} from './cli-functions.js';
 import { AuthService, type LoginWithCallbackConfig } from '../utils/auth.js';
 import { FileSystemTokenStorage } from '../utils/token-storage.js';
 import { startCallbackServer, waitForCallback } from '../utils/oauth-callback-server.js';
@@ -47,6 +56,98 @@ export async function main() {
         },
       },
       argv => listApplications(argv.endpoint, authService)
+    )
+    .command(
+      'list-application-versions <applicationId>',
+      'List versions for a specific application',
+      yargs =>
+        yargs
+          .positional('applicationId', {
+            describe: 'Application ID to get versions for',
+            type: 'string',
+            demandOption: true,
+          })
+          .option('endpoint', {
+            describe: 'API endpoint to use',
+            type: 'string',
+            default: 'https://platform.aignostics.com',
+          }),
+      argv => listApplicationVersions(argv.endpoint, authService, argv.applicationId)
+    )
+    .command(
+      'list-application-runs',
+      'List application runs',
+      {
+        endpoint: {
+          describe: 'API endpoint to use',
+          type: 'string',
+          default: 'https://platform.aignostics.com',
+        },
+        applicationId: {
+          describe: 'Filter by application ID',
+          type: 'string',
+        },
+        applicationVersion: {
+          describe: 'Filter by application version',
+          type: 'string',
+        },
+      },
+      argv =>
+        listApplicationRuns(argv.endpoint, authService, {
+          applicationId: argv.applicationId,
+          applicationVersion: argv.applicationVersion,
+        })
+    )
+    .command(
+      'get-run <applicationRunId>',
+      'Get details of a specific application run',
+      yargs =>
+        yargs
+          .positional('applicationRunId', {
+            describe: 'Application run ID to get details for',
+            type: 'string',
+            demandOption: true,
+          })
+          .option('endpoint', {
+            describe: 'API endpoint to use',
+            type: 'string',
+            default: 'https://platform.aignostics.com',
+          }),
+      argv => getRun(argv.endpoint, authService, argv.applicationRunId)
+    )
+    .command(
+      'cancel-run <applicationRunId>',
+      'Cancel a specific application run',
+      yargs =>
+        yargs
+          .positional('applicationRunId', {
+            describe: 'Application run ID to cancel',
+            type: 'string',
+            demandOption: true,
+          })
+          .option('endpoint', {
+            describe: 'API endpoint to use',
+            type: 'string',
+            default: 'https://platform.aignostics.com',
+          }),
+      argv => cancelApplicationRun(argv.endpoint, authService, argv.applicationRunId)
+    )
+    .command(
+      'list-run-results <applicationRunId>',
+      'List results for a specific application run',
+      yargs =>
+        yargs
+          .positional('applicationRunId', {
+            describe: 'Application run ID to get results for',
+            type: 'string',
+            demandOption: true,
+          })
+          .option('endpoint', {
+            describe: 'API endpoint to use',
+            type: 'string',
+            default: 'https://platform.aignostics.com',
+          }),
+      argv => listRunResults(argv.endpoint, authService, argv.applicationRunId)
     )
     .command(
       'login',

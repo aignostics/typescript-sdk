@@ -33,3 +33,93 @@ export async function listApplications(endpoint: string, authService: AuthServic
   const response = await sdk.listApplications();
   console.log('Applications:', JSON.stringify(response, null, 2));
 }
+
+export async function listApplicationVersions(
+  endpoint: string,
+  authService: AuthService,
+  applicationId: string
+): Promise<void> {
+  const sdk = new PlatformSDKHttp({
+    baseURL: endpoint,
+    tokenProvider: () => authService.getValidAccessToken(),
+  });
+  try {
+    const response = await sdk.listApplicationVersions(applicationId);
+    console.log(`Application versions for ${applicationId}:`, JSON.stringify(response, null, 2));
+  } catch (error) {
+    console.error('❌ Failed to list application versions:', error);
+    process.exit(1);
+  }
+}
+
+export async function listApplicationRuns(
+  endpoint: string,
+  authService: AuthService,
+  options?: { applicationId?: string; applicationVersion?: string }
+): Promise<void> {
+  const sdk = new PlatformSDKHttp({
+    baseURL: endpoint,
+    tokenProvider: () => authService.getValidAccessToken(),
+  });
+  try {
+    const response = await sdk.listApplicationRuns(options);
+    console.log('Application runs:', JSON.stringify(response, null, 2));
+  } catch (error) {
+    console.error('❌ Failed to list application runs:', error);
+    process.exit(1);
+  }
+}
+
+export async function getRun(
+  endpoint: string,
+  authService: AuthService,
+  applicationRunId: string
+): Promise<void> {
+  const sdk = new PlatformSDKHttp({
+    baseURL: endpoint,
+    tokenProvider: () => authService.getValidAccessToken(),
+  });
+  try {
+    const response = await sdk.getRun(applicationRunId);
+    console.log(`Run details for ${applicationRunId}:`, JSON.stringify(response, null, 2));
+  } catch (error) {
+    console.error('❌ Failed to get run:', error);
+    process.exit(1);
+  }
+}
+
+export async function cancelApplicationRun(
+  endpoint: string,
+  authService: AuthService,
+  applicationRunId: string
+): Promise<void> {
+  const sdk = new PlatformSDKHttp({
+    baseURL: endpoint,
+    tokenProvider: () => authService.getValidAccessToken(),
+  });
+  try {
+    await sdk.cancelApplicationRun(applicationRunId);
+    console.log(`✅ Successfully cancelled application run: ${applicationRunId}`);
+  } catch (error) {
+    console.error('❌ Failed to cancel application run:', error);
+    process.exit(1);
+  }
+}
+
+export async function listRunResults(
+  endpoint: string,
+  authService: AuthService,
+  applicationRunId: string
+): Promise<void> {
+  const sdk = new PlatformSDKHttp({
+    baseURL: endpoint,
+    tokenProvider: () => authService.getValidAccessToken(),
+  });
+  try {
+    const response = await sdk.listRunResults(applicationRunId);
+    console.log(`Run results for ${applicationRunId}:`, JSON.stringify(response, null, 2));
+  } catch (error) {
+    console.error('❌ Failed to list run results:', error);
+    process.exit(1);
+  }
+}

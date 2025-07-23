@@ -1,5 +1,11 @@
 import packageJson from '../package.json' with { type: 'json' };
-import { ApplicationReadResponse, PublicApi } from './generated/index.js';
+import {
+  ApplicationReadResponse,
+  ApplicationVersionReadResponse,
+  RunReadResponse,
+  ItemResultReadResponse,
+  PublicApi,
+} from './generated/index.js';
 
 /**
  * Token provider function that returns a valid access token
@@ -32,6 +38,14 @@ export interface PlatformSDK {
   getConfig(): PlatformSDKConfig;
   testConnection(): Promise<boolean>;
   listApplications(): Promise<ApplicationReadResponse[]>;
+  listApplicationVersions(applicationId: string): Promise<ApplicationVersionReadResponse[]>;
+  listApplicationRuns(options?: {
+    applicationId?: string;
+    applicationVersion?: string;
+  }): Promise<RunReadResponse[]>;
+  getRun(applicationRunId: string): Promise<RunReadResponse>;
+  cancelApplicationRun(applicationRunId: string): Promise<void>;
+  listRunResults(applicationRunId: string): Promise<ItemResultReadResponse[]>;
 }
 /**
  * Main SDK class for interacting with the Aignostics Platform
@@ -100,6 +114,85 @@ export class PlatformSDKHttp implements PlatformSDK {
       return response.data;
     } catch (error) {
       throw new Error(`list applications failed: ${String(error)}`);
+    }
+  }
+
+  async listApplicationVersions(applicationId: string): Promise<ApplicationVersionReadResponse[]> {
+    try {
+      const client = await this.#ensureClient();
+      const response =
+        await client.listVersionsByApplicationIdV1ApplicationsApplicationIdVersionsGet({
+          applicationId,
+        });
+      if (response.status !== 200) {
+        throw new Error(`Failed to list application versions: ${response.statusText}`);
+      }
+      return response.data;
+    } catch (error) {
+      throw new Error(`list application versions failed: ${String(error)}`);
+    }
+  }
+
+  async listApplicationRuns(options?: {
+    applicationId?: string;
+    applicationVersion?: string;
+  }): Promise<RunReadResponse[]> {
+    try {
+      const client = await this.#ensureClient();
+      const response = await client.listApplicationRunsV1RunsGet({
+        applicationId: options?.applicationId,
+        applicationVersion: options?.applicationVersion,
+      });
+      if (response.status !== 200) {
+        throw new Error(`Failed to list application runs: ${response.statusText}`);
+      }
+      return response.data;
+    } catch (error) {
+      throw new Error(`list application runs failed: ${String(error)}`);
+    }
+  }
+
+  async getRun(applicationRunId: string): Promise<RunReadResponse> {
+    try {
+      const client = await this.#ensureClient();
+      const response = await client.getRunV1RunsApplicationRunIdGet({
+        applicationRunId,
+      });
+      if (response.status !== 200) {
+        throw new Error(`Failed to get run: ${response.statusText}`);
+      }
+      return response.data;
+    } catch (error) {
+      throw new Error(`get run failed: ${String(error)}`);
+    }
+  }
+
+  async cancelApplicationRun(applicationRunId: string): Promise<void> {
+    try {
+      const client = await this.#ensureClient();
+      const response = await client.cancelApplicationRunV1RunsApplicationRunIdCancelPost({
+        applicationRunId,
+      });
+      if (response.status !== 200) {
+        throw new Error(`Failed to cancel application run: ${response.statusText}`);
+      }
+    } catch (error) {
+      throw new Error(`cancel application run failed: ${String(error)}`);
+    }
+  }
+
+  async listRunResults(applicationRunId: string): Promise<ItemResultReadResponse[]> {
+    try {
+      const client = await this.#ensureClient();
+      const response = await client.listRunResultsV1RunsApplicationRunIdResultsGet({
+        applicationRunId,
+      });
+      if (response.status !== 200) {
+        throw new Error(`Failed to list run results: ${response.statusText}`);
+      }
+      return response.data;
+    } catch (error) {
+      throw new Error(`list run results failed: ${String(error)}`);
     }
   }
 

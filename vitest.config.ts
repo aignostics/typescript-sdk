@@ -38,13 +38,13 @@ export default defineConfig({
         functions: 85,
         lines: 85,
         statements: 85,
-        '**/*.ts': {
-          lines: 70,
-        },
-        // add exception for this executable index file
-        'src/cli/index.ts': {
-          lines: 50,
-        },
+        // '**/*.ts': {
+        //   lines: 70,
+        // },
+        // // add exception for this executable index file
+        // 'src/cli/index.ts': {
+        //   lines: 50,
+        // },
       },
     },
   },

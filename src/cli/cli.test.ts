@@ -18,8 +18,82 @@ vi.mock('./cli-functions', () => ({
       'Applications:',
       JSON.stringify(
         [
-          { id: '1', name: 'Test App 1' },
-          { id: '2', name: 'Test App 2' },
+          { application_id: '1', name: 'Test App 1' },
+          { application_id: '2', name: 'Test App 2' },
+        ],
+        null,
+        2
+      )
+    );
+  }),
+  // eslint-disable-next-line @typescript-eslint/require-await
+  listApplicationVersions: vi.fn(async () => {
+    console.log(
+      'Application versions for app1:',
+      JSON.stringify(
+        [
+          {
+            application_version_id: 'v1.0.0',
+            version: '1.0.0',
+            application_id: 'app1',
+            changelog: 'Initial version',
+          },
+        ],
+        null,
+        2
+      )
+    );
+  }),
+  // eslint-disable-next-line @typescript-eslint/require-await
+  listApplicationRuns: vi.fn(async () => {
+    console.log(
+      'Application runs:',
+      JSON.stringify(
+        [
+          {
+            application_run_id: 'run-1',
+            application_version_id: 'v1.0.0',
+            status: 'COMPLETED',
+            created_at: '2023-01-01T00:00:00Z',
+          },
+        ],
+        null,
+        2
+      )
+    );
+  }),
+  // eslint-disable-next-line @typescript-eslint/require-await
+  getRun: vi.fn(async () => {
+    console.log(
+      'Run details for run-1:',
+      JSON.stringify(
+        {
+          application_run_id: 'run-1',
+          application_version_id: 'v1.0.0',
+          status: 'COMPLETED',
+          created_at: '2023-01-01T00:00:00Z',
+        },
+        null,
+        2
+      )
+    );
+  }),
+  // eslint-disable-next-line @typescript-eslint/require-await
+  cancelApplicationRun: vi.fn(async () => {
+    console.log('✅ Successfully cancelled application run: run-1');
+  }),
+  // eslint-disable-next-line @typescript-eslint/require-await
+  listRunResults: vi.fn(async () => {
+    console.log(
+      'Run results for run-1:',
+      JSON.stringify(
+        [
+          {
+            item_id: 'item-1',
+            reference: 'test-ref-1',
+            status: 'SUCCEEDED',
+            created_at: '2023-01-01T00:00:00Z',
+          },
         ],
         null,
         2
@@ -103,6 +177,225 @@ describe('CLI Integration Tests', () => {
         'Applications:',
         expect.stringContaining('Test App 2')
       );
+    });
+  });
+
+  describe('list-application-versions command', () => {
+    it('should list application versions successfully', async () => {
+      // Mock process.argv for yargs
+      process.argv = [
+        'node',
+        'cli.js',
+        'list-application-versions',
+        'app1',
+        '--endpoint',
+        'https://api.example.com',
+      ];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Application versions for app1:',
+        expect.stringContaining('v1.0.0')
+      );
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Application versions for app1:',
+        expect.stringContaining('Initial version')
+      );
+    });
+
+    it('should require applicationId parameter', async () => {
+      // Mock process.argv for yargs - missing applicationId
+      process.argv = ['node', 'cli.js', 'list-application-versions'];
+
+      try {
+        await main();
+        expect.fail('Expected main() to throw an error when applicationId is missing');
+      } catch (error) {
+        expect(error.message).toMatch(/process\.exit.*1/);
+        expect(consoleSpy.error).toHaveBeenCalledWith(
+          expect.stringContaining('Not enough non-option arguments')
+        );
+      }
+    });
+  });
+
+  describe('list-application-runs command', () => {
+    it('should list application runs successfully', async () => {
+      // Mock process.argv for yargs
+      process.argv = [
+        'node',
+        'cli.js',
+        'list-application-runs',
+        '--endpoint',
+        'https://api.example.com',
+      ];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Application runs:',
+        expect.stringContaining('run-1')
+      );
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Application runs:',
+        expect.stringContaining('COMPLETED')
+      );
+    });
+
+    it('should support filtering by applicationId', async () => {
+      // Mock process.argv for yargs
+      process.argv = [
+        'node',
+        'cli.js',
+        'list-application-runs',
+        '--applicationId',
+        'app1',
+        '--endpoint',
+        'https://api.example.com',
+      ];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Application runs:',
+        expect.stringContaining('run-1')
+      );
+    });
+
+    it('should support filtering by applicationVersion', async () => {
+      // Mock process.argv for yargs
+      process.argv = [
+        'node',
+        'cli.js',
+        'list-application-runs',
+        '--applicationVersion',
+        'v1.0.0',
+        '--endpoint',
+        'https://api.example.com',
+      ];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Application runs:',
+        expect.stringContaining('run-1')
+      );
+    });
+  });
+
+  describe('get-run command', () => {
+    it('should get run details successfully', async () => {
+      // Mock process.argv for yargs
+      process.argv = [
+        'node',
+        'cli.js',
+        'get-run',
+        'run-1',
+        '--endpoint',
+        'https://api.example.com',
+      ];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Run details for run-1:',
+        expect.stringContaining('run-1')
+      );
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Run details for run-1:',
+        expect.stringContaining('COMPLETED')
+      );
+    });
+
+    it('should require applicationRunId parameter', async () => {
+      // Mock process.argv for yargs - missing applicationRunId
+      process.argv = ['node', 'cli.js', 'get-run'];
+
+      try {
+        await main();
+        expect.fail('Expected main() to throw an error when applicationRunId is missing');
+      } catch (error) {
+        expect(error.message).toMatch(/process\.exit.*1/);
+        expect(consoleSpy.error).toHaveBeenCalledWith(
+          expect.stringContaining('Not enough non-option arguments')
+        );
+      }
+    });
+  });
+
+  describe('cancel-run command', () => {
+    it('should cancel run successfully', async () => {
+      // Mock process.argv for yargs
+      process.argv = [
+        'node',
+        'cli.js',
+        'cancel-run',
+        'run-1',
+        '--endpoint',
+        'https://api.example.com',
+      ];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        '✅ Successfully cancelled application run: run-1'
+      );
+    });
+
+    it('should require applicationRunId parameter', async () => {
+      // Mock process.argv for yargs - missing applicationRunId
+      process.argv = ['node', 'cli.js', 'cancel-run'];
+
+      try {
+        await main();
+        expect.fail('Expected main() to throw an error when applicationRunId is missing');
+      } catch (error) {
+        expect(error.message).toMatch(/process\.exit.*1/);
+        expect(consoleSpy.error).toHaveBeenCalledWith(
+          expect.stringContaining('Not enough non-option arguments')
+        );
+      }
+    });
+  });
+
+  describe('list-run-results command', () => {
+    it('should list run results successfully', async () => {
+      // Mock process.argv for yargs
+      process.argv = [
+        'node',
+        'cli.js',
+        'list-run-results',
+        'run-1',
+        '--endpoint',
+        'https://api.example.com',
+      ];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Run results for run-1:',
+        expect.stringContaining('item-1')
+      );
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Run results for run-1:',
+        expect.stringContaining('SUCCEEDED')
+      );
+    });
+
+    it('should require applicationRunId parameter', async () => {
+      // Mock process.argv for yargs - missing applicationRunId
+      process.argv = ['node', 'cli.js', 'list-run-results'];
+
+      try {
+        await main();
+        expect.fail('Expected main() to throw an error when applicationRunId is missing');
+      } catch (error) {
+        expect(error.message).toMatch(/process\.exit.*1/);
+        expect(consoleSpy.error).toHaveBeenCalledWith(
+          expect.stringContaining('Not enough non-option arguments')
+        );
+      }
     });
   });
 

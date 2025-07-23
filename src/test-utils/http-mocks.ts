@@ -7,12 +7,96 @@ import { setupServer } from 'msw/node';
 export const mockResponses = {
   // Mock successful applications list response
   applicationsSuccess: [
-    { id: '1', name: 'Test Application 1', description: 'A test application' },
-    { id: '2', name: 'Test Application 2', description: 'Another test application' },
+    {
+      application_id: '1',
+      name: 'Test Application 1',
+      description: 'A test application',
+      regulatory_classes: [],
+    },
+    {
+      application_id: '2',
+      name: 'Test Application 2',
+      description: 'Another test application',
+      regulatory_classes: [],
+    },
   ],
 
   // Mock empty applications list
   applicationsEmpty: [],
+
+  // Mock application versions response
+  applicationVersionsSuccess: [
+    {
+      application_version_id: 'v1.0.0',
+      version: '1.0.0',
+      application_id: '1',
+      changelog: 'Initial version',
+      input_artifacts: [],
+      output_artifacts: [],
+      created_at: '2023-01-01T00:00:00Z',
+    },
+    {
+      application_version_id: 'v1.1.0',
+      version: '1.1.0',
+      application_id: '1',
+      changelog: 'Bug fixes and improvements',
+      input_artifacts: [],
+      output_artifacts: [],
+      created_at: '2023-02-01T00:00:00Z',
+    },
+  ],
+
+  // Mock application runs response
+  applicationRunsSuccess: [
+    {
+      application_run_id: 'run-1',
+      application_version_id: 'v1.0.0',
+      organization_id: 'org-1',
+      status: 'COMPLETED',
+      created_at: '2023-01-01T00:00:00Z',
+      updated_at: '2023-01-01T01:00:00Z',
+    },
+    {
+      application_run_id: 'run-2',
+      application_version_id: 'v1.1.0',
+      organization_id: 'org-1',
+      status: 'RUNNING',
+      created_at: '2023-01-02T00:00:00Z',
+      updated_at: '2023-01-02T00:30:00Z',
+    },
+  ],
+
+  // Mock single run response
+  runSuccess: {
+    application_run_id: 'run-1',
+    application_version_id: 'v1.0.0',
+    organization_id: 'org-1',
+    status: 'COMPLETED',
+    created_at: '2023-01-01T00:00:00Z',
+    updated_at: '2023-01-01T01:00:00Z',
+  },
+
+  // Mock run results response
+  runResultsSuccess: [
+    {
+      item_id: 'item-1',
+      reference: 'test-ref-1',
+      status: 'SUCCEEDED',
+      input_artifacts: [],
+      output_artifacts: [],
+      created_at: '2023-01-01T00:00:00Z',
+      updated_at: '2023-01-01T01:00:00Z',
+    },
+    {
+      item_id: 'item-2',
+      reference: 'test-ref-2',
+      status: 'SUCCEEDED',
+      input_artifacts: [],
+      output_artifacts: [],
+      created_at: '2023-01-01T00:00:00Z',
+      updated_at: '2023-01-01T01:00:00Z',
+    },
+  ],
 
   // Mock error response
   error: {
@@ -31,12 +115,36 @@ export const handlers = {
     http.get('*/v1/applications', () => {
       return HttpResponse.json(mockResponses.applicationsSuccess, { status: 200 });
     }),
+    http.get('*/v1/applications/:applicationId/versions', () => {
+      return HttpResponse.json(mockResponses.applicationVersionsSuccess, { status: 200 });
+    }),
+    http.get('*/v1/runs', () => {
+      return HttpResponse.json(mockResponses.applicationRunsSuccess, { status: 200 });
+    }),
+    http.get('*/v1/runs/:applicationRunId', () => {
+      return HttpResponse.json(mockResponses.runSuccess, { status: 200 });
+    }),
+    http.post('*/v1/runs/:applicationRunId/cancel', () => {
+      return HttpResponse.json({}, { status: 200 });
+    }),
+    http.get('*/v1/runs/:applicationRunId/results', () => {
+      return HttpResponse.json(mockResponses.runResultsSuccess, { status: 200 });
+    }),
   ],
 
   // Empty responses
   empty: [
     http.get('*/v1/applications', () => {
       return HttpResponse.json(mockResponses.applicationsEmpty, { status: 200 });
+    }),
+    http.get('*/v1/applications/:applicationId/versions', () => {
+      return HttpResponse.json([], { status: 200 });
+    }),
+    http.get('*/v1/runs', () => {
+      return HttpResponse.json([], { status: 200 });
+    }),
+    http.get('*/v1/runs/:applicationRunId/results', () => {
+      return HttpResponse.json([], { status: 200 });
     }),
   ],
 
@@ -45,11 +153,41 @@ export const handlers = {
     http.get('*/v1/applications', () => {
       return HttpResponse.json(mockResponses.error, { status: 404 });
     }),
+    http.get('*/v1/applications/:applicationId/versions', () => {
+      return HttpResponse.json(mockResponses.error, { status: 404 });
+    }),
+    http.get('*/v1/runs', () => {
+      return HttpResponse.json(mockResponses.error, { status: 404 });
+    }),
+    http.get('*/v1/runs/:applicationRunId', () => {
+      return HttpResponse.json(mockResponses.error, { status: 404 });
+    }),
+    http.post('*/v1/runs/:applicationRunId/cancel', () => {
+      return HttpResponse.json(mockResponses.error, { status: 404 });
+    }),
+    http.get('*/v1/runs/:applicationRunId/results', () => {
+      return HttpResponse.json(mockResponses.error, { status: 404 });
+    }),
   ],
 
   // Network error (connection failure)
   networkError: [
     http.get('*/v1/applications', () => {
+      return HttpResponse.error();
+    }),
+    http.get('*/v1/applications/:applicationId/versions', () => {
+      return HttpResponse.error();
+    }),
+    http.get('*/v1/runs', () => {
+      return HttpResponse.error();
+    }),
+    http.get('*/v1/runs/:applicationRunId', () => {
+      return HttpResponse.error();
+    }),
+    http.post('*/v1/runs/:applicationRunId/cancel', () => {
+      return HttpResponse.error();
+    }),
+    http.get('*/v1/runs/:applicationRunId/results', () => {
       return HttpResponse.error();
     }),
   ],
