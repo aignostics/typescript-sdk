@@ -2,11 +2,8 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
 import { handleInfo, testApi, listApplications } from './cli-functions.js';
-import {
-  AuthService,
-  FileSystemTokenStorage,
-  type LoginWithCallbackConfig,
-} from '../utils/auth.js';
+import { AuthService, type LoginWithCallbackConfig } from '../utils/auth.js';
+import { FileSystemTokenStorage } from '../utils/token-storage.js';
 import { startCallbackServer, waitForCallback } from '../utils/oauth-callback-server.js';
 import crypto from 'crypto';
 

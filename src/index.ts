@@ -10,7 +10,8 @@ export {
   type PlatformSDK,
   type TokenProvider,
 } from './platform-sdk.js';
-export { AuthService, FileSystemTokenStorage, type TokenStorage } from './utils/auth.js';
+export { AuthService, type TokenStorage } from './utils/auth.js';
+export { FileSystemTokenStorage } from './utils/token-storage.js';
 
 // Export main SDK as default
 export default PlatformSDKHttp;

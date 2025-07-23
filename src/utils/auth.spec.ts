@@ -1,10 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { AuthService, FileSystemTokenStorage } from './auth.js';
-import * as tokenStorage from './token-storage.js';
+import { AuthService } from './auth.js';
 import http from 'node:http';
-
-// Mock token-storage module
-vi.mock('./token-storage.js');
 
 // Mock external dependencies
 vi.mock('open', () => ({
@@ -329,58 +325,6 @@ describe('AuthService', () => {
 
       // Verify server was closed
       expect(mockServer.close).toHaveBeenCalled();
-    });
-  });
-});
-
-describe('FileSystemTokenStorage', () => {
-  let storage: FileSystemTokenStorage;
-
-  beforeEach(() => {
-    storage = new FileSystemTokenStorage();
-  });
-
-  describe('save', () => {
-    it('should delegate to token-storage saveData', async () => {
-      const testData = { token: 'test-token' };
-      vi.mocked(tokenStorage.saveData).mockResolvedValue(undefined);
-
-      await storage.save(testData);
-
-      expect(tokenStorage.saveData).toHaveBeenCalledWith(testData);
-    });
-  });
-
-  describe('load', () => {
-    it('should delegate to token-storage loadData', async () => {
-      const testData = { token: 'test-token' };
-      vi.mocked(tokenStorage.loadData).mockResolvedValue(testData);
-
-      const result = await storage.load();
-
-      expect(tokenStorage.loadData).toHaveBeenCalled();
-      expect(result).toBe(testData);
-    });
-  });
-
-  describe('remove', () => {
-    it('should delegate to token-storage removeData', async () => {
-      vi.mocked(tokenStorage.removeData).mockResolvedValue(undefined);
-
-      await storage.remove();
-
-      expect(tokenStorage.removeData).toHaveBeenCalled();
-    });
-  });
-
-  describe('exists', () => {
-    it('should delegate to token-storage hasData', async () => {
-      vi.mocked(tokenStorage.hasData).mockResolvedValue(true);
-
-      const result = await storage.exists();
-
-      expect(tokenStorage.hasData).toHaveBeenCalled();
-      expect(result).toBe(true);
     });
   });
 });

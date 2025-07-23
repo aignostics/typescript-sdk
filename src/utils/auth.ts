@@ -313,29 +313,3 @@ export class AuthService {
     }
   }
 }
-
-/**
- * Implementation of TokenStorage using the existing token-storage module
- */
-export class FileSystemTokenStorage implements TokenStorage {
-  async save(data: Record<string, unknown>): Promise<void> {
-    const { saveData } = await import('./token-storage.js');
-    return saveData(data);
-  }
-
-  async load(): Promise<Record<string, unknown> | null> {
-    const { loadData } = await import('./token-storage.js');
-    const data = await loadData();
-    return data as Record<string, unknown> | null;
-  }
-
-  async remove(): Promise<void> {
-    const { removeData } = await import('./token-storage.js');
-    return removeData();
-  }
-
-  async exists(): Promise<boolean> {
-    const { hasData } = await import('./token-storage.js');
-    return hasData();
-  }
-}

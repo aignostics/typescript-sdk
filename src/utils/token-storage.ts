@@ -2,6 +2,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as os from 'node:os';
 import { Entry } from '@napi-rs/keyring';
+import { type TokenStorage } from './auth.js';
 
 /**
  * Cross-platform secure storage utility using OS-native secure storage
@@ -210,5 +211,28 @@ async function removeDataFromFile(): Promise<void> {
     }
   } catch (error) {
     // Ignore file removal errors
+  }
+}
+
+/**
+ * Implementation of TokenStorage using the token-storage module
+ * This provides a clean interface for the auth module to use.
+ */
+export class FileSystemTokenStorage implements TokenStorage {
+  async save(data: Record<string, unknown>): Promise<void> {
+    return saveData(data);
+  }
+
+  async load(): Promise<Record<string, unknown> | null> {
+    const data = await loadData();
+    return data as Record<string, unknown> | null;
+  }
+
+  async remove(): Promise<void> {
+    return removeData();
+  }
+
+  async exists(): Promise<boolean> {
+    return hasData();
   }
 }
