@@ -19,7 +19,7 @@ export interface PlatformSDKConfig {
    * Token provider function for dynamic token retrieval
    * This function will be called when a token is needed
    */
-  tokenProvider?: TokenProvider;
+  tokenProvider: TokenProvider;
 
   /**
    * Request timeout in milliseconds
@@ -44,7 +44,7 @@ export class PlatformSDKHttp implements PlatformSDK {
    * Creates a new instance of the Platform SDK
    * @param config Configuration options
    */
-  constructor(config: PlatformSDKConfig = {}) {
+  constructor(config: PlatformSDKConfig) {
     this.#config = {
       baseURL: config.baseURL || 'https://api.aignostics.com',
       timeout: config.timeout || 10000,

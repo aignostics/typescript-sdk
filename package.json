@@ -23,8 +23,9 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "npm run codegen && npm run compile",
+    "build": "npm run codegen && npm run typecheck && npm run compile",
     "compile": "tsup",
+    "typecheck": "tsc --noEmit",
     "codegen": "npm run codegen:clean && npm run codegen:generate",
     "codegen:clean": "rm -rf src/generated",
     "codegen:generate": "docker run --rm -v ${PWD}:/local --user $(id -u):$(id -g) openapitools/openapi-generator-cli:v7.14.0 generate -i https://raw.githubusercontent.com/aignostics/python-sdk/refs/heads/main/codegen/in/api.json -g typescript-axios -o /local/src/generated --additional-properties=supportsES6=true,withInterfaces=true,typescriptThreePlus=true,useSingleRequestParameter=true,importFileExtension=.js",

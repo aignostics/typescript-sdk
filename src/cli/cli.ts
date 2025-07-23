@@ -34,7 +34,7 @@ export async function main() {
           default: 'https://platform.aignostics.com',
         },
       },
-      yargs => testApi(yargs.endpoint)
+      yargs => testApi(yargs.endpoint, authService)
     )
     .command(
       'list-applications',
@@ -46,7 +46,7 @@ export async function main() {
           default: 'https://platform.aignostics.com',
         },
       },
-      argv => listApplications(argv.endpoint)
+      argv => listApplications(argv.endpoint, authService)
     )
     .command(
       'login',
