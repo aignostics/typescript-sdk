@@ -1,66 +1,76 @@
 # Aignostics Platform TypeScript SDK
 
-The official TypeScript SDK for the Aignostics Platform, providing a comprehensive set of tools and utilities for interacting with the Aignostics API.
+The official TypeScript SDK for the Aignostics Platform, providing type-safe access to the Aignostics API. Also includes a CLI tool for command-line operations.
+
+## Packages
+
+- **[@aignostics/platform-typescript-sdk](packages/sdk/)** - Core TypeScript SDK with auto-generated API clients
+- **[@aignostics/platform-cli](packages/cli/)** - Command-line interface for platform operations
 
 ## Features
 
 - 🚀 **Type-safe API client** - Generated from OpenAPI specifications
 - 🔧 **CLI tool** - Command-line interface for platform operations
-- 📚 **Auto-generated documentation** - Up-to-date API documentation
+- � **Monorepo structure** - Independent packages with shared tooling
 - 🧪 **Comprehensive testing** - 85%+ code coverage with Vitest
-- 🔄 **Automatic releases** - Semantic versioning and changelog generation
+- 🔄 **Automatic releases** - Semantic versioning per package
 - 🛡️ **Code quality** - ESLint, Prettier, and SonarQube integration
 
 ## Installation
+
+### SDK Package
 
 ```bash
 npm install @aignostics/platform-typescript-sdk
 ```
 
+### CLI Package
+
+```bash
+npm install -g @aignostics/platform-cli
+```
+
 ## Usage
 
-### SDK Usage
+For detailed usage instructions, see the individual package documentation:
+
+- **SDK Usage**: [packages/sdk/README.md](packages/sdk/README.md)
+- **CLI Usage**: [packages/cli/README.md](packages/cli/README.md)
+
+### Quick Start - SDK
 
 ```typescript
 import { PlatformSDK } from '@aignostics/platform-typescript-sdk';
 
-// Initialize the SDK
 const sdk = new PlatformSDK({
   baseURL: 'https://api.aignostics.com',
   apiKey: 'your-api-key',
-  timeout: 10000,
 });
-
-// Test connection
-try {
-  await sdk.testConnection();
-  console.log('Connected successfully!');
-} catch (error) {
-  console.error('Connection failed:', error);
-}
 ```
 
-### CLI Usage
+### Quick Start - CLI
 
 ```bash
-# Install globally
-npm install -g @aignostics/platform-typescript-sdk
-
-# Use the CLI
+# Install and use the CLI
+npm install -g @aignostics/platform-cli
 aignostics-platform info
-aignostics-platform test-api --endpoint https://api.aignostics.com
 ```
 
-## API Documentation
+## Developer Documentation
 
-The complete API documentation is available at [https://aignostics-platform-sdk.github.io](https://aignostics-platform-sdk.github.io).
+### Architecture & Development
 
-## Development
+- [HTTP Mocking Patterns](docs/HTTP_MOCKING.md) - Testing patterns for HTTP requests
+- [Testing Conventions](docs/TESTING_CONVENTION.md) - Testing standards and best practices
+- [Token Storage](docs/TOKEN_STORAGE.md) - CLI authentication implementation
+- [Dependency Injection](docs/DEPENDENCY_INJECTION.md) - DI patterns and practices
+
+## Development Setup
 
 ### Prerequisites
 
 - Node.js 18+
-- Docker (for code generation)
+- Docker (for OpenAPI code generation)
 
 ### Setup
 
@@ -72,35 +82,32 @@ cd platform-typescript-sdk
 # Install dependencies
 npm install
 
-# Generate code from OpenAPI spec
-npm run codegen
-
-# Build the project
+# Build all packages
 npm run build
+```
+
+### Nx Commands
+
+```bash
+# Build all packages
+nx run-many -t build
+
+# Test all packages
+nx run-many -t test
+
+# Work with individual packages
+nx build sdk           # Build only SDK
+nx test cli           # Test only CLI
+nx codegen sdk        # Generate OpenAPI client
 ```
 
 ### Available Scripts
 
-- `npm run build` - Build the project (includes code generation)
-- `npm run codegen` - Generate TypeScript code from OpenAPI specification
-- `npm run test` - Run tests
-- `npm run test:coverage` - Run tests with coverage report
-- `npm run lint` - Run ESLint
-- `npm run format` - Format code with Prettier
-- `npm run docs` - Generate documentation
-
-### Testing
-
-```bash
-# Run all tests
-npm test
-
-# Run tests in watch mode
-npm run test:watch
-
-# Generate coverage report
-npm run test:coverage
-```
+- `npm run build` - Build all packages
+- `npm run test` - Run all tests
+- `npm run lint` - Lint all packages
+- `npm run codegen` - Generate OpenAPI client for SDK
+- `npm run clean` - Clean all build outputs
 
 ## Contributing
 
