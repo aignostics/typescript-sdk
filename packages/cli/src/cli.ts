@@ -1,5 +1,8 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
+import { AuthService, type LoginWithCallbackConfig } from './utils/auth.js';
+import { FileSystemTokenStorage } from './utils/token-storage.js';
+import { startCallbackServer, waitForCallback } from './utils/oauth-callback-server.js';
 
 import {
   handleInfo,
@@ -11,9 +14,6 @@ import {
   cancelApplicationRun,
   listRunResults,
 } from './cli-functions.js';
-import { AuthService, type LoginWithCallbackConfig } from '../utils/auth.js';
-import { FileSystemTokenStorage } from '../utils/token-storage.js';
-import { startCallbackServer, waitForCallback } from '../utils/oauth-callback-server.js';
 import crypto from 'crypto';
 
 // Create a shared auth service instance for the CLI

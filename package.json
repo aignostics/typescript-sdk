@@ -1,48 +1,35 @@
 {
-  "name": "@aignostics/platform-typescript-sdk",
+  "name": "@aignostics/platform-monorepo",
   "version": "0.0.0-development",
-  "description": "The TypeScript SDK for the Aignostics Platform",
+  "description": "Monorepo for Aignostics Platform TypeScript SDK and CLI",
   "type": "module",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    },
-    "./package.json": "./package.json"
-  },
-  "bin": {
-    "aignostics-platform": "./dist/cli/index.cjs"
-  },
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
+  "private": true,
+  "workspaces": [
+    "packages/*"
   ],
   "scripts": {
-    "build": "npm run codegen && npm run typecheck && npm run compile",
-    "compile": "tsup",
-    "typecheck": "tsc --noEmit",
-    "codegen": "npm run codegen:clean && npm run codegen:generate",
-    "codegen:clean": "rm -rf src/generated",
-    "codegen:generate": "docker run --rm -v ${PWD}:/local --user $(id -u):$(id -g) openapitools/openapi-generator-cli:v7.14.0 generate -i https://raw.githubusercontent.com/aignostics/python-sdk/refs/heads/main/codegen/in/api.json -g typescript-axios -o /local/src/generated --additional-properties=supportsES6=true,withInterfaces=true,typescriptThreePlus=true,useSingleRequestParameter=true,importFileExtension=.js",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
-    "docs": "typedoc src/index.ts --out docs --exclude '**/*.test.ts' --exclude 'src/generated/**'",
+    "build": "nx run-many -t build",
+    "build:sdk": "nx build sdk",
+    "build:cli": "nx build cli",
+    "build-bundle": "nx run-many -t build-bundle",
+    "build-bundle:sdk": "nx build-bundle sdk",
+    "build-bundle:cli": "nx build-bundle cli",
+    "test": "nx run-many -t test",
+    "test:sdk": "nx test sdk",
+    "test:cli": "nx test cli",
+    "test:coverage": "nx run-many -t test --coverage",
+    "lint": "nx run-many -t lint",
+    "lint:sdk": "nx lint sdk",
+    "lint:cli": "nx lint cli",
+    "typecheck": "nx run-many -t typecheck",
+    "typecheck:sdk": "nx typecheck sdk",
+    "typecheck:cli": "nx typecheck cli",
+    "codegen": "nx codegen sdk",
+    "clean": "rm -rf dist packages/*/dist packages/*/coverage",
+    "docs": "typedoc packages/sdk/src/index.ts --out docs --exclude '**/*.test.ts' --exclude 'packages/sdk/src/generated/**'",
     "docs:serve": "npx http-server docs -p 8080",
-    "lint": "eslint src",
-    "lint:fix": "eslint src --fix",
-    "format": "prettier --write src/**/*.ts",
-    "format:check": "prettier --check src/**/*.ts",
-    "clean": "rm -rf dist docs coverage",
-    "prepublishOnly": "npm run build && npm test",
-    "test:compatibility": "./scripts/test-node-compatibility.sh",
-    "test:compatibility:docker": "./scripts/test-node-compatibility-docker.sh",
-    "test:quick": "./scripts/quick-test.sh"
+    "format": "prettier --write packages/*/src/**/*.ts",
+    "format:check": "prettier --check packages/*/src/**/*.ts"
   },
   "repository": {
     "type": "git",
@@ -67,20 +54,22 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.31.0",
+    "@nx/eslint": "^21.3.5",
+    "@nx/js": "^21.3.5",
+    "@nx/node": "^21.3.5",
+    "@nx/vite": "^21.3.5",
     "@semantic-release/commit-analyzer": "^13.0.0",
     "@semantic-release/github": "^11.0.0",
     "@semantic-release/npm": "^12.0.1",
     "@semantic-release/release-notes-generator": "^14.0.1",
-    "@types/express": "^5.0.3",
-    "@types/keytar": "^4.4.0",
     "@types/node": "^24.0.13",
-    "@types/yargs": "^17.0.33",
     "@vitest/coverage-v8": "^3.2.4",
     "conventional-changelog-conventionalcommits": "^8.0.0",
     "eslint": "^9.31.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.3",
     "msw": "^2.10.4",
+    "nx": "^21.3.5",
     "prettier": "^3.4.2",
     "semantic-release": "^24.2.7",
     "tsup": "^8.5.0",
@@ -88,16 +77,6 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.38.0",
     "vitest": "^3.2.4"
-  },
-  "dependencies": {
-    "@napi-rs/keyring": "^1.1.8",
-    "axios": "^1.7.9",
-    "express": "^5.1.0",
-    "keytar": "^7.9.0",
-    "open": "^10.2.0",
-    "openid-client": "^5",
-    "yargs": "^17.7.2",
-    "zod": "^4.0.5"
   },
   "engines": {
     "node": ">=18.0.0"

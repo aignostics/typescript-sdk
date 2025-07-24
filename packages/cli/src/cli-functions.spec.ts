@@ -9,8 +9,8 @@ import {
   cancelApplicationRun,
   listRunResults,
 } from './cli-functions.js';
-import { PlatformSDK, PlatformSDKHttp } from '../platform-sdk.js';
-import { AuthService } from '../utils/auth.js';
+import { PlatformSDK, PlatformSDKHttp } from '@aignostics/platform-typescript-sdk';
+import { AuthService } from './utils/auth.js';
 
 // Mock process.exit to prevent test runner from exiting
 const mockExit = vi.fn();
@@ -19,7 +19,10 @@ vi.stubGlobal('process', {
   exit: mockExit,
 });
 
-vi.mock('../platform-sdk');
+vi.mock('@aignostics/platform-typescript-sdk', () => ({
+  PlatformSDKHttp: vi.fn(),
+  PlatformSDK: vi.fn(),
+}));
 
 const platformSDKMock = {
   testConnection: vi.fn(),

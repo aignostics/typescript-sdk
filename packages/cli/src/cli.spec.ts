@@ -1,10 +1,9 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
-import { startCallbackServer, waitForCallback } from '../utils/oauth-callback-server.js';
+import { startCallbackServer, waitForCallback } from './utils/oauth-callback-server.js';
 import crypto from 'crypto';
-import { AuthService } from '../utils/auth.js';
 
 // Mock external dependencies
-vi.mock('../utils/oauth-callback-server');
+vi.mock('./utils/oauth-callback-server');
 vi.mock('crypto');
 
 // Mock the auth module and create a mock authService instance
@@ -16,8 +15,8 @@ const mockAuthService = {
 };
 
 // Mock the auth module to return our mock instance
-vi.mock('../utils/auth', () => ({
-  AuthService: vi.fn(),
+vi.mock('./utils/auth', () => ({
+  AuthService: vi.fn(() => mockAuthService),
   FileSystemTokenStorage: vi.fn(),
 }));
 
@@ -37,7 +36,6 @@ describe('CLI Handlers', () => {
     vi.spyOn(process, 'exit').mockImplementation(() => {
       throw new Error('process.exit called');
     });
-    vi.mocked(AuthService).mockImplementation(() => mockAuthService as unknown as AuthService);
   });
 
   describe('handleLogin', () => {

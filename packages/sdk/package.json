@@ -1,0 +1,47 @@
+{
+  "name": "@aignostics/platform-typescript-sdk",
+  "version": "0.0.0-development",
+  "description": "The TypeScript SDK for the Aignostics Platform",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "scripts": {
+    "build": "nx build",
+    "test": "nx test",
+    "lint": "nx lint",
+    "typecheck": "nx typecheck"
+  },
+  "keywords": [
+    "aignostics",
+    "platform",
+    "sdk",
+    "typescript",
+    "api"
+  ],
+  "author": "Aignostics",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.7.9"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

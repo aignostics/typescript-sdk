@@ -1,0 +1,48 @@
+{
+  "name": "cli",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/cli/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/cli",
+        "main": "packages/cli/src/index.ts",
+        "tsConfig": "packages/cli/tsconfig.app.json",
+        "assets": []
+      },
+      "dependsOn": ["sdk:build"]
+    },
+    "build-bundle": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd packages/cli && tsup"
+      },
+      "dependsOn": ["sdk:build-bundle"]
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.coverage.reportsDirectory}"],
+      "options": {
+        "config": "packages/cli/vite.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/cli/**/*.ts"]
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit --project packages/cli/tsconfig.app.json"
+      }
+    }
+  },
+  "tags": ["type:app", "scope:cli"]
+}

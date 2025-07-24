@@ -28,25 +28,28 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Generate code from OpenAPI
-        run: npm run codegen
+      - name: Generate SDK code from OpenAPI
+        run: npx nx codegen sdk
 
       - name: Run linting
-        run: npm run lint
+        run: npx nx run-many -t lint
 
       - name: Run formatting check
         run: npm run format:check
 
-      - name: Build project
-        run: npm run compile
+      - name: Run type checking
+        run: npx nx run-many -t typecheck
+
+      - name: Build packages
+        run: npx nx run-many -t build-bundle
 
       - name: Run tests with coverage
-        run: npm run test:coverage
+        run: npx nx run-many -t test --coverage
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
-          file: ./coverage/lcov.info
+          files: ./coverage/lcov.info,./packages/*/coverage/lcov.info
           flags: unittests
           name: codecov-umbrella
           fail_ci_if_error: false
@@ -69,11 +72,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Generate code from OpenAPI
-        run: npm run codegen
+      - name: Generate SDK code from OpenAPI
+        run: npx nx codegen sdk
 
-      - name: Build project
-        run: npm run compile
+      - name: Build SDK package
+        run: npx nx build-bundle sdk
 
       - name: Generate documentation
         run: npm run docs
@@ -110,15 +113,24 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Generate code from OpenAPI
-        run: npm run codegen
+      - name: Generate SDK code from OpenAPI
+        run: npx nx codegen sdk
 
-      - name: Build project
-        run: npm run compile
+      - name: Build all packages
+        run: npx nx run-many -t build-bundle
 
-      - name: Release
+      - name: Release SDK
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        working-directory: packages/sdk
+        run: npx semantic-release
+
+      - name: Release CLI
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        working-directory: packages/cli
         run: npx semantic-release

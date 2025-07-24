@@ -10,7 +10,10 @@ export default tseslint.config(
   {
     languageOptions: {
       parserOptions: {
-        project: './tsconfig.eslint.json',
+        project: [
+          './packages/*/tsconfig.json',
+          './tsconfig.eslint.json'
+        ],
         tsconfigRootDir: import.meta.dirname,
       },
     },
@@ -33,6 +36,15 @@ export default tseslint.config(
     },
   },
   {
-    ignores: ['dist/', 'docs/', 'coverage/', 'src/generated/**', '*.js', '*.cjs'],
+    ignores: [
+      'dist/', 
+      'docs/', 
+      'coverage/', 
+      'packages/*/dist/',
+      'packages/*/coverage/',
+      'packages/sdk/src/generated/**', 
+      '*.js', 
+      '*.cjs'
+    ],
   }
 );

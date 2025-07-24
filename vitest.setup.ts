@@ -1,5 +1,5 @@
 import { beforeAll, afterEach, afterAll } from 'vitest';
-import { server } from './src/test-utils/http-mocks';
+import { server } from './packages/sdk/src/test-utils/http-mocks';
 
 // Randomize timezone for each test run to ensure timezone independence
 const timezones = [

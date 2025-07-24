@@ -1,0 +1,52 @@
+{
+  "name": "@aignostics/platform-cli",
+  "version": "0.0.0-development",
+  "description": "CLI for the Aignostics Platform",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "aignostics-platform": "./dist/index.cjs"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "scripts": {
+    "build": "nx build",
+    "test": "nx test",
+    "lint": "nx lint",
+    "typecheck": "nx typecheck"
+  },
+  "keywords": [
+    "aignostics",
+    "platform",
+    "cli",
+    "typescript"
+  ],
+  "author": "Aignostics",
+  "license": "MIT",
+  "dependencies": {
+    "@aignostics/platform-typescript-sdk": "*",
+    "@napi-rs/keyring": "^1.1.8",
+    "express": "^5.1.0",
+    "keytar": "^7.9.0",
+    "open": "^10.2.0",
+    "openid-client": "^5",
+    "yargs": "^17.7.2",
+    "zod": "^4.0.5"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/keytar": "^4.4.0",
+    "@types/yargs": "^17.0.33"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

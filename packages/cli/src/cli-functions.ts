@@ -1,6 +1,11 @@
-import { PlatformSDKHttp } from '../platform-sdk.js';
-import packageJson from '../../package.json' with { type: 'json' };
-import { AuthService } from '../utils/auth.js';
+import { PlatformSDKHttp } from '@aignostics/platform-typescript-sdk';
+import { AuthService } from './utils/auth.js';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
+// Read package.json synchronously for CommonJS compatibility
+const packageJsonPath = join(__dirname, '../package.json');
+const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8')) as { version: string };
 
 export function handleInfo(): void {
   console.log('Aignostics Platform SDK');
