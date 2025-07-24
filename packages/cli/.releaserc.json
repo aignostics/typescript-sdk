@@ -1,5 +1,6 @@
 {
   "branches": ["main"],
+  "tagFormat": "cli-v${version}",
   "plugins": [
     [
       "@semantic-release/commit-analyzer",
