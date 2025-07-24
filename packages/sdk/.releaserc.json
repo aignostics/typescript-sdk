@@ -1,5 +1,6 @@
 {
   "branches": ["main"],
+  "tagFormat": "sdk-v${version}",
   "plugins": [
     [
       "@semantic-release/commit-analyzer",
