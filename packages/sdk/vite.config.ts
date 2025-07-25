@@ -4,6 +4,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   test: {
     globals: true,
+    reporters: ['default'],
     environment: 'node',
     setupFiles: ['../../vitest.setup.ts'],
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],

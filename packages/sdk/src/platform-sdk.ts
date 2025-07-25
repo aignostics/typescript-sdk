@@ -4,6 +4,8 @@ import {
   ApplicationVersionReadResponse,
   RunReadResponse,
   ItemResultReadResponse,
+  RunCreationRequest,
+  RunCreationResponse,
   PublicApi,
 } from './generated/index.js';
 
@@ -43,6 +45,7 @@ export interface PlatformSDK {
     applicationId?: string;
     applicationVersion?: string;
   }): Promise<RunReadResponse[]>;
+  createApplicationRun(request: RunCreationRequest): Promise<RunCreationResponse>;
   getRun(applicationRunId: string): Promise<RunReadResponse>;
   cancelApplicationRun(applicationRunId: string): Promise<void>;
   listRunResults(applicationRunId: string): Promise<ItemResultReadResponse[]>;
@@ -149,6 +152,21 @@ export class PlatformSDKHttp implements PlatformSDK {
       return response.data;
     } catch (error) {
       throw new Error(`list application runs failed: ${String(error)}`);
+    }
+  }
+
+  async createApplicationRun(request: RunCreationRequest): Promise<RunCreationResponse> {
+    try {
+      const client = await this.#ensureClient();
+      const response = await client.createApplicationRunV1RunsPost({
+        runCreationRequest: request,
+      });
+      if (response.status !== 200) {
+        throw new Error(`Failed to create application run: ${response.statusText}`);
+      }
+      return response.data;
+    } catch (error) {
+      throw new Error(`create application run failed: ${String(error)}`);
     }
   }
 
