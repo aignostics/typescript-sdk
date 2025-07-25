@@ -161,7 +161,7 @@ export class PlatformSDKHttp implements PlatformSDK {
       const response = await client.createApplicationRunV1RunsPost({
         runCreationRequest: request,
       });
-      if (response.status !== 200) {
+      if (response.status < 200 || response.status >= 300) {
         throw new Error(`Failed to create application run: ${response.statusText}`);
       }
       return response.data;

@@ -4,7 +4,7 @@ export default defineConfig({
   entry: ['src/index.ts'],
   format: ['esm', 'cjs'],
   target: 'node18',
-  dts: false,
+  dts: true,
   sourcemap: true,
   clean: true,
   splitting: false,

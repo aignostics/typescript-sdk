@@ -1,4 +1,4 @@
-import { PlatformSDKHttp } from '@aignostics/platform-typescript-sdk';
+import { PlatformSDKHttp, type ItemCreationRequest } from '@aignostics/platform-typescript-sdk';
 import { AuthService } from './utils/auth.js';
 import { readFileSync } from 'fs';
 import { join } from 'path';
@@ -126,5 +126,42 @@ export async function listRunResults(
   } catch (error) {
     console.error('❌ Failed to list run results:', error);
     process.exit(1);
+  }
+}
+
+export async function createApplicationRun(
+  endpoint: string,
+  authService: AuthService,
+  applicationVersionId: string,
+  itemsJson: string
+): Promise<void> {
+  const sdk = new PlatformSDKHttp({
+    baseURL: endpoint,
+    tokenProvider: () => authService.getValidAccessToken(),
+  });
+  try {
+    // Parse the items JSON
+    let items: ItemCreationRequest[];
+    try {
+      const parsed = JSON.parse(itemsJson) as unknown;
+      if (!Array.isArray(parsed)) {
+        throw new Error('Items must be an array');
+      }
+      items = parsed as ItemCreationRequest[];
+    } catch (parseError) {
+      console.error('❌ Invalid items JSON:', parseError);
+      process.exit(1);
+      return; // Ensure we don't continue execution in tests
+    }
+
+    const response = await sdk.createApplicationRun({
+      application_version_id: applicationVersionId,
+      items: items,
+    });
+    console.log('✅ Application run created successfully:', JSON.stringify(response, null, 2));
+  } catch (error) {
+    console.error('❌ Failed to create application run:', error);
+    process.exit(1);
+    return; // Ensure we don't continue execution in tests
   }
 }

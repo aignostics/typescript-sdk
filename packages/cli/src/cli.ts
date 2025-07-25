@@ -13,6 +13,7 @@ import {
   getRun,
   cancelApplicationRun,
   listRunResults,
+  createApplicationRun,
 } from './cli-functions.js';
 import crypto from 'crypto';
 
@@ -148,6 +149,29 @@ export async function main() {
             default: 'https://platform.aignostics.com',
           }),
       argv => listRunResults(argv.endpoint, authService, argv.applicationRunId)
+    )
+    .command(
+      'create-run <applicationVersionId>',
+      'Create a new application run',
+      yargs =>
+        yargs
+          .positional('applicationVersionId', {
+            describe: 'Application version ID to run',
+            type: 'string',
+            demandOption: true,
+          })
+          .option('endpoint', {
+            describe: 'API endpoint to use',
+            type: 'string',
+            default: 'https://platform.aignostics.com',
+          })
+          .option('items', {
+            describe: 'JSON string of items to process (array of objects)',
+            type: 'string',
+            default: '[]',
+          }),
+      argv =>
+        createApplicationRun(argv.endpoint, authService, argv.applicationVersionId, argv.items)
     )
     .command(
       'login',
