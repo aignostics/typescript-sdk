@@ -226,7 +226,7 @@ describe('PlatformSDK', () => {
     expect(result[0]).toHaveProperty('reference');
   });
 
-  it('should handle list run results failure', async () => {
+  it('should list run results failure', async () => {
     // Mock token provider to return a valid token
     mockTokenProvider.mockResolvedValue('mocked-token');
 
@@ -234,6 +234,71 @@ describe('PlatformSDK', () => {
     setMockScenario('error');
 
     await expect(sdk.listRunResults('test-run-id')).rejects.toThrow('list run results failed');
+  });
+
+  it('should create application run successfully', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with successful response
+    setMockScenario('success');
+
+    const runRequest = {
+      application_version_id: 'test-app:v1.0.0',
+      items: [
+        {
+          reference: 'test-item-1',
+          input_artifacts: [
+            {
+              name: 'input_slide',
+              download_url: 'https://example.com/file.tiff',
+              metadata: {
+                checksum_base64_crc32c: 'abc123==',
+                mime_type: 'image/tiff',
+                height: 1000,
+                width: 1000,
+                mpp: 0.25,
+              },
+            },
+          ],
+        },
+      ],
+    };
+
+    const result = await sdk.createApplicationRun(runRequest);
+    expect(result).toBeDefined();
+    expect(typeof result.application_run_id).toBe('string');
+  });
+
+  it('should handle create application run failure', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with error response
+    setMockScenario('error');
+
+    const runRequest = {
+      application_version_id: 'test-app:v1.0.0',
+      items: [
+        {
+          reference: 'test-item-1',
+          input_artifacts: [
+            {
+              name: 'input_slide',
+              download_url: 'https://example.com/file.tiff',
+              metadata: {
+                checksum_base64_crc32c: 'abc123==',
+                mime_type: 'image/tiff',
+              },
+            },
+          ],
+        },
+      ],
+    };
+
+    await expect(sdk.createApplicationRun(runRequest)).rejects.toThrow(
+      'create application run failed'
+    );
   });
 
   it('should handle no token for new methods', async () => {
@@ -245,6 +310,12 @@ describe('PlatformSDK', () => {
 
     await expect(sdk.listApplicationVersions('test-app-id')).rejects.toThrow(errorMessage);
     await expect(sdk.listApplicationRuns()).rejects.toThrow(errorMessage);
+    await expect(
+      sdk.createApplicationRun({
+        application_version_id: 'test-app:v1.0.0',
+        items: [],
+      })
+    ).rejects.toThrow(errorMessage);
     await expect(sdk.getRun('test-run-id')).rejects.toThrow(errorMessage);
     await expect(sdk.cancelApplicationRun('test-run-id')).rejects.toThrow(errorMessage);
     await expect(sdk.listRunResults('test-run-id')).rejects.toThrow(errorMessage);

@@ -76,6 +76,11 @@ export const mockResponses = {
     updated_at: '2023-01-01T01:00:00Z',
   },
 
+  // Mock create application run response
+  createRunSuccess: {
+    application_run_id: 'new-run-123',
+  },
+
   // Mock run results response
   runResultsSuccess: [
     {
@@ -121,6 +126,9 @@ export const handlers = {
     http.get('*/v1/runs', () => {
       return HttpResponse.json(mockResponses.applicationRunsSuccess, { status: 200 });
     }),
+    http.post('*/v1/runs', () => {
+      return HttpResponse.json(mockResponses.createRunSuccess, { status: 200 });
+    }),
     http.get('*/v1/runs/:applicationRunId', () => {
       return HttpResponse.json(mockResponses.runSuccess, { status: 200 });
     }),
@@ -159,6 +167,9 @@ export const handlers = {
     http.get('*/v1/runs', () => {
       return HttpResponse.json(mockResponses.error, { status: 404 });
     }),
+    http.post('*/v1/runs', () => {
+      return HttpResponse.json(mockResponses.error, { status: 404 });
+    }),
     http.get('*/v1/runs/:applicationRunId', () => {
       return HttpResponse.json(mockResponses.error, { status: 404 });
     }),
@@ -179,6 +190,9 @@ export const handlers = {
       return HttpResponse.error();
     }),
     http.get('*/v1/runs', () => {
+      return HttpResponse.error();
+    }),
+    http.post('*/v1/runs', () => {
       return HttpResponse.error();
     }),
     http.get('*/v1/runs/:applicationRunId', () => {
