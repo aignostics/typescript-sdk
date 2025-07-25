@@ -8,6 +8,7 @@ import {
   getRun,
   cancelApplicationRun,
   listRunResults,
+  createApplicationRun,
 } from './cli-functions.js';
 import { PlatformSDK, PlatformSDKHttp } from '@aignostics/platform-typescript-sdk';
 import { AuthService } from './utils/auth.js';
@@ -32,6 +33,7 @@ const platformSDKMock = {
   getRun: vi.fn(),
   cancelApplicationRun: vi.fn(),
   listRunResults: vi.fn(),
+  createApplicationRun: vi.fn(),
   getConfig: vi.fn(),
   getVersion: vi.fn(),
 } satisfies PlatformSDK;
@@ -60,6 +62,9 @@ describe('CLI Functions Unit Tests', () => {
   };
 
   beforeEach(() => {
+    // Clear all mocks
+    vi.clearAllMocks();
+
     // Mock console methods to avoid noise in tests
     consoleSpy = {
       log: vi.spyOn(console, 'log').mockImplementation(() => {}),
@@ -337,6 +342,114 @@ describe('CLI Functions Unit Tests', () => {
 
       expect(consoleSpy.error).toHaveBeenCalledWith(
         '❌ Failed to list run results:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('createApplicationRun', () => {
+    it('should create application run successfully with empty items', async () => {
+      const runResponse = {
+        application_run_id: 'run-123',
+      };
+      platformSDKMock.createApplicationRun.mockResolvedValue(runResponse);
+
+      await createApplicationRun(
+        'https://api.example.com',
+        mockAuthService,
+        'test-app:v1.0.0',
+        '[]'
+      );
+
+      expect(platformSDKMock.createApplicationRun).toHaveBeenCalledWith({
+        application_version_id: 'test-app:v1.0.0',
+        items: [],
+      });
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        '✅ Application run created successfully:',
+        JSON.stringify(runResponse, null, 2)
+      );
+    });
+
+    it('should create application run successfully with items', async () => {
+      const runResponse = {
+        application_run_id: 'run-456',
+      };
+      const items = [
+        {
+          reference: 'slide_1',
+          input_artifacts: [
+            {
+              name: 'input_slide',
+              download_url: 'https://example.com/slide1.tiff',
+              metadata: { mime_type: 'image/tiff' },
+            },
+          ],
+        },
+      ];
+      platformSDKMock.createApplicationRun.mockResolvedValue(runResponse);
+
+      await createApplicationRun(
+        'https://api.example.com',
+        mockAuthService,
+        'test-app:v1.0.0',
+        JSON.stringify(items)
+      );
+
+      expect(platformSDKMock.createApplicationRun).toHaveBeenCalledWith({
+        application_version_id: 'test-app:v1.0.0',
+        items: items,
+      });
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        '✅ Application run created successfully:',
+        JSON.stringify(runResponse, null, 2)
+      );
+    });
+
+    it('should handle invalid JSON in items parameter', async () => {
+      await createApplicationRun(
+        'https://api.example.com',
+        mockAuthService,
+        'test-app:v1.0.0',
+        'invalid-json'
+      );
+
+      expect(consoleSpy.error).toHaveBeenCalledWith('❌ Invalid items JSON:', expect.any(Error));
+      expect(mockExit).toHaveBeenCalledWith(1);
+      expect(platformSDKMock.createApplicationRun).not.toHaveBeenCalled();
+    });
+
+    it('should handle non-array items parameter', async () => {
+      await createApplicationRun(
+        'https://api.example.com',
+        mockAuthService,
+        'test-app:v1.0.0',
+        '{"not": "an array"}'
+      );
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Invalid items JSON:',
+        expect.objectContaining({
+          message: 'Items must be an array',
+        })
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+      expect(platformSDKMock.createApplicationRun).not.toHaveBeenCalled();
+    });
+
+    it('should handle API error during run creation', async () => {
+      platformSDKMock.createApplicationRun.mockRejectedValue(new Error('API error'));
+
+      await createApplicationRun(
+        'https://api.example.com',
+        mockAuthService,
+        'test-app:v1.0.0',
+        '[]'
+      );
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to create application run:',
         expect.any(Error)
       );
       expect(mockExit).toHaveBeenCalledWith(1);

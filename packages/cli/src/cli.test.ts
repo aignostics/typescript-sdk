@@ -100,6 +100,13 @@ vi.mock('./cli-functions', () => ({
       )
     );
   }),
+  // eslint-disable-next-line @typescript-eslint/require-await
+  createApplicationRun: vi.fn(async () => {
+    console.log(
+      '✅ Application run created successfully:',
+      JSON.stringify({ application_run_id: 'run-123' }, null, 2)
+    );
+  }),
 }));
 
 // Mock process.exit to prevent test runner from exiting
@@ -390,6 +397,63 @@ describe('CLI Integration Tests', () => {
       try {
         await main();
         expect.fail('Expected main() to throw an error when applicationRunId is missing');
+      } catch (error) {
+        expect(error.message).toMatch(/process\.exit.*1/);
+        expect(consoleSpy.error).toHaveBeenCalledWith(
+          expect.stringContaining('Not enough non-option arguments')
+        );
+      }
+    });
+  });
+
+  describe('create-run command', () => {
+    it('should create application run successfully with empty items', async () => {
+      // Mock process.argv for yargs
+      process.argv = [
+        'node',
+        'cli.js',
+        'create-run',
+        'test-app:v1.0.0',
+        '--endpoint',
+        'https://api.example.com',
+        '--items',
+        '[]',
+      ];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        '✅ Application run created successfully:',
+        expect.stringContaining('run-123')
+      );
+    });
+
+    it('should create application run successfully with default empty items', async () => {
+      // Mock process.argv for yargs - without explicit --items parameter
+      process.argv = [
+        'node',
+        'cli.js',
+        'create-run',
+        'test-app:v1.0.0',
+        '--endpoint',
+        'https://api.example.com',
+      ];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        '✅ Application run created successfully:',
+        expect.stringContaining('run-123')
+      );
+    });
+
+    it('should require applicationVersionId parameter', async () => {
+      // Mock process.argv for yargs - missing applicationVersionId
+      process.argv = ['node', 'cli.js', 'create-run'];
+
+      try {
+        await main();
+        expect.fail('Expected main() to throw an error when applicationVersionId is missing');
       } catch (error) {
         expect(error.message).toMatch(/process\.exit.*1/);
         expect(consoleSpy.error).toHaveBeenCalledWith(
