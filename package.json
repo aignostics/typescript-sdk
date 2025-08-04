@@ -29,7 +29,9 @@
     "docs": "typedoc packages/sdk/src/index.ts --out docs --exclude '**/*.test.ts' --exclude 'packages/sdk/src/generated/**'",
     "docs:serve": "npx http-server docs -p 8080",
     "format": "prettier --write packages/*/src/**/*.ts",
-    "format:check": "prettier --check packages/*/src/**/*.ts"
+    "format:check": "prettier --check packages/*/src/**/*.ts",
+    "generate-attributions": "node scripts/generate-attributions.js",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -68,6 +70,7 @@
     "eslint": "^9.31.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.3",
+    "husky": "^9.1.7",
     "msw": "^2.10.4",
     "nx": "^21.3.5",
     "prettier": "^3.4.2",
