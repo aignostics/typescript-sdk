@@ -1,5 +1,8 @@
 # Aignostics Platform TypeScript SDK
 
+[![codecov](https://codecov.io/github/aignostics/typescript-sdk/graph/badge.svg?token=Y5nGFdSlX1)](https://codecov.io/github/aignostics/typescript-sdk)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=aignostics_typescript-sdk&metric=alert_status&token=57884e493e2a2670dc8da5cc59eeb57e56d00d74)](https://sonarcloud.io/summary/new_code?id=aignostics_typescript-sdk)
+
 The official TypeScript SDK for the Aignostics Platform, providing type-safe access to the Aignostics API. Also includes a CLI tool for command-line operations.
 
 ## Packages
