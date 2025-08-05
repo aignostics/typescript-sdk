@@ -44,7 +44,7 @@ import { PlatformSDK } from '@aignostics/sdk';
 
 const sdk = new PlatformSDK({
   baseURL: 'https://api.aignostics.com',
-  apiKey: 'your-api-key',
+  tokenProvider: () => 'your-access-token-here',
 });
 ```
 

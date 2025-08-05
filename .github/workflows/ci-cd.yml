@@ -41,7 +41,7 @@ jobs:
         run: npx nx run-many -t typecheck
 
       - name: Build packages
-        run: npx nx run-many -t build-bundle
+        run: npx nx run-many -t build
 
       - name: Run tests with coverage
         run: npx nx run-many -t test --coverage
@@ -76,7 +76,7 @@ jobs:
         run: npx nx codegen sdk
 
       - name: Build SDK package
-        run: npx nx build-bundle sdk
+        run: npx nx build sdk
 
       - name: Generate documentation
         run: npm run docs
@@ -117,7 +117,7 @@ jobs:
         run: npx nx codegen sdk
 
       - name: Build all packages
-        run: npx nx run-many -t build-bundle
+        run: npx nx run-many -t build
 
       - name: Release SDK
         env:
