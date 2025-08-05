@@ -31,6 +31,8 @@
     "format": "prettier --write packages/*/src/**/*.ts",
     "format:check": "prettier --check packages/*/src/**/*.ts",
     "generate-attributions": "node scripts/generate-attributions.js",
+    "analyze-licenses": "node scripts/analyze-licenses.js",
+    "check-license-policy": "node scripts/check-license-policy.js",
     "prepare": "husky"
   },
   "repository": {
@@ -66,11 +68,13 @@
     "@semantic-release/release-notes-generator": "^14.0.1",
     "@types/node": "^24.0.13",
     "@vitest/coverage-v8": "^3.2.4",
+    "chalk": "^5.5.0",
     "conventional-changelog-conventionalcommits": "^8.0.0",
     "eslint": "^9.31.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.3",
     "husky": "^9.1.7",
+    "license-checker-rseidelsohn": "^4.4.2",
     "msw": "^2.10.4",
     "nx": "^21.3.5",
     "prettier": "^3.4.2",

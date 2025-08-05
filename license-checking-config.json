@@ -1,0 +1,39 @@
+{
+  "allowedLicenses": [
+    "MIT",
+    "ISC",
+    "Apache-2.0",
+    "Apache 2.0",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "CC0-1.0",
+    "Unlicense",
+    "0BSD",
+    "BlueOak-1.0.0",
+    "CC-BY-3.0",
+    "CC-BY-4.0",
+    "WTFPL",
+    "Artistic-2.0",
+    "(MIT OR CC0-1.0)",
+    "Python-2.0",
+    "(MIT OR WTFPL)",
+    "(Apache-2.0 OR MPL-1.1)",
+    "(BSD-2-Clause OR MIT OR Apache-2.0)",
+    "(MIT AND CC-BY-3.0)"
+  ],
+  "prohibitedLicenses": [
+    "AGPL-1.0",
+    "AGPL-3.0",
+    "GPL-1.0",
+    "EUPL-1.0",
+    "EUPL-1.1",
+    "EUPL-1.2",
+    "GPL-2.0",
+    "GPL-3.0",
+    "LGPL-2.1",
+    "LGPL-3.0",
+    "MPL-2.0",
+    "EPL-1.0",
+    "EPL-2.0"
+  ]
+}

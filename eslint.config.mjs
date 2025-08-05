@@ -5,20 +5,22 @@ import prettierConfig from 'eslint-config-prettier';
 
 export default tseslint.config(
   js.configs.recommended,
+  { files: ['scripts/**/*.js', 'eslint.config.mjs'], language: 'javascript' },
   ...tseslint.configs.recommendedTypeChecked,
   prettierConfig,
   {
     languageOptions: {
       parserOptions: {
-        project: [
-          './packages/*/tsconfig.json',
-          './tsconfig.eslint.json'
-        ],
+        project: ['./packages/*/tsconfig.json', './tsconfig.eslint.json'],
         tsconfigRootDir: import.meta.dirname,
       },
     },
     plugins: {
       prettier,
+    },
+    linterOptions: {
+      reportUnusedInlineConfigs: 'error',
+      reportUnusedDisableDirectives: 'error',
     },
     rules: {
       'prettier/prettier': 'error',
@@ -37,14 +39,14 @@ export default tseslint.config(
   },
   {
     ignores: [
-      'dist/', 
-      'docs/', 
-      'coverage/', 
+      'dist/',
+      'docs/',
+      'coverage/',
       'packages/*/dist/',
       'packages/*/coverage/',
-      'packages/sdk/src/generated/**', 
-      '*.js', 
-      '*.cjs'
+      'packages/sdk/src/generated/**',
+      '*.js',
+      '*.cjs',
     ],
   }
 );
