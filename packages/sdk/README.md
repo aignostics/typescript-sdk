@@ -5,13 +5,13 @@ The TypeScript SDK for the Aignostics Platform.
 ## Installation
 
 ```bash
-npm install @aignostics/platform-typescript-sdk
+npm install @aignostics/sdk
 ```
 
 ## Usage
 
 ```typescript
-import { PlatformSDKHttp } from '@aignostics/platform-typescript-sdk';
+import { PlatformSDKHttp } from '@aignostics/sdk';
 
 // Create SDK instance with a token provider
 const sdk = new PlatformSDKHttp({

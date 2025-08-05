@@ -177,7 +177,7 @@ $ aignostics-platform logout
 ### Programmatic Usage
 
 ```typescript
-import { PlatformSDK } from '@aignostics/platform-typescript-sdk';
+import { PlatformSDK } from '@aignostics/sdk';
 import { hasValidToken, getCurrentToken } from './utils/token-storage';
 
 // Check if user is authenticated

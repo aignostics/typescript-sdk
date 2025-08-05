@@ -1,7 +1,7 @@
 {
-  "name": "@aignostics/platform-typescript-sdk",
+  "name": "@aignostics/sdk",
   "version": "0.0.0-development",
-  "description": "The TypeScript SDK for the Aignostics Platform",
+  "description": "The TypeScript SDK for Aignostics",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",

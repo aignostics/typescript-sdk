@@ -74,7 +74,7 @@ if npm publish --registry http://localhost:$PORT; then
         node:20-alpine \
         sh -c "
             npm config set registry http://verdaccio:4873
-            npm install -g @aignostics/platform-typescript-sdk
+            npm install -g @aignostics/sdk
             aignostics-platform --version
         "
     

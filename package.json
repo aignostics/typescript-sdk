@@ -1,5 +1,5 @@
 {
-  "name": "@aignostics/platform-monorepo",
+  "name": "@aignostics/monorepo",
   "version": "0.0.0-development",
   "description": "Monorepo for Aignostics Platform TypeScript SDK and CLI",
   "type": "module",
@@ -37,7 +37,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aignostics/platform-typescript-sdk.git"
+    "url": "git+https://github.com/aignostics/typescript-sdk.git"
   },
   "keywords": [
     "aignostics",
@@ -49,9 +49,9 @@
   "author": "Aignostics",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/aignostics/platform-typescript-sdk/issues"
+    "url": "https://github.com/aignostics/typescript-sdk/issues"
   },
-  "homepage": "https://github.com/aignostics/platform-typescript-sdk#readme",
+  "homepage": "https://github.com/aignostics/typescript-sdk#readme",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
     "access": "restricted"

@@ -1,4 +1,4 @@
-import { PlatformSDKHttp, type ItemCreationRequest } from '@aignostics/platform-typescript-sdk';
+import { PlatformSDKHttp, type ItemCreationRequest } from '@aignostics/sdk';
 import { AuthService } from './utils/auth.js';
 import { readFileSync } from 'fs';
 import { join } from 'path';

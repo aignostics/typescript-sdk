@@ -4,8 +4,8 @@ The official TypeScript SDK for the Aignostics Platform, providing type-safe acc
 
 ## Packages
 
-- **[@aignostics/platform-typescript-sdk](packages/sdk/)** - Core TypeScript SDK with auto-generated API clients
-- **[@aignostics/platform-cli](packages/cli/)** - Command-line interface for platform operations
+- **[@aignostics/sdk](packages/sdk/)** - Core TypeScript SDK with auto-generated API clients
+- **[@aignostics/cli](packages/cli/)** - Command-line interface for platform operations
 
 ## Features
 
@@ -21,13 +21,13 @@ The official TypeScript SDK for the Aignostics Platform, providing type-safe acc
 ### SDK Package
 
 ```bash
-npm install @aignostics/platform-typescript-sdk
+npm install @aignostics/sdk
 ```
 
 ### CLI Package
 
 ```bash
-npm install -g @aignostics/platform-cli
+npm install -g @aignostics/cli
 ```
 
 ## Usage
@@ -40,7 +40,7 @@ For detailed usage instructions, see the individual package documentation:
 ### Quick Start - SDK
 
 ```typescript
-import { PlatformSDK } from '@aignostics/platform-typescript-sdk';
+import { PlatformSDK } from '@aignostics/sdk';
 
 const sdk = new PlatformSDK({
   baseURL: 'https://api.aignostics.com',
@@ -52,7 +52,7 @@ const sdk = new PlatformSDK({
 
 ```bash
 # Install and use the CLI
-npm install -g @aignostics/platform-cli
+npm install -g @aignostics/cli
 aignostics-platform info
 ```
 
@@ -76,8 +76,8 @@ aignostics-platform info
 
 ```bash
 # Clone the repository
-git clone https://github.com/aignostics/platform-typescript-sdk.git
-cd platform-typescript-sdk
+git clone https://github.com/aignostics/typescript-sdk.git
+cd typescript-sdk
 
 # Install dependencies
 npm install
@@ -135,7 +135,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-For support, please open an issue on [GitHub](https://github.com/aignostics/platform-typescript-sdk/issues) or contact the development team.
+For support, please open an issue on [GitHub](https://github.com/aignostics/typescript-sdk/issues) or contact the development team.
 
 ---
 

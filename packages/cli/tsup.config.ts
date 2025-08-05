@@ -11,7 +11,7 @@ export default defineConfig({
   treeshake: true,
   outDir: 'dist',
   external: [
-    '@aignostics/platform-typescript-sdk',
+    '@aignostics/sdk',
     '@napi-rs/keyring',
     'express',
     'keytar',

@@ -118,7 +118,7 @@ if npm publish --registry http://localhost:$VERDACCIO_PORT; then
             set -e
             npm config set @aignostics:registry http://verdaccio-simple-test:4873
             npm config set '//verdaccio-simple-test:4873/:_authToken=anonymous'
-            npm install -g @aignostics/platform-typescript-sdk
+            npm install -g @aignostics/sdk
             aignostics-platform --version
         "
     
