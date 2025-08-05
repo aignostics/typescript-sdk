@@ -5,22 +5,11 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "dist/packages/cli",
-        "main": "packages/cli/src/index.ts",
-        "tsConfig": "packages/cli/tsconfig.app.json",
-        "assets": []
-      },
-      "dependsOn": ["sdk:build"]
-    },
-    "build-bundle": {
       "executor": "nx:run-commands",
       "options": {
         "command": "cd packages/cli && tsup"
       },
-      "dependsOn": ["sdk:build-bundle"]
+      "dependsOn": ["sdk:build"]
     },
     "test": {
       "executor": "@nx/vite:test",

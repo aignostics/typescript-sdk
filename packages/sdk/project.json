@@ -15,17 +15,6 @@
       }
     },
     "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "dist/packages/sdk",
-        "main": "packages/sdk/src/index.ts",
-        "tsConfig": "packages/sdk/tsconfig.lib.json",
-        "assets": []
-      },
-      "dependsOn": ["codegen"]
-    },
-    "build-bundle": {
       "executor": "nx:run-commands",
       "options": {
         "command": "cd packages/sdk && tsup"

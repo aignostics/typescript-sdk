@@ -30,4 +30,4 @@ For detailed API documentation, see the main project documentation.
 
 ## Note
 
-Authentication utilities (AuthService, TokenStorage, etc.) are now part of the CLI package and not exported from the SDK. The SDK focuses solely on API communication and requires you to provide your own token management.
+Authentication utilities are not included in this SDK. The SDK focuses solely on API communication and requires you to provide your own token management.
