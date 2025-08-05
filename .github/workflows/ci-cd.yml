@@ -47,12 +47,23 @@ jobs:
         run: npx nx run-many -t test --coverage
 
       - name: Upload coverage to Codecov
+        if: matrix.node-version == '20.x'
         uses: codecov/codecov-action@v3
         with:
-          files: ./coverage/lcov.info,./packages/*/coverage/lcov.info
+          files: ./packages/sdk/coverage/lcov.info,./packages/cli/coverage/lcov.info
+          token: ${{ secrets.CODECOV_TOKEN }}
           flags: unittests
           name: codecov-umbrella
           fail_ci_if_error: false
+
+      - name: SonarQube Scan
+        if: matrix.node-version == '20.x'
+        uses: SonarSource/sonarqube-scan-action@v5
+        with:
+          args: |
+            -Dsonar.javascript.lcov.reportPaths=packages/sdk/coverage/lcov.info,packages/cli/coverage/lcov.info
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   build-docs:
     runs-on: ubuntu-latest
