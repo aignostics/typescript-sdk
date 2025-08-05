@@ -50,6 +50,21 @@ function runPreCommitHook() {
   const packageLockChanged = hasPackageLockChanged();
   const attributionsUpToDate = isAttributionsUpToDate();
 
+  // Always check license policy if package-lock.json changed
+  if (packageLockChanged) {
+    console.log('🔒 package-lock.json changed - checking license policy...');
+
+    try {
+      execSync('node scripts/check-license-policy.js', {
+        stdio: 'inherit',
+        cwd: process.cwd(),
+      });
+    } catch (error) {
+      console.error('❌ License policy check failed');
+      process.exit(1);
+    }
+  }
+
   if (packageLockChanged || !attributionsUpToDate) {
     console.log('📦 package-lock.json has changed or ATTRIBUTIONS.md is out of date');
     console.log('🔄 Regenerating attributions file...');
