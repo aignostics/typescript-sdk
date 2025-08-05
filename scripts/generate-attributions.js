@@ -357,7 +357,8 @@ async function generateAttributions() {
       if (
         packagePath === '' ||
         packagePath.startsWith('packages/') ||
-        packagePath.includes('@aignostics/platform-')
+        packagePath.includes('@aignostics/sdk') ||
+        packagePath.includes('@aignostics/cli')
       ) {
         continue;
       }
@@ -367,7 +368,8 @@ async function generateAttributions() {
       // Skip duplicates and local packages
       if (
         dependencies.some(dep => dep.name === packageName) ||
-        packageName.includes('@aignostics/platform-')
+        packageName.includes('@aignostics/sdk') ||
+        packageName.includes('@aignostics/cli')
       ) {
         continue;
       }

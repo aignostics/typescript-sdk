@@ -15,7 +15,7 @@ NC='\033[0m' # No Color
 # Configuration
 VERDACCIO_PORT=4873
 VERDACCIO_URL="http://verdaccio-test:4873"
-PACKAGE_NAME="@aignostics/platform-typescript-sdk"
+PACKAGE_NAME="@aignostics/sdk"
 VERDACCIO_CONTAINER="verdaccio-test"
 DOCKER_NETWORK="test-network"
 

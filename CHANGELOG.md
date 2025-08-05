@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented in GitHub Releases.
 
-Please visit the [GitHub Releases page](https://github.com/aignostics/platform-typescript-sdk/releases) to see the full changelog with detailed release notes.
+Please visit the [GitHub Releases page](https://github.com/aignostics/typescript-sdk/releases) to see the full changelog with detailed release notes.
 
 ## Why GitHub Releases?
 
@@ -15,9 +15,9 @@ We use GitHub Releases to automatically generate changelogs from commit messages
 
 ## Quick Links
 
-- 📦 [All Releases](https://github.com/aignostics/platform-typescript-sdk/releases)
-- 🏷️ [Latest Release](https://github.com/aignostics/platform-typescript-sdk/releases/latest)
-- 📋 [Compare Versions](https://github.com/aignostics/platform-typescript-sdk/compare)
+- 📦 [All Releases](https://github.com/aignostics/typescript-sdk/releases)
+- 🏷️ [Latest Release](https://github.com/aignostics/typescript-sdk/releases/latest)
+- 📋 [Compare Versions](https://github.com/aignostics/typescript-sdk/compare)
 
 ## Release Types
 

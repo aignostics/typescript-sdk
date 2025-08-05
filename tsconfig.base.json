@@ -24,8 +24,8 @@
     "preserveConstEnums": true,
     "baseUrl": ".",
     "paths": {
-      "@aignostics/platform-typescript-sdk": ["packages/sdk/src/index.ts"],
-      "@aignostics/platform-cli": ["packages/cli/src/index.ts"]
+      "@aignostics/sdk": ["packages/sdk/src/index.ts"],
+      "@aignostics/cli": ["packages/cli/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
