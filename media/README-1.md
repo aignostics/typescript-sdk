@@ -5,7 +5,7 @@ Command-line interface for the Aignostics Platform.
 ## Installation
 
 ```bash
-npm install -g @aignostics/platform-cli
+npm install -g @aignostics/cli
 ```
 
 ## Usage
