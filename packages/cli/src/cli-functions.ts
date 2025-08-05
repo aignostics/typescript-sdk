@@ -1,7 +1,9 @@
 import { PlatformSDKHttp, type ItemCreationRequest } from '@aignostics/sdk';
-import { AuthService } from './utils/auth.js';
+import { AuthService, type LoginWithCallbackConfig } from './utils/auth.js';
+import { startCallbackServer, waitForCallback } from './utils/oauth-callback-server.js';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import crypto from 'crypto';
 
 // Read package.json synchronously for CommonJS compatibility
 const packageJsonPath = join(__dirname, '../package.json');
@@ -163,5 +165,84 @@ export async function createApplicationRun(
     console.error('❌ Failed to create application run:', error);
     process.exit(1);
     return; // Ensure we don't continue execution in tests
+  }
+}
+
+export async function handleLogin(issuerURL: string, clientID: string, authService: AuthService) {
+  const codeVerifier = crypto.randomBytes(32).toString('hex');
+
+  // Start local server to handle OAuth callback
+  console.log('🔐 Starting authentication process...');
+  const server = await startCallbackServer();
+
+  const address = server.address();
+  const actualPort = typeof address === 'object' && address !== null ? address.port : 8989;
+  const redirectUri = `http://localhost:${actualPort}`;
+
+  const config: LoginWithCallbackConfig = {
+    issuerURL,
+    clientID,
+    redirectUri,
+    codeVerifier,
+    audience: 'https://aignostics-platform-samia',
+    scope: 'openid profile email offline_access',
+  };
+
+  try {
+    // Start the OAuth flow (opens browser)
+    const authorizationUrl = await authService.loginWithCallback(config);
+    console.log('🌐 Opening browser for authentication...');
+    console.log("📝 If the browser doesn't open automatically, visit:");
+    console.log(`   ${authorizationUrl}`);
+    console.log('');
+
+    // Wait for the callback
+    console.log('⏳ Waiting for authentication callback...');
+    const authCode = await waitForCallback(server);
+
+    console.log('✅ Authentication callback received!');
+
+    // Complete the login (exchange code for tokens)
+    await authService.completeLogin(config, authCode);
+
+    console.log('🎉 Login successful! Token saved securely.');
+    console.log('🔑 You are now authenticated and can use the SDK.');
+  } catch (error) {
+    console.error('❌ Authentication failed:', error);
+    throw error;
+  } finally {
+    // Always close the server
+    server.close();
+  }
+}
+
+export async function handleLogout(authService: AuthService): Promise<void> {
+  await authService.logout();
+  console.log('✅ Logged out successfully. Token removed.');
+}
+
+export async function handleStatus(authService: AuthService): Promise<void> {
+  try {
+    const authState = await authService.getAuthState();
+
+    if (authState.isAuthenticated && authState.token) {
+      console.log('✅ Authenticated');
+      console.log('Token details:');
+      console.log(`  - Type: ${authState.token.type}`);
+      console.log(`  - Scope: ${authState.token.scope}`);
+
+      if (authState.token.expiresAt) {
+        console.log(`  - Expires: ${authState.token.expiresAt.toLocaleString()}`);
+      } else {
+        console.log('  - Expires: Never');
+      }
+
+      console.log(`  - Stored: ${authState.token.storedAt.toLocaleString()}`);
+    } else {
+      console.log('❌ Not authenticated. Run "aignostics-platform login" to authenticate.');
+    }
+  } catch (error) {
+    console.error('❌ Error checking status:', error);
+    process.exit(1);
   }
 }

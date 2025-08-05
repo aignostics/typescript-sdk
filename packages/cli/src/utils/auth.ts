@@ -1,7 +1,5 @@
-import crypto from 'node:crypto';
 import { z } from 'zod';
 import { Issuer, generators } from 'openid-client';
-import { startCallbackServer, waitForCallback } from './oauth-callback-server.js';
 
 /**
  * Authentication utilities for the Aignostics Platform SDK
@@ -76,8 +74,6 @@ export class AuthService {
   async loginWithCallback(config: LoginWithCallbackConfig): Promise<string> {
     const open = (await import('open')).default;
 
-    console.log('🔐 Starting authentication process...');
-
     try {
       const issuer = await Issuer.discover(config.issuerURL);
       const client = new issuer.Client({
@@ -97,12 +93,6 @@ export class AuthService {
         code_challenge: codeChallenge,
         code_challenge_method: 'S256',
       });
-
-      console.log('🌐 Opening browser for authentication...');
-      console.log("📝 If the browser doesn't open automatically, visit:");
-      console.log(`   ${authorizationUrl}`);
-      console.log('');
-      console.log('⏳ Waiting for authentication callback...');
 
       await open(authorizationUrl);
 
@@ -128,8 +118,6 @@ export class AuthService {
         token_endpoint_auth_method: 'none',
       });
 
-      console.log('✅ Authentication callback received!');
-
       // Exchange authorization code for tokens
       const tokenSet = await client.callback(
         config.redirectUri,
@@ -145,9 +133,6 @@ export class AuthService {
         token_type: tokenSet.token_type,
         scope: tokenSet.scope,
       });
-
-      console.log('🎉 Login successful! Token saved securely.');
-      console.log('🔑 You are now authenticated and can use the SDK.');
     } catch (error) {
       console.error('❌ Token exchange failed:', error);
       throw error;
@@ -259,54 +244,11 @@ export class AuthService {
   }
 
   /**
-   * Perform OAuth2 PKCE login flow
-   * @deprecated Use loginWithCallback and completeLogin for better server lifecycle management
-   */
-  async login(config: LoginConfig): Promise<void> {
-    const codeVerifier = crypto.randomBytes(32).toString('hex');
-
-    // Start local server to handle OAuth callback
-    const server = await startCallbackServer();
-    const address = server.address();
-    const actualPort = typeof address === 'object' && address !== null ? address.port : 8989;
-    const redirectUri = `http://localhost:${actualPort}`;
-
-    try {
-      // Start the OAuth flow
-      await this.loginWithCallback({
-        ...config,
-        redirectUri,
-        codeVerifier,
-      });
-
-      // Wait for the callback
-      const authCode = await waitForCallback(server);
-
-      // Complete the login
-      await this.completeLogin(
-        {
-          ...config,
-          redirectUri,
-          codeVerifier,
-        },
-        authCode
-      );
-    } catch (error) {
-      console.error('❌ Authentication failed:', error);
-      throw error;
-    } finally {
-      // Always close the server
-      server.close();
-    }
-  }
-
-  /**
    * Logout and remove stored tokens
    */
   async logout(): Promise<void> {
     try {
       await this.tokenStorage.remove();
-      console.log('✅ Logged out successfully. Token removed.');
     } catch (error) {
       console.error('❌ Error during logout:', error);
       throw error;

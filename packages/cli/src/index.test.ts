@@ -9,19 +9,6 @@ describe('CLI Entry Point', () => {
     expect(typeof indexModule.main).toBe('function');
   });
 
-  it('should export all CLI handler functions', async () => {
-    const indexModule = await import('./index.js');
-
-    expect(indexModule.handleLogin).toBeDefined();
-    expect(typeof indexModule.handleLogin).toBe('function');
-
-    expect(indexModule.handleLogout).toBeDefined();
-    expect(typeof indexModule.handleLogout).toBe('function');
-
-    expect(indexModule.handleStatus).toBeDefined();
-    expect(typeof indexModule.handleStatus).toBe('function');
-  });
-
   it('should check if module is main using fileURLToPath', () => {
     // Test the logic for determining if this is the main module
     const testFilename = '/test/cli/index.js';

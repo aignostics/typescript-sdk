@@ -8,10 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const isMainModule = process.argv[1] === __filename || process.argv[1]?.endsWith('/cli/index.cjs');
 
 if (isMainModule) {
-  main().catch(error => {
-    console.error('CLI Error:', error);
-    process.exit(1);
-  });
+  void main();
 }
 
 export * from './cli.js';
