@@ -1,8 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { AuthService } from './auth.js';
-import http from 'node:http';
-import { BaseClient, Issuer } from 'openid-client';
-import { ChildProcess } from 'node:child_process';
 
 // Mock external dependencies
 vi.mock('open', () => ({
@@ -16,11 +13,6 @@ vi.mock('openid-client', () => ({
   generators: {
     codeChallenge: vi.fn(() => 'mock-code-challenge'),
   },
-}));
-
-vi.mock('./oauth-callback-server.js', () => ({
-  startCallbackServer: vi.fn(),
-  waitForCallback: vi.fn(),
 }));
 
 vi.mock('node:http', () => ({
@@ -228,7 +220,6 @@ describe('AuthService', () => {
       await authService.logout();
 
       expect(mockTokenStorage.remove).toHaveBeenCalled();
-      expect(consoleSpy.log).toHaveBeenCalledWith('✅ Logged out successfully. Token removed.');
     });
 
     it('should handle storage errors and throw an error', async () => {
@@ -242,95 +233,6 @@ describe('AuthService', () => {
       }
 
       expect(consoleSpy.error).toHaveBeenCalledWith('❌ Error during logout:', expect.any(Error));
-    });
-  });
-
-  describe('login', () => {
-    it('should handle OAuth flow errors gracefully', async () => {
-      const { Issuer } = await import('openid-client');
-      const { startCallbackServer } = await import('./oauth-callback-server.js');
-
-      // Mock the callback server first (since it's called before OAuth discovery)
-      const mockServer = {
-        address: vi.fn(() => ({ port: 8989 })),
-        close: vi.fn(),
-      };
-      vi.mocked(startCallbackServer).mockResolvedValue(mockServer as unknown as http.Server);
-
-      // Then mock the OAuth discovery to fail
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      vi.mocked(Issuer.discover).mockRejectedValue(new Error('Network error'));
-
-      const config = {
-        issuerURL: 'https://example.com/oauth',
-        clientID: 'test-client-id',
-      };
-
-      await expect(authService.login(config)).rejects.toThrow('Network error');
-
-      // Verify server was closed even on error
-      expect(mockServer.close).toHaveBeenCalled();
-    });
-
-    it('should complete OAuth flow successfully', async () => {
-      const { Issuer, generators } = await import('openid-client');
-      const { startCallbackServer, waitForCallback } = await import('./oauth-callback-server.js');
-
-      // Mock server
-      const mockServer = {
-        address: vi.fn(() => ({ port: 8989 })),
-        close: vi.fn(),
-      };
-      vi.mocked(startCallbackServer).mockResolvedValue(mockServer as unknown as http.Server);
-      vi.mocked(waitForCallback).mockResolvedValue('test-auth-code');
-
-      // Mock OAuth client and token exchange
-      const mockClient = {
-        authorizationUrl: vi.fn(() => 'https://example.com/auth?code_challenge=...'),
-        callback: vi.fn(() => ({
-          access_token: 'test-access-token',
-          refresh_token: 'test-refresh-token',
-          expires_in: 3600,
-          token_type: 'Bearer',
-          scope: 'openid profile email',
-        })),
-      };
-      const mockIssuer = {
-        Client: vi.fn(() => mockClient),
-      };
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      vi.mocked(Issuer.discover).mockResolvedValue(mockIssuer as unknown as Issuer<BaseClient>);
-
-      vi.mocked(generators.codeChallenge).mockReturnValue('mock-code-challenge');
-
-      // Mock open function
-      const { default: open } = await import('open');
-
-      vi.mocked(open).mockResolvedValue({} as ChildProcess);
-
-      // Mock tokenStorage.saveData
-      mockTokenStorage.save.mockResolvedValue(undefined);
-
-      const config = {
-        issuerURL: 'https://example.com/oauth',
-        clientID: 'test-client-id',
-      };
-
-      await authService.login(config);
-
-      // Verify that save was called with the token
-      expect(mockTokenStorage.save).toHaveBeenCalledWith({
-        access_token: 'test-access-token',
-        refresh_token: 'test-refresh-token',
-        expires_in: 3600,
-        token_type: 'Bearer',
-        scope: 'openid profile email',
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        stored_at: expect.any(Number),
-      });
-
-      // Verify server was closed
-      expect(mockServer.close).toHaveBeenCalled();
     });
   });
 });

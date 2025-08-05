@@ -1,8 +1,7 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { AuthService, type LoginWithCallbackConfig } from './utils/auth.js';
+import { AuthService } from './utils/auth.js';
 import { FileSystemTokenStorage } from './utils/token-storage.js';
-import { startCallbackServer, waitForCallback } from './utils/oauth-callback-server.js';
 
 import {
   handleInfo,
@@ -14,8 +13,10 @@ import {
   cancelApplicationRun,
   listRunResults,
   createApplicationRun,
+  handleLogin,
+  handleLogout,
+  handleStatus,
 } from './cli-functions.js';
-import crypto from 'crypto';
 
 // Create a shared auth service instance for the CLI
 const authService = new AuthService(new FileSystemTokenStorage());
@@ -180,23 +181,25 @@ export async function main() {
         issuerURL: {
           describe: 'Issuer URL for OpenID Connect',
           type: 'string',
+          // defaults to the production issues URL
           default: 'https://aignostics-platform.eu.auth0.com/oauth',
         },
         clientID: {
           describe: 'Client ID for the application',
           type: 'string',
+          // defaults to the production client id
           default: 'YtJ7F9lAtxx16SZGQlYPe6wcjlXB78MM',
         },
       },
       async argv => {
-        await handleLogin(argv.issuerURL, argv.clientID);
+        await handleLogin(argv.issuerURL, argv.clientID, authService);
       }
     )
     .command('logout', 'Logout and remove stored token', {}, async () => {
-      await handleLogout();
+      await handleLogout(authService);
     })
     .command('status', 'Check authentication status', {}, async () => {
-      await handleStatus();
+      await handleStatus(authService);
     })
     .help()
     .alias('help', 'h')
@@ -204,77 +207,4 @@ export async function main() {
     .alias('version', 'v')
     .demandCommand(1, 'You need at least one command before moving on')
     .parse();
-}
-
-export async function handleLogin(issuerURL: string, clientID: string) {
-  const codeVerifier = crypto.randomBytes(32).toString('hex');
-
-  // Start local server to handle OAuth callback
-  console.log('🔐 Starting authentication process...');
-  const server = await startCallbackServer();
-  const address = server.address();
-  const actualPort = typeof address === 'object' && address !== null ? address.port : 8989;
-  const redirectUri = `http://localhost:${actualPort}`;
-
-  const config: LoginWithCallbackConfig = {
-    issuerURL,
-    clientID,
-    redirectUri,
-    codeVerifier,
-    audience: 'https://aignostics-platform-samia',
-    scope: 'openid profile email offline_access',
-  };
-
-  try {
-    // Start the OAuth flow (opens browser)
-    await authService.loginWithCallback(config);
-
-    // Wait for the callback
-    console.log('⏳ Waiting for authentication callback...');
-    const authCode = await waitForCallback(server);
-
-    console.log('✅ Authentication callback received!');
-
-    // Complete the login (exchange code for tokens)
-    await authService.completeLogin(config, authCode);
-
-    console.log('🎉 Login successful! Token saved securely.');
-    console.log('🔑 You are now authenticated and can use the SDK.');
-  } catch (error) {
-    console.error('❌ Authentication failed:', error);
-    throw error;
-  } finally {
-    // Always close the server
-    server.close();
-  }
-}
-
-export async function handleLogout(): Promise<void> {
-  await authService.logout();
-}
-
-export async function handleStatus(): Promise<void> {
-  try {
-    const authState = await authService.getAuthState();
-
-    if (authState.isAuthenticated && authState.token) {
-      console.log('✅ Authenticated');
-      console.log('Token details:');
-      console.log(`  - Type: ${authState.token.type}`);
-      console.log(`  - Scope: ${authState.token.scope}`);
-
-      if (authState.token.expiresAt) {
-        console.log(`  - Expires: ${authState.token.expiresAt.toLocaleString()}`);
-      } else {
-        console.log('  - Expires: Never');
-      }
-
-      console.log(`  - Stored: ${authState.token.storedAt.toLocaleString()}`);
-    } else {
-      console.log('❌ Not authenticated. Run "aignostics-platform login" to authenticate.');
-    }
-  } catch (error) {
-    console.error('❌ Error checking status:', error);
-    process.exit(1);
-  }
 }

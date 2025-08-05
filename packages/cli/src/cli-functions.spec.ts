@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+/* eslint-disable @typescript-eslint/unbound-method */
+import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import {
   handleInfo,
   testApi,
@@ -9,9 +10,18 @@ import {
   cancelApplicationRun,
   listRunResults,
   createApplicationRun,
+  handleLogin,
+  handleLogout,
+  handleStatus,
 } from './cli-functions.js';
 import { PlatformSDK, PlatformSDKHttp } from '@aignostics/sdk';
-import { AuthService } from './utils/auth.js';
+import { AuthService, AuthState } from './utils/auth.js';
+import { startCallbackServer, waitForCallback } from './utils/oauth-callback-server.js';
+import crypto from 'crypto';
+
+// Mock external dependencies
+vi.mock('./utils/oauth-callback-server');
+vi.mock('crypto');
 
 // Mock process.exit to prevent test runner from exiting
 const mockExit = vi.fn();
@@ -43,10 +53,8 @@ const mockAuthService = {
   getValidAccessToken: vi.fn().mockResolvedValue('mock-token'),
   loginWithCallback: vi.fn(),
   completeLogin: vi.fn(),
-  refreshToken: vi.fn(),
   logout: vi.fn(),
-  getStoredToken: vi.fn(),
-  isAuthenticated: vi.fn(),
+  getAuthState: vi.fn(),
 } as unknown as AuthService;
 
 // Mock package.json
@@ -453,6 +461,249 @@ describe('CLI Functions Unit Tests', () => {
         expect.any(Error)
       );
       expect(mockExit).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('handleLogin', () => {
+    const mockAuthCode = 'test-auth-code';
+    const mockCodeVerifier = 'test-code-verifier';
+    const mockCodeVerifierHex = Buffer.from(mockCodeVerifier, 'utf-8').toString('hex');
+    // Mock console methods
+    const mockConsole = {
+      log: vi.fn(),
+      error: vi.fn(),
+    };
+    const mockServer = {
+      address: vi.fn().mockReturnValue({ port: 8989 }),
+      close: vi.fn(),
+    };
+
+    beforeEach(() => {
+      vi.spyOn(console, 'log').mockImplementation(mockConsole.log);
+      vi.spyOn(console, 'error').mockImplementation(mockConsole.error);
+      (crypto.randomBytes as Mock).mockReturnValue(Buffer.from(mockCodeVerifier, 'utf-8'));
+      (startCallbackServer as Mock).mockResolvedValue(mockServer);
+    });
+
+    it('should complete login flow successfully', async () => {
+      (waitForCallback as Mock).mockResolvedValue(mockAuthCode);
+      vi.mocked(mockAuthService.loginWithCallback).mockResolvedValue('');
+      vi.mocked(mockAuthService.completeLogin).mockResolvedValue(undefined);
+
+      await handleLogin('https://test-issuer.com', 'test-client-id', mockAuthService);
+
+      // Verify the flow
+      expect(crypto.randomBytes).toHaveBeenCalledWith(32);
+      expect(startCallbackServer).toHaveBeenCalled();
+      expect(mockAuthService.loginWithCallback).toHaveBeenCalledWith({
+        issuerURL: 'https://test-issuer.com',
+        clientID: 'test-client-id',
+        redirectUri: 'http://localhost:8989',
+        codeVerifier: mockCodeVerifierHex,
+        audience: 'https://aignostics-platform-samia',
+        scope: 'openid profile email offline_access',
+      });
+      expect(waitForCallback).toHaveBeenCalledWith(mockServer);
+      expect(mockAuthService.completeLogin).toHaveBeenCalledWith(
+        {
+          issuerURL: 'https://test-issuer.com',
+          clientID: 'test-client-id',
+          redirectUri: 'http://localhost:8989',
+          codeVerifier: mockCodeVerifierHex,
+          audience: 'https://aignostics-platform-samia',
+          scope: 'openid profile email offline_access',
+        },
+        mockAuthCode
+      );
+      expect(mockServer.close).toHaveBeenCalled();
+    });
+
+    it('should handle server address as number', async () => {
+      const mockServer = {
+        address: vi.fn().mockReturnValue(8990),
+        close: vi.fn(),
+      };
+
+      (startCallbackServer as Mock).mockResolvedValue(mockServer);
+      (waitForCallback as Mock).mockResolvedValue('auth-code');
+      vi.mocked(mockAuthService.loginWithCallback).mockResolvedValue('');
+      vi.mocked(mockAuthService.completeLogin).mockResolvedValue(undefined);
+
+      await handleLogin('https://test-issuer.com', 'test-client-id', mockAuthService);
+
+      expect(mockAuthService.loginWithCallback).toHaveBeenCalledWith(
+        expect.objectContaining({
+          redirectUri: 'http://localhost:8989', // Should fallback to 8989
+        })
+      );
+    });
+
+    it('should handle authentication errors and close server', async () => {
+      const mockError = new Error('Authentication failed');
+
+      vi.mocked(mockAuthService.loginWithCallback).mockRejectedValue(mockError);
+
+      await expect(
+        handleLogin('https://test-issuer.com', 'test-client-id', mockAuthService)
+      ).rejects.toThrow('Authentication failed');
+
+      expect(mockConsole.error).toHaveBeenCalledWith('❌ Authentication failed:', mockError);
+      expect(mockServer.close).toHaveBeenCalled();
+    });
+
+    it('should handle callback wait errors and close server', async () => {
+      const mockError = new Error('Callback timeout');
+
+      vi.mocked(mockAuthService.loginWithCallback).mockResolvedValue('');
+      (waitForCallback as Mock).mockRejectedValue(mockError);
+
+      await expect(
+        handleLogin('https://test-issuer.com', 'test-client-id', mockAuthService)
+      ).rejects.toThrow('Callback timeout');
+
+      expect(mockConsole.error).toHaveBeenCalledWith('❌ Authentication failed:', mockError);
+      expect(mockServer.close).toHaveBeenCalled();
+    });
+
+    it('should handle token exchange errors and close server', async () => {
+      const mockError = new Error('Token exchange failed');
+
+      (waitForCallback as Mock).mockResolvedValue('auth-code');
+      vi.mocked(mockAuthService.loginWithCallback).mockResolvedValue('');
+      vi.mocked(mockAuthService.completeLogin).mockRejectedValue(mockError);
+
+      await expect(
+        handleLogin('https://test-issuer.com', 'test-client-id', mockAuthService)
+      ).rejects.toThrow('Token exchange failed');
+
+      expect(mockConsole.error).toHaveBeenCalledWith('❌ Authentication failed:', mockError);
+      expect(mockServer.close).toHaveBeenCalled();
+    });
+  });
+
+  describe('handleLogout', () => {
+    // Mock console methods
+    const mockConsole = {
+      log: vi.fn(),
+      error: vi.fn(),
+    };
+
+    beforeEach(() => {
+      vi.spyOn(console, 'log').mockImplementation(mockConsole.log);
+      vi.spyOn(console, 'error').mockImplementation(mockConsole.error);
+    });
+
+    it('should call logout function', async () => {
+      vi.mocked(mockAuthService.logout).mockResolvedValue(undefined);
+
+      await handleLogout(mockAuthService);
+
+      expect(mockAuthService.logout).toHaveBeenCalled();
+    });
+
+    it('should handle logout errors', async () => {
+      const mockError = new Error('Logout failed');
+      vi.mocked(mockAuthService.logout).mockRejectedValue(mockError);
+
+      await expect(handleLogout(mockAuthService)).rejects.toThrow('Logout failed');
+    });
+  });
+
+  describe('handleStatus', () => {
+    // Mock console methods
+    const mockConsole = {
+      log: vi.fn(),
+      error: vi.fn(),
+    };
+
+    beforeEach(() => {
+      vi.spyOn(console, 'log').mockImplementation(mockConsole.log);
+      vi.spyOn(console, 'error').mockImplementation(mockConsole.error);
+
+      // Mock process.exit
+      vi.spyOn(process, 'exit').mockImplementation(() => {
+        throw new Error('process.exit called');
+      });
+    });
+
+    it('should display authenticated status with expiring token', async () => {
+      const mockExpiresAt = new Date('2025-01-01T12:59:59.000Z');
+      const mockStoredAt = new Date('2024-12-01T10:00:00.000Z');
+
+      const mockAuthState: AuthState = {
+        isAuthenticated: true,
+        token: {
+          type: 'Bearer',
+          scope: 'openid profile email offline_access',
+          expiresAt: mockExpiresAt,
+          storedAt: mockStoredAt,
+        },
+      };
+
+      vi.mocked(mockAuthService.getAuthState).mockResolvedValue(mockAuthState);
+
+      await handleStatus(mockAuthService);
+
+      expect(mockConsole.log).toHaveBeenCalledWith('✅ Authenticated');
+      expect(mockConsole.log).toHaveBeenCalledWith('Token details:');
+      expect(mockConsole.log).toHaveBeenCalledWith('  - Type: Bearer');
+      expect(mockConsole.log).toHaveBeenCalledWith(
+        '  - Scope: openid profile email offline_access'
+      );
+      expect(mockConsole.log).toHaveBeenCalledWith(
+        `  - Expires: ${mockExpiresAt.toLocaleString()}`
+      );
+      expect(mockConsole.log).toHaveBeenCalledWith(`  - Stored: ${mockStoredAt.toLocaleString()}`);
+    });
+
+    it('should display authenticated status with non-expiring token', async () => {
+      const mockStoredAt = new Date('2024-12-01T10:00:00.000Z');
+
+      const mockAuthState: AuthState = {
+        isAuthenticated: true,
+        token: {
+          type: 'Bearer',
+          scope: 'openid profile email offline_access',
+          expiresAt: undefined,
+          storedAt: mockStoredAt,
+        },
+      };
+
+      vi.mocked(mockAuthService.getAuthState).mockResolvedValue(mockAuthState);
+
+      await handleStatus(mockAuthService);
+
+      expect(mockConsole.log).toHaveBeenCalledWith('✅ Authenticated');
+      expect(mockConsole.log).toHaveBeenCalledWith('Token details:');
+      expect(mockConsole.log).toHaveBeenCalledWith('  - Type: Bearer');
+      expect(mockConsole.log).toHaveBeenCalledWith(
+        '  - Scope: openid profile email offline_access'
+      );
+      expect(mockConsole.log).toHaveBeenCalledWith('  - Expires: Never');
+      expect(mockConsole.log).toHaveBeenCalledWith(`  - Stored: ${mockStoredAt.toLocaleString()}`);
+    });
+
+    it('should display not authenticated status', async () => {
+      const mockAuthState: AuthState = {
+        isAuthenticated: false,
+      };
+
+      vi.mocked(mockAuthService.getAuthState).mockResolvedValue(mockAuthState);
+
+      await handleStatus(mockAuthService);
+
+      expect(mockConsole.log).toHaveBeenCalledWith(
+        '❌ Not authenticated. Run "aignostics-platform login" to authenticate.'
+      );
+    });
+
+    it('should handle auth state check errors', async () => {
+      const mockError = new Error('Failed to check auth state');
+      vi.mocked(mockAuthService.getAuthState).mockRejectedValue(mockError);
+
+      await expect(handleStatus(mockAuthService)).rejects.toThrow('process.exit called');
+
+      expect(mockConsole.error).toHaveBeenCalledWith('❌ Error checking status:', mockError);
     });
   });
 });
