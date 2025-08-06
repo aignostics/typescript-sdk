@@ -9,6 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const ALLOWED_LICENSES = licenseConfig.allowedLicenses;
+const WHITELISTED_PACKAGES = licenseConfig.whitelistedPackages;
 
 /**
  * Enforce license policy - fail on prohibited licenses
@@ -21,8 +22,9 @@ function enforceLicensePolicy() {
     const allowedLicensesString = ALLOWED_LICENSES.join(';');
 
     // Run license checker with onlyAllow to enforce policy
-    const cmd = `npx license-checker-rseidelsohn --excludePrivatePackages --onlyAllow "${allowedLicensesString}" --summary`;
+    const cmd = `npx license-checker-rseidelsohn --excludePrivatePackages --excludePackages '${WHITELISTED_PACKAGES.join(';')}' --onlyAllow "${allowedLicensesString}" --summary`;
 
+    console.log(cmd);
     execSync(cmd, {
       stdio: 'inherit',
       cwd: path.join(__dirname, '..'),

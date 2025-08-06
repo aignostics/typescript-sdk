@@ -60,7 +60,7 @@ function runPreCommitHook() {
         cwd: process.cwd(),
       });
     } catch (error) {
-      console.error('❌ License policy check failed');
+      console.error('❌ License policy check failed', error.message);
       process.exit(1);
     }
   }

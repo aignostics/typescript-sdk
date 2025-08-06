@@ -44,3 +44,7 @@ packages/sdk/src/generated/
 # Temporary files
 *.tmp
 *.temp
+
+# Next.js
+.next
+out
