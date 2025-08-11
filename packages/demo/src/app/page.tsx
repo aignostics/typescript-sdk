@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import TriggerApplicationRunModal from './components/TriggerApplicationRunModal';
+import VisualizationModal from './components/VisualizationModal';
 
 // Type definition for a Run based on the SDK's RunReadResponse
 interface Run {
@@ -62,6 +63,7 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedRun, setSelectedRun] = useState<Run | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isVisualizationModalOpen, setIsVisualizationModalOpen] = useState(false);
 
   const fetchRuns = async () => {
     if (!session) return;
@@ -304,16 +306,40 @@ export default function HomePage() {
               </div>
               <h4 className="text-lg font-medium text-gray-900 mb-2">Results Visualization</h4>
               <p className="text-gray-600 mb-4">
-                Processing results and analysis data for this application run would appear here.
+                Processing results and analysis data for this application run.
                 <br />
-                This could include charts, tables, processed images, or other result data.
+                {selectedRun.status === 'COMPLETED'
+                  ? 'Click below to view the interactive visualization.'
+                  : 'Visualization will be available once the run completes successfully.'}
               </p>
-              <div className="mt-4 space-y-1 text-sm text-gray-500">
+              <div className="mt-4 space-y-1 text-sm text-gray-500 mb-6">
                 <div>Run ID: {selectedRun.application_run_id}</div>
                 <div>Status: {selectedRun.status}</div>
                 <div>Triggered: {formatTimestamp(selectedRun.triggered_at)}</div>
                 <div>Application Version: {selectedRun.application_version_id}</div>
               </div>
+              {selectedRun.status === 'COMPLETED' && (
+                <button
+                  onClick={() => setIsVisualizationModalOpen(true)}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 inline-flex items-center space-x-2"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                    />
+                  </svg>
+                  <span>View Visualization</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -324,6 +350,14 @@ export default function HomePage() {
         onClose={() => setIsModalOpen(false)}
         onRunTriggered={handleRunTriggered}
       />
+
+      {selectedRun && (
+        <VisualizationModal
+          isOpen={isVisualizationModalOpen}
+          onClose={() => setIsVisualizationModalOpen(false)}
+          runId={selectedRun.application_run_id}
+        />
+      )}
     </div>
   );
 }

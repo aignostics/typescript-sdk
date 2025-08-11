@@ -18,7 +18,7 @@ export async function GET() {
     });
 
     // Fetch application runs using the SDK
-    const runs = await sdk.listApplicationRuns();
+    const runs = await sdk.listApplicationRuns({ sort: ['-triggered_at'] });
 
     return NextResponse.json({
       runs: runs || [],

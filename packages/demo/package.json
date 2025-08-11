@@ -19,6 +19,7 @@
     "react-dom": "19.0.0"
   },
   "devDependencies": {
+    "@nx/eslint-plugin": "^21.3.11",
     "@tailwindcss/postcss": "^4.1.11",
     "@types/node": "^24.0.13",
     "@types/react": "19.0.0",
