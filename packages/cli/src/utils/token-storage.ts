@@ -22,7 +22,7 @@ import { type TokenStorage } from './auth.js';
  * const TokenSchema = z.object({
  *   access_token: z.string(),
  *   refresh_token: z.string().optional(),
- *   expires_in: z.number().optional(),
+ *   expires_at: z.number().optional(),
  *   stored_at: z.number(),
  * });
  *
@@ -35,7 +35,7 @@ import { type TokenStorage } from './auth.js';
  *
  *   const token = result.data;
  *   // Check expiration
- *   if (token.expires_in && Date.now() > token.stored_at + token.expires_in * 1000) {
+ *   if (token.expires_at && Date.now() > token.expires_at) {
  *     return null;
  *   }
  *
