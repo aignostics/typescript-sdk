@@ -145,3 +145,12 @@ jobs:
           NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         working-directory: packages/cli
         run: npx semantic-release
+  codeql:
+    if: (!contains(github.event.head_commit.message, 'skip:ci'))
+    uses: ./.github/workflows/_codeql.yml
+    permissions:
+      actions: read
+      contents: read
+      packages: read
+      security-events: write
+    secrets: inherit
