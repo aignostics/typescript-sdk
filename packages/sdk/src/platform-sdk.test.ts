@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { PlatformSDKHttp } from './platform-sdk.js';
+import { AuthenticationError } from './errors.js';
 import { setMockScenario } from './test-utils/http-mocks.js';
 
 describe('PlatformSDK', () => {
@@ -56,7 +57,7 @@ describe('PlatformSDK', () => {
     mockTokenProvider.mockResolvedValue('mocked-token');
 
     // Use mock server with error response
-    setMockScenario('error');
+    setMockScenario('validationError');
 
     await expect(sdk.testConnection()).rejects.toThrow('Connection test failed');
   });
@@ -65,6 +66,7 @@ describe('PlatformSDK', () => {
     // Mock token provider to return null (indicating no token available)
     mockTokenProvider.mockResolvedValue(null);
 
+    await expect(sdk.testConnection()).rejects.toThrow(AuthenticationError);
     await expect(sdk.testConnection()).rejects.toThrow(
       'No access token available. Please provide a tokenProvider in the SDK configuration that returns a valid token.'
     );
@@ -74,6 +76,7 @@ describe('PlatformSDK', () => {
     // Mock token provider to return undefined (indicating no token available)
     mockTokenProvider.mockResolvedValue(undefined);
 
+    await expect(sdk.testConnection()).rejects.toThrow(AuthenticationError);
     await expect(sdk.testConnection()).rejects.toThrow(
       'No access token available. Please provide a tokenProvider in the SDK configuration that returns a valid token.'
     );
@@ -95,9 +98,11 @@ describe('PlatformSDK', () => {
     mockTokenProvider.mockResolvedValue('mocked-token');
 
     // Use mock server with error response
-    setMockScenario('error');
+    setMockScenario('internalServerError');
 
-    await expect(sdk.listApplications()).rejects.toThrow('list applications failed');
+    await expect(sdk.listApplications()).rejects.toThrow(
+      'API request failed: Request failed with status code 500'
+    );
   });
 
   it('should list application versions successfully', async () => {
@@ -120,10 +125,10 @@ describe('PlatformSDK', () => {
     mockTokenProvider.mockResolvedValue('mocked-token');
 
     // Use mock server with error response
-    setMockScenario('error');
+    setMockScenario('notFoundError');
 
     await expect(sdk.listApplicationVersions('test-app-id')).rejects.toThrow(
-      'list application versions failed'
+      'Resource not found: '
     );
   });
 
@@ -160,9 +165,9 @@ describe('PlatformSDK', () => {
     mockTokenProvider.mockResolvedValue('mocked-token');
 
     // Use mock server with error response
-    setMockScenario('error');
+    setMockScenario('notFoundError');
 
-    await expect(sdk.listApplicationRuns()).rejects.toThrow('list application runs failed');
+    await expect(sdk.listApplicationRuns()).rejects.toThrow('Resource not found: ');
   });
 
   it('should get run successfully', async () => {
@@ -183,9 +188,9 @@ describe('PlatformSDK', () => {
     mockTokenProvider.mockResolvedValue('mocked-token');
 
     // Use mock server with error response
-    setMockScenario('error');
+    setMockScenario('notFoundError');
 
-    await expect(sdk.getRun('test-run-id')).rejects.toThrow('get run failed');
+    await expect(sdk.getRun('test-run-id')).rejects.toThrow('Resource not found: ');
   });
 
   it('should cancel application run successfully', async () => {
@@ -204,11 +209,9 @@ describe('PlatformSDK', () => {
     mockTokenProvider.mockResolvedValue('mocked-token');
 
     // Use mock server with error response
-    setMockScenario('error');
+    setMockScenario('notFoundError');
 
-    await expect(sdk.cancelApplicationRun('test-run-id')).rejects.toThrow(
-      'cancel application run failed'
-    );
+    await expect(sdk.cancelApplicationRun('test-run-id')).rejects.toThrow('Resource not found: ');
   });
 
   it('should list run results successfully', async () => {
@@ -231,9 +234,9 @@ describe('PlatformSDK', () => {
     mockTokenProvider.mockResolvedValue('mocked-token');
 
     // Use mock server with error response
-    setMockScenario('error');
+    setMockScenario('notFoundError');
 
-    await expect(sdk.listRunResults('test-run-id')).rejects.toThrow('list run results failed');
+    await expect(sdk.listRunResults('test-run-id')).rejects.toThrow('Resource not found: ');
   });
 
   it('should create application run successfully', async () => {
@@ -275,7 +278,7 @@ describe('PlatformSDK', () => {
     mockTokenProvider.mockResolvedValue('mocked-token');
 
     // Use mock server with error response
-    setMockScenario('error');
+    setMockScenario('notFoundError');
 
     const runRequest = {
       application_version_id: 'test-app:v1.0.0',
@@ -296,9 +299,7 @@ describe('PlatformSDK', () => {
       ],
     };
 
-    await expect(sdk.createApplicationRun(runRequest)).rejects.toThrow(
-      'create application run failed'
-    );
+    await expect(sdk.createApplicationRun(runRequest)).rejects.toThrow('Resource not found: ');
   });
 
   it('should handle no token for new methods', async () => {
@@ -308,16 +309,32 @@ describe('PlatformSDK', () => {
     const errorMessage =
       'No access token available. Please provide a tokenProvider in the SDK configuration that returns a valid token.';
 
+    await expect(sdk.listApplicationVersions('test-app-id')).rejects.toThrow(AuthenticationError);
     await expect(sdk.listApplicationVersions('test-app-id')).rejects.toThrow(errorMessage);
+
+    await expect(sdk.listApplicationRuns()).rejects.toThrow(AuthenticationError);
     await expect(sdk.listApplicationRuns()).rejects.toThrow(errorMessage);
+
+    await expect(
+      sdk.createApplicationRun({
+        application_version_id: 'test-app:v1.0.0',
+        items: [],
+      })
+    ).rejects.toThrow(AuthenticationError);
     await expect(
       sdk.createApplicationRun({
         application_version_id: 'test-app:v1.0.0',
         items: [],
       })
     ).rejects.toThrow(errorMessage);
+
+    await expect(sdk.getRun('test-run-id')).rejects.toThrow(AuthenticationError);
     await expect(sdk.getRun('test-run-id')).rejects.toThrow(errorMessage);
+
+    await expect(sdk.cancelApplicationRun('test-run-id')).rejects.toThrow(AuthenticationError);
     await expect(sdk.cancelApplicationRun('test-run-id')).rejects.toThrow(errorMessage);
+
+    await expect(sdk.listRunResults('test-run-id')).rejects.toThrow(AuthenticationError);
     await expect(sdk.listRunResults('test-run-id')).rejects.toThrow(errorMessage);
   });
 });

@@ -8,6 +8,55 @@ import {
   RunCreationResponse,
   PublicApi,
 } from './generated/index.js';
+import { APIError, AuthenticationError, UnexpectedError } from './errors.js';
+import { isAxiosError } from 'axios';
+import z from 'zod';
+
+const validationErrorSchema = z.object({
+  detail: z.array(
+    z.object({
+      loc: z.array(z.union([z.string(), z.number()])),
+      msg: z.string(),
+      type: z.string(),
+    })
+  ),
+});
+
+const errorResponseSchema = z.union([validationErrorSchema, z.any()]);
+
+function handleRequestError(error: unknown): never {
+  if (isAxiosError(error)) {
+    switch (error.status) {
+      case 422: {
+        throw new APIError(`Validation error: ${error.message}`, {
+          context: {
+            responseBody: validationErrorSchema.parse(error.response?.data),
+          },
+          originalError: error,
+          statusCode: 422,
+        });
+      }
+      case 404: {
+        throw new APIError(`Resource not found: ${error.message}`, {
+          context: {
+            responseBody: errorResponseSchema.parse(error.response?.data),
+          },
+          originalError: error,
+          statusCode: 404,
+        });
+      }
+      default: {
+        throw new APIError(`API request failed: ${error.message}`, {
+          context: {
+            responseBody: errorResponseSchema.parse(error.response?.data),
+          },
+          originalError: error,
+        });
+      }
+    }
+  }
+  throw new UnexpectedError(`Unexpected error: ${String(error)}`, { originalError: error });
+}
 
 /**
  * Token provider function that returns a valid access token
@@ -54,8 +103,7 @@ export interface PlatformSDK {
  * Main SDK class for interacting with the Aignostics Platform
  */
 export class PlatformSDKHttp implements PlatformSDK {
-  #client: PublicApi | undefined;
-  #config: PlatformSDKConfig;
+  readonly #config: Readonly<PlatformSDKConfig>;
 
   /**
    * Creates a new instance of the Platform SDK
@@ -69,29 +117,23 @@ export class PlatformSDKHttp implements PlatformSDK {
     };
   }
 
-  async #ensureClient(): Promise<PublicApi> {
-    if (!this.#client) {
-      let accessToken: string | null = null;
+  async #getClient(): Promise<PublicApi> {
+    const accessToken = await this.#config.tokenProvider();
 
-      // Get token from provider
-      if (this.#config.tokenProvider) {
-        accessToken = await this.#config.tokenProvider();
-      }
-
-      // Throw error if no token is available
-      if (!accessToken) {
-        throw new Error(
-          'No access token available. Please provide a tokenProvider in the SDK configuration that returns a valid token.'
-        );
-      }
-
-      this.#client = new PublicApi({
-        basePath: this.#config.baseURL,
-        isJsonMime: mime => mime === 'application/json',
-        accessToken,
-      });
+    // Throw error if no token is available
+    if (!accessToken) {
+      throw new AuthenticationError(
+        'No access token available. Please provide a tokenProvider in the SDK configuration that returns a valid token.'
+      );
     }
-    return this.#client;
+
+    return new PublicApi({
+      basePath: this.#config.baseURL,
+      accessToken,
+      isJsonMime(mime) {
+        return mime === 'application/json';
+      },
+    });
   }
 
   /**
@@ -102,7 +144,8 @@ export class PlatformSDKHttp implements PlatformSDK {
    * It's useful for validating setup and troubleshooting connectivity issues.
    *
    * @returns A promise that resolves to `true` if the connection is successful
-   * @throws {Error} If the connection test fails due to network issues, authentication problems, or API errors
+   * @throws {AuthenticationError} If no valid authentication token is available
+   * @throws {Error} If the connection test fails due to network issues or API errors
    *
    * @example
    * ```typescript
@@ -117,8 +160,8 @@ export class PlatformSDKHttp implements PlatformSDK {
    * ```
    */
   async testConnection(): Promise<boolean> {
+    const client = await this.#getClient();
     try {
-      const client = await this.#ensureClient();
       const response = await client.listApplicationsV1ApplicationsGet();
       return response.status === 200;
     } catch (error) {
@@ -134,7 +177,8 @@ export class PlatformSDKHttp implements PlatformSDK {
    * processing pipelines available on the Aignostics Platform.
    *
    * @returns A promise that resolves to an array of application objects
-   * @throws {Error} If the request fails due to network issues, authentication problems, or API errors
+   * @throws {AuthenticationError} If no valid authentication token is available
+   * @throws {Error} If the request fails due to network issues or API errors
    *
    * @example
    * ```typescript
@@ -152,15 +196,12 @@ export class PlatformSDKHttp implements PlatformSDK {
    * ```
    */
   async listApplications(): Promise<ApplicationReadResponse[]> {
+    const client = await this.#getClient();
     try {
-      const client = await this.#ensureClient();
       const response = await client.listApplicationsV1ApplicationsGet();
-      if (response.status !== 200) {
-        throw new Error(`Failed to list applications: ${response.statusText}`);
-      }
       return response.data;
     } catch (error) {
-      throw new Error(`list applications failed: ${String(error)}`);
+      handleRequestError(error);
     }
   }
 
@@ -173,7 +214,8 @@ export class PlatformSDKHttp implements PlatformSDK {
    *
    * @param applicationId - The unique identifier of the application
    * @returns A promise that resolves to an array of application version objects
-   * @throws {Error} If the request fails due to network issues, authentication problems, invalid application ID, or API errors
+   * @throws {AuthenticationError} If no valid authentication token is available
+   * @throws {Error} If the request fails due to network issues, invalid application ID, or API errors
    *
    * @example
    * ```typescript
@@ -191,18 +233,15 @@ export class PlatformSDKHttp implements PlatformSDK {
    * ```
    */
   async listApplicationVersions(applicationId: string): Promise<ApplicationVersionReadResponse[]> {
+    const client = await this.#getClient();
     try {
-      const client = await this.#ensureClient();
       const response =
         await client.listVersionsByApplicationIdV1ApplicationsApplicationIdVersionsGet({
           applicationId,
         });
-      if (response.status !== 200) {
-        throw new Error(`Failed to list application versions: ${response.statusText}`);
-      }
       return response.data;
     } catch (error) {
-      throw new Error(`list application versions failed: ${String(error)}`);
+      handleRequestError(error);
     }
   }
 
@@ -248,18 +287,16 @@ export class PlatformSDKHttp implements PlatformSDK {
     applicationId?: string;
     applicationVersion?: string;
   }): Promise<RunReadResponse[]> {
+    const client = await this.#getClient();
     try {
-      const client = await this.#ensureClient();
       const response = await client.listApplicationRunsV1RunsGet({
         applicationId: options?.applicationId,
         applicationVersion: options?.applicationVersion,
       });
-      if (response.status !== 200) {
-        throw new Error(`Failed to list application runs: ${response.statusText}`);
-      }
+
       return response.data;
     } catch (error) {
-      throw new Error(`list application runs failed: ${String(error)}`);
+      handleRequestError(error);
     }
   }
 
@@ -302,17 +339,14 @@ export class PlatformSDKHttp implements PlatformSDK {
    * ```
    */
   async createApplicationRun(request: RunCreationRequest): Promise<RunCreationResponse> {
+    const client = await this.#getClient();
     try {
-      const client = await this.#ensureClient();
       const response = await client.createApplicationRunV1RunsPost({
         runCreationRequest: request,
       });
-      if (response.status < 200 || response.status >= 300) {
-        throw new Error(`Failed to create application run: ${response.statusText}`);
-      }
       return response.data;
     } catch (error) {
-      throw new Error(`create application run failed: ${String(error)}`);
+      handleRequestError(error);
     }
   }
 
@@ -342,17 +376,15 @@ export class PlatformSDKHttp implements PlatformSDK {
    * ```
    */
   async getRun(applicationRunId: string): Promise<RunReadResponse> {
+    const client = await this.#getClient();
     try {
-      const client = await this.#ensureClient();
       const response = await client.getRunV1RunsApplicationRunIdGet({
         applicationRunId,
       });
-      if (response.status !== 200) {
-        throw new Error(`Failed to get run: ${response.statusText}`);
-      }
+
       return response.data;
     } catch (error) {
-      throw new Error(`get run failed: ${String(error)}`);
+      handleRequestError(error);
     }
   }
 
@@ -384,16 +416,13 @@ export class PlatformSDKHttp implements PlatformSDK {
    * ```
    */
   async cancelApplicationRun(applicationRunId: string): Promise<void> {
+    const client = await this.#getClient();
     try {
-      const client = await this.#ensureClient();
-      const response = await client.cancelApplicationRunV1RunsApplicationRunIdCancelPost({
+      await client.cancelApplicationRunV1RunsApplicationRunIdCancelPost({
         applicationRunId,
       });
-      if (response.status !== 200) {
-        throw new Error(`Failed to cancel application run: ${response.statusText}`);
-      }
     } catch (error) {
-      throw new Error(`cancel application run failed: ${String(error)}`);
+      handleRequestError(error);
     }
   }
 
@@ -428,17 +457,15 @@ export class PlatformSDKHttp implements PlatformSDK {
    * ```
    */
   async listRunResults(applicationRunId: string): Promise<ItemResultReadResponse[]> {
+    const client = await this.#getClient();
     try {
-      const client = await this.#ensureClient();
       const response = await client.listRunResultsV1RunsApplicationRunIdResultsGet({
         applicationRunId,
       });
-      if (response.status !== 200) {
-        throw new Error(`Failed to list run results: ${response.statusText}`);
-      }
+
       return response.data;
     } catch (error) {
-      throw new Error(`list run results failed: ${String(error)}`);
+      handleRequestError(error);
     }
   }
 
