@@ -20,16 +20,24 @@ export interface TokenStorage {
 /**
  * Token data schema for validation
  */
-const TokenSchema = z.object({
+const tokenSchema = z.object({
   access_token: z.string(),
-  refresh_token: z.string().optional(),
-  expires_in: z.number().optional(),
-  token_type: z.string().optional(),
-  scope: z.string().optional(),
+  refresh_token: z.string().nullable().default(null),
+  expires_at_ms: z.number().nullable().default(null),
+  token_type: z.string().nullable().default(null),
+  scope: z.string().nullable().default(null),
   stored_at: z.number(),
 });
 
-export type TokenData = z.infer<typeof TokenSchema>;
+const tokenSetValidationSchema = z.object({
+  access_token: z.string(),
+  refresh_token: z.string().optional(),
+  expires_at: z.number(),
+  token_type: z.literal('Bearer'),
+  scope: z.string(),
+});
+
+export type TokenData = z.infer<typeof tokenSchema>;
 
 /**
  * Authentication state information
@@ -66,7 +74,7 @@ export interface LoginWithCallbackConfig extends LoginConfig {
  * Authentication service class with configurable token storage
  */
 export class AuthService {
-  constructor(private tokenStorage: TokenStorage) {}
+  constructor(private readonly tokenStorage: TokenStorage) {}
 
   /**
    * Perform OAuth2 PKCE login flow with external callback handling
@@ -119,20 +127,24 @@ export class AuthService {
       });
 
       // Exchange authorization code for tokens
-      const tokenSet = await client.callback(
-        config.redirectUri,
-        { code: authCode },
-        { code_verifier: config.codeVerifier }
+      const tokenSet = tokenSetValidationSchema.parse(
+        await client.callback(
+          config.redirectUri,
+          { code: authCode },
+          { code_verifier: config.codeVerifier }
+        )
       );
 
       // Save the token securely
-      await this.saveToken({
-        access_token: tokenSet.access_token!,
-        refresh_token: tokenSet.refresh_token,
-        expires_in: tokenSet.expires_in,
-        token_type: tokenSet.token_type,
-        scope: tokenSet.scope,
-      });
+      await this.saveToken(
+        tokenSchema.omit({ stored_at: true }).parse({
+          access_token: tokenSet.access_token,
+          refresh_token: tokenSet.refresh_token,
+          expires_at_ms: tokenSet.expires_at * 1000,
+          token_type: tokenSet.token_type,
+          scope: tokenSet.scope,
+        })
+      );
     } catch (error) {
       console.error('❌ Token exchange failed:', error);
       throw error;
@@ -142,12 +154,13 @@ export class AuthService {
   /**
    * Save token data with timestamp
    */
-  private async saveToken(tokenData: Omit<TokenData, 'stored_at'>): Promise<void> {
+  private async saveToken(tokenData: Omit<TokenData, 'stored_at'>): Promise<TokenData> {
     const dataToStore: TokenData = {
       ...tokenData,
       stored_at: Date.now(),
     };
-    return this.tokenStorage.save(dataToStore);
+    await this.tokenStorage.save(dataToStore);
+    return dataToStore;
   }
 
   /**
@@ -156,7 +169,7 @@ export class AuthService {
   private async loadToken(): Promise<TokenData | null> {
     try {
       const data = await this.tokenStorage.load();
-      const result = TokenSchema.safeParse(data);
+      const result = tokenSchema.safeParse(data);
 
       if (!result.success) {
         return null;
@@ -174,11 +187,10 @@ export class AuthService {
    */
   private isTokenValid(tokenData: TokenData): boolean {
     // Check if token has expiration and if it's expired
-    if (tokenData.expires_in) {
-      const expirationTime = tokenData.stored_at + tokenData.expires_in * 1000;
+    if (tokenData.expires_at_ms) {
       const now = Date.now();
 
-      if (now >= expirationTime) {
+      if (now >= tokenData.expires_at_ms) {
         return false;
       }
     }
@@ -187,10 +199,49 @@ export class AuthService {
   }
 
   /**
-   * Get a valid access token from storage
-   * @returns Valid access token or null if not found/expired
+   * Refresh an expired token using the refresh token
    */
-  async getValidAccessToken(): Promise<string | null> {
+  private async refreshToken(config: LoginConfig, tokenData: TokenData): Promise<TokenData | null> {
+    if (!tokenData.refresh_token) {
+      return null;
+    }
+
+    try {
+      const issuer = await Issuer.discover(config.issuerURL);
+      const client = new issuer.Client({
+        client_id: config.clientID,
+        redirect_uris: [], // Not needed for refresh
+        response_types: ['code'],
+        scope: config.scope || 'openid profile email offline_access',
+        audience: config.audience || 'https://aignostics-platform-samia',
+        token_endpoint_auth_method: 'none',
+      });
+
+      const tokenSet = tokenSetValidationSchema.parse(
+        await client.refresh(tokenData.refresh_token)
+      );
+
+      const newTokenData: Omit<TokenData, 'stored_at'> = {
+        access_token: tokenSet.access_token,
+        refresh_token: tokenSet.refresh_token || tokenData.refresh_token, // Keep old refresh token if not renewed
+        expires_at_ms: tokenSet.expires_at * 1000,
+        token_type: tokenSet.token_type,
+        scope: tokenSet.scope,
+      };
+
+      return this.saveToken(newTokenData);
+    } catch (error) {
+      console.warn(`Warning: Token refresh failed: ${String(error)}`);
+      return null;
+    }
+  }
+
+  /**
+   * Get a valid access token from storage, refreshing if necessary
+   * @param config Optional login config for token refresh. If not provided and refresh is needed, returns null
+   * @returns Valid access token or null if not found/expired/refresh failed
+   */
+  async getValidAccessToken(config?: LoginConfig): Promise<string | null> {
     try {
       const tokenData = await this.loadToken();
 
@@ -198,11 +249,25 @@ export class AuthService {
         return null;
       }
 
-      if (!this.isTokenValid(tokenData)) {
-        return null;
+      // If token is valid, return it
+      if (this.isTokenValid(tokenData)) {
+        return tokenData.access_token;
       }
 
-      return tokenData.access_token;
+      // If token is expired but we have a refresh token and config, try to refresh
+      if (tokenData.refresh_token && config) {
+        console.log('Access token expired, attempting to refresh...');
+        const refreshedTokenData = await this.refreshToken(config, tokenData);
+
+        if (refreshedTokenData) {
+          console.log('✅ Token refreshed successfully');
+          return refreshedTokenData.access_token;
+        } else {
+          console.warn('❌ Token refresh failed');
+        }
+      }
+
+      return null;
     } catch (error) {
       console.warn(`Warning: Could not retrieve token: ${String(error)}`);
       return null;
@@ -231,9 +296,7 @@ export class AuthService {
         token: {
           type: tokenData.token_type || 'Bearer',
           scope: tokenData.scope || 'N/A',
-          expiresAt: tokenData.expires_in
-            ? new Date(tokenData.stored_at + tokenData.expires_in * 1000)
-            : undefined,
+          expiresAt: tokenData.expires_at_ms ? new Date(tokenData.expires_at_ms) : undefined,
           storedAt: new Date(tokenData.stored_at),
         },
       };

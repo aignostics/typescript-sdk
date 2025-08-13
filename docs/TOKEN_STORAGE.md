@@ -91,7 +91,7 @@ src/
 await saveToken({
   access_token: 'jwt-token',
   refresh_token: 'refresh-token', // optional
-  expires_in: 3600, // optional
+  expires_at: Date.now() + 3600, // optional
   token_type: 'Bearer', // optional
   scope: 'openid profile email', // optional
 });
@@ -115,7 +115,7 @@ await removeToken();
 interface TokenData {
   access_token: string;
   refresh_token?: string;
-  expires_in?: number;
+  expires_at?: number;
   token_type?: string;
   scope?: string;
   stored_at: number; // Unix timestamp
