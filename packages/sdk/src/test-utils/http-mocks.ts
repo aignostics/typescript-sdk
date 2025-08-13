@@ -109,6 +109,16 @@ export const mockResponses = {
     message: 'The requested resource was not found',
     statusCode: 404,
   },
+
+  validationError: {
+    detail: [
+      {
+        loc: ['field1'],
+        type: 'missing',
+        msg: 'field1 is required',
+      },
+    ],
+  },
 };
 
 /**
@@ -156,8 +166,8 @@ export const handlers = {
     }),
   ],
 
-  // Error responses
-  error: [
+  // Not found responses
+  notFoundError: [
     http.get('*/v1/applications', () => {
       return HttpResponse.json(mockResponses.error, { status: 404 });
     }),
@@ -178,6 +188,54 @@ export const handlers = {
     }),
     http.get('*/v1/runs/:applicationRunId/results', () => {
       return HttpResponse.json(mockResponses.error, { status: 404 });
+    }),
+  ],
+
+  validationError: [
+    http.get('*/v1/applications', () => {
+      return HttpResponse.json(mockResponses.validationError, { status: 422 });
+    }),
+    http.get('*/v1/applications/:applicationId/versions', () => {
+      return HttpResponse.json(mockResponses.validationError, { status: 422 });
+    }),
+    http.get('*/v1/runs', () => {
+      return HttpResponse.json(mockResponses.validationError, { status: 422 });
+    }),
+    http.post('*/v1/runs', () => {
+      return HttpResponse.json(mockResponses.validationError, { status: 422 });
+    }),
+    http.get('*/v1/runs/:applicationRunId', () => {
+      return HttpResponse.json(mockResponses.validationError, { status: 422 });
+    }),
+    http.post('*/v1/runs/:applicationRunId/cancel', () => {
+      return HttpResponse.json(mockResponses.validationError, { status: 422 });
+    }),
+    http.get('*/v1/runs/:applicationRunId/results', () => {
+      return HttpResponse.json(mockResponses.validationError, { status: 422 });
+    }),
+  ],
+
+  internalServerError: [
+    http.get('*/v1/applications', () => {
+      return HttpResponse.json(mockResponses.error, { status: 500 });
+    }),
+    http.get('*/v1/applications/:applicationId/versions', () => {
+      return HttpResponse.json(mockResponses.error, { status: 500 });
+    }),
+    http.get('*/v1/runs', () => {
+      return HttpResponse.json(mockResponses.error, { status: 500 });
+    }),
+    http.post('*/v1/runs', () => {
+      return HttpResponse.json(mockResponses.error, { status: 500 });
+    }),
+    http.get('*/v1/runs/:applicationRunId', () => {
+      return HttpResponse.json(mockResponses.error, { status: 500 });
+    }),
+    http.post('*/v1/runs/:applicationRunId/cancel', () => {
+      return HttpResponse.json(mockResponses.error, { status: 500 });
+    }),
+    http.get('*/v1/runs/:applicationRunId/results', () => {
+      return HttpResponse.json(mockResponses.error, { status: 500 });
     }),
   ],
 

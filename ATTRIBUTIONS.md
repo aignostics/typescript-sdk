@@ -37887,7 +37887,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## zod
 
-**Version:** 4.0.5  
+**Version:** 4.0.17  
 **License:** MIT
 
 ```
