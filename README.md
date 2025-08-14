@@ -57,7 +57,7 @@ const sdk = new PlatformSDK({
 ```bash
 # Install and use the CLI
 npm install -g @aignostics/cli
-aignostics-platform info
+aignostics info
 ```
 
 ## Developer Documentation
