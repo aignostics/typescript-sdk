@@ -18,10 +18,6 @@ export default defineConfig({
         functions: 85,
         lines: 85,
         statements: 85,
-        // Exception for the CLI entry point
-        'src/index.ts': {
-          lines: 50,
-        },
       },
     },
   },

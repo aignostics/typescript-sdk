@@ -6,7 +6,7 @@
   "main": "./dist/index.cjs",
   "types": "./dist/index.d.ts",
   "bin": {
-    "aignostics": "./dist/index.cjs"
+    "aignostics": "./dist/bin.cjs"
   },
   "files": [
     "dist",
