@@ -6,6 +6,8 @@
 
 The official TypeScript SDK for the Aignostics Platform, providing type-safe access to the Aignostics API. Also includes a CLI tool for command-line operations.
 
+For general information about the Aignostics Platform [check this documentation page](https://aignostics.readthedocs.io/en/latest/main.html#platform)
+
 ## Packages
 
 - **[@aignostics/sdk](packages/sdk/)** - Core TypeScript SDK with auto-generated API clients
