@@ -45,14 +45,13 @@ import { type TokenStorage } from './auth.js';
  */
 
 const SERVICE_NAME = 'aignostics-platform';
-const ACCOUNT_NAME = 'default';
 
 /**
  * Save data securely using OS keychain/credential manager
  * @param data - Any JSON-serializable data to store
  */
-export async function saveData(data: unknown): Promise<void> {
-  const entry = new Entry(SERVICE_NAME, ACCOUNT_NAME);
+export async function saveData(name: string, data: unknown): Promise<void> {
+  const entry = new Entry(SERVICE_NAME, name);
   try {
     const serializedData = JSON.stringify(data);
     entry.setPassword(serializedData);
@@ -60,7 +59,7 @@ export async function saveData(data: unknown): Promise<void> {
   } catch {
     // Fallback to file-based storage if keyring fails
     console.warn('Warning: Could not save to OS keychain, falling back to file storage');
-    await saveDataToFile(data);
+    await saveDataToFile(name, data);
   }
 }
 
@@ -68,14 +67,14 @@ export async function saveData(data: unknown): Promise<void> {
  * Load data from OS keychain/credential manager
  * @returns The stored data as unknown, or null if not found
  */
-export async function loadData(): Promise<unknown> {
-  const entry = new Entry(SERVICE_NAME, ACCOUNT_NAME);
+export async function loadData(name: string): Promise<unknown> {
+  const entry = new Entry(SERVICE_NAME, name);
   try {
     const serializedData = entry.getPassword();
 
     if (!serializedData) {
       // Try fallback file storage
-      return await loadDataFromFile();
+      return await loadDataFromFile(name);
     }
 
     try {
@@ -88,23 +87,23 @@ export async function loadData(): Promise<unknown> {
   } catch (error) {
     console.warn(`Warning: Could not load data from keychain: ${String(error)}`);
     // Try fallback file storage
-    return await loadDataFromFile();
+    return await loadDataFromFile(name);
   }
 }
 
 /**
  * Check if data exists in storage
  */
-export async function hasData(): Promise<boolean> {
-  const data = await loadData();
+export async function hasData(name: string): Promise<boolean> {
+  const data = await loadData(name);
   return data !== null && data !== undefined;
 }
 
 /**
  * Remove the stored data from OS keychain/credential manager
  */
-export async function removeData(): Promise<void> {
-  const entry = new Entry(SERVICE_NAME, ACCOUNT_NAME);
+export async function removeData(name: string): Promise<void> {
+  const entry = new Entry(SERVICE_NAME, name);
   try {
     const success = entry.deletePassword();
     if (success) {
@@ -112,11 +111,11 @@ export async function removeData(): Promise<void> {
     }
 
     // Also try to remove from fallback file storage
-    await removeDataFromFile();
+    await removeDataFromFile(name);
   } catch (error) {
     console.warn(`Warning: Could not remove data from keychain: ${String(error)}`);
     // Try fallback file storage
-    await removeDataFromFile();
+    await removeDataFromFile(name);
   }
 }
 
@@ -158,16 +157,18 @@ function ensureConfigDir(): string {
 /**
  * Get the full path to the data file (fallback)
  */
-function getDataFilePath(): string {
+function getDataFilePath(name: string): string {
   const configDir = ensureConfigDir();
-  return path.join(configDir, 'data.json');
+  // Sanitize the name to prevent path traversal
+  const safeName = name.replace(/[^a-zA-Z0-9_-]/g, '_');
+  return path.join(configDir, `${safeName}.json`);
 }
 
 /**
  * Save data to file (fallback)
  */
-async function saveDataToFile(data: unknown): Promise<void> {
-  const dataFilePath = getDataFilePath();
+async function saveDataToFile(name: string, data: unknown): Promise<void> {
+  const dataFilePath = getDataFilePath(name);
 
   try {
     await fs.promises.writeFile(dataFilePath, JSON.stringify(data, null, 2), { mode: 0o600 });
@@ -180,8 +181,8 @@ async function saveDataToFile(data: unknown): Promise<void> {
 /**
  * Load data from file (fallback)
  */
-async function loadDataFromFile(): Promise<unknown> {
-  const dataFilePath = getDataFilePath();
+async function loadDataFromFile(name: string): Promise<unknown> {
+  const dataFilePath = getDataFilePath(name);
 
   try {
     if (!fs.existsSync(dataFilePath)) {
@@ -201,8 +202,8 @@ async function loadDataFromFile(): Promise<unknown> {
 /**
  * Remove data file (fallback)
  */
-async function removeDataFromFile(): Promise<void> {
-  const dataFilePath = getDataFilePath();
+async function removeDataFromFile(name: string): Promise<void> {
+  const dataFilePath = getDataFilePath(name);
 
   try {
     if (fs.existsSync(dataFilePath)) {
@@ -219,20 +220,20 @@ async function removeDataFromFile(): Promise<void> {
  * This provides a clean interface for the auth module to use.
  */
 export class FileSystemTokenStorage implements TokenStorage {
-  async save(data: Record<string, unknown>): Promise<void> {
-    return saveData(data);
+  async save(name: string, data: Record<string, unknown>): Promise<void> {
+    return saveData(name, data);
   }
 
-  async load(): Promise<Record<string, unknown> | null> {
-    const data = await loadData();
+  async load(name: string): Promise<Record<string, unknown> | null> {
+    const data = await loadData(name);
     return data as Record<string, unknown> | null;
   }
 
-  async remove(): Promise<void> {
-    return removeData();
+  async remove(name: string): Promise<void> {
+    return removeData(name);
   }
 
-  async exists(): Promise<boolean> {
-    return hasData();
+  async exists(name: string): Promise<boolean> {
+    return hasData(name);
   }
 }

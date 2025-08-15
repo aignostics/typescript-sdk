@@ -4,6 +4,7 @@ import { startCallbackServer, waitForCallback } from './utils/oauth-callback-ser
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import crypto from 'crypto';
+import { environmentConfig, EnvironmentKey } from './utils/environment.js';
 
 // Read package.json synchronously for CommonJS compatibility
 const packageJsonPath = join(__dirname, '../package.json');
@@ -14,10 +15,14 @@ export function handleInfo(): void {
   console.log('Version:', packageJson.version);
 }
 
-export async function testApi(endpoint: string, authService: AuthService): Promise<void> {
+export async function testApi(
+  environment: EnvironmentKey,
+  authService: AuthService
+): Promise<void> {
+  const { endpoint } = environmentConfig[environment];
   const sdk = new PlatformSDKHttp({
     baseURL: endpoint,
-    tokenProvider: () => authService.getValidAccessToken(),
+    tokenProvider: () => authService.getValidAccessToken(environment),
   });
   try {
     const success = await sdk.testConnection();
@@ -32,23 +37,28 @@ export async function testApi(endpoint: string, authService: AuthService): Promi
   }
 }
 
-export async function listApplications(endpoint: string, authService: AuthService): Promise<void> {
+export async function listApplications(
+  environment: EnvironmentKey,
+  authService: AuthService
+): Promise<void> {
+  const { endpoint } = environmentConfig[environment];
   const sdk = new PlatformSDKHttp({
     baseURL: endpoint,
-    tokenProvider: () => authService.getValidAccessToken(),
+    tokenProvider: () => authService.getValidAccessToken(environment),
   });
   const response = await sdk.listApplications();
   console.log('Applications:', JSON.stringify(response, null, 2));
 }
 
 export async function listApplicationVersions(
-  endpoint: string,
+  environment: EnvironmentKey,
   authService: AuthService,
   applicationId: string
 ): Promise<void> {
+  const { endpoint } = environmentConfig[environment];
   const sdk = new PlatformSDKHttp({
     baseURL: endpoint,
-    tokenProvider: () => authService.getValidAccessToken(),
+    tokenProvider: () => authService.getValidAccessToken(environment),
   });
   try {
     const response = await sdk.listApplicationVersions(applicationId);
@@ -60,13 +70,14 @@ export async function listApplicationVersions(
 }
 
 export async function listApplicationRuns(
-  endpoint: string,
+  environment: EnvironmentKey,
   authService: AuthService,
   options?: { applicationId?: string; applicationVersion?: string }
 ): Promise<void> {
+  const { endpoint } = environmentConfig[environment];
   const sdk = new PlatformSDKHttp({
     baseURL: endpoint,
-    tokenProvider: () => authService.getValidAccessToken(),
+    tokenProvider: () => authService.getValidAccessToken(environment),
   });
   try {
     const response = await sdk.listApplicationRuns(options);
@@ -78,13 +89,14 @@ export async function listApplicationRuns(
 }
 
 export async function getRun(
-  endpoint: string,
+  environment: EnvironmentKey,
   authService: AuthService,
   applicationRunId: string
 ): Promise<void> {
+  const { endpoint } = environmentConfig[environment];
   const sdk = new PlatformSDKHttp({
     baseURL: endpoint,
-    tokenProvider: () => authService.getValidAccessToken(),
+    tokenProvider: () => authService.getValidAccessToken(environment),
   });
   try {
     const response = await sdk.getRun(applicationRunId);
@@ -96,13 +108,14 @@ export async function getRun(
 }
 
 export async function cancelApplicationRun(
-  endpoint: string,
+  environment: EnvironmentKey,
   authService: AuthService,
   applicationRunId: string
 ): Promise<void> {
+  const { endpoint } = environmentConfig[environment];
   const sdk = new PlatformSDKHttp({
     baseURL: endpoint,
-    tokenProvider: () => authService.getValidAccessToken(),
+    tokenProvider: () => authService.getValidAccessToken(environment),
   });
   try {
     await sdk.cancelApplicationRun(applicationRunId);
@@ -114,13 +127,14 @@ export async function cancelApplicationRun(
 }
 
 export async function listRunResults(
-  endpoint: string,
+  environment: EnvironmentKey,
   authService: AuthService,
   applicationRunId: string
 ): Promise<void> {
+  const { endpoint } = environmentConfig[environment];
   const sdk = new PlatformSDKHttp({
     baseURL: endpoint,
-    tokenProvider: () => authService.getValidAccessToken(),
+    tokenProvider: () => authService.getValidAccessToken(environment),
   });
   try {
     const response = await sdk.listRunResults(applicationRunId);
@@ -132,14 +146,15 @@ export async function listRunResults(
 }
 
 export async function createApplicationRun(
-  endpoint: string,
+  environment: EnvironmentKey,
   authService: AuthService,
   applicationVersionId: string,
   itemsJson: string
 ): Promise<void> {
+  const { endpoint } = environmentConfig[environment];
   const sdk = new PlatformSDKHttp({
     baseURL: endpoint,
-    tokenProvider: () => authService.getValidAccessToken(),
+    tokenProvider: () => authService.getValidAccessToken(environment),
   });
   try {
     // Parse the items JSON
@@ -168,7 +183,7 @@ export async function createApplicationRun(
   }
 }
 
-export async function handleLogin(issuerURL: string, clientID: string, authService: AuthService) {
+export async function handleLogin(environment: EnvironmentKey, authService: AuthService) {
   const codeVerifier = crypto.randomBytes(32).toString('hex');
 
   // Start local server to handle OAuth callback
@@ -180,17 +195,13 @@ export async function handleLogin(issuerURL: string, clientID: string, authServi
   const redirectUri = `http://localhost:${actualPort}`;
 
   const config: LoginWithCallbackConfig = {
-    issuerURL,
-    clientID,
     redirectUri,
     codeVerifier,
-    audience: 'https://aignostics-platform-samia',
-    scope: 'openid profile email offline_access',
   };
 
   try {
     // Start the OAuth flow (opens browser)
-    const authorizationUrl = await authService.loginWithCallback(config);
+    const authorizationUrl = await authService.loginWithCallback(environment, config);
     console.log('🌐 Opening browser for authentication...');
     console.log("📝 If the browser doesn't open automatically, visit:");
     console.log(`   ${authorizationUrl}`);
@@ -203,7 +214,7 @@ export async function handleLogin(issuerURL: string, clientID: string, authServi
     console.log('✅ Authentication callback received!');
 
     // Complete the login (exchange code for tokens)
-    await authService.completeLogin(config, authCode);
+    await authService.completeLogin(environment, config, authCode);
 
     console.log('🎉 Login successful! Token saved securely.');
     console.log('🔑 You are now authenticated and can use the SDK.');
@@ -216,14 +227,20 @@ export async function handleLogin(issuerURL: string, clientID: string, authServi
   }
 }
 
-export async function handleLogout(authService: AuthService): Promise<void> {
-  await authService.logout();
+export async function handleLogout(
+  environment: EnvironmentKey,
+  authService: AuthService
+): Promise<void> {
+  await authService.logout(environment);
   console.log('✅ Logged out successfully. Token removed.');
 }
 
-export async function handleStatus(authService: AuthService): Promise<void> {
+export async function handleStatus(
+  environment: EnvironmentKey,
+  authService: AuthService
+): Promise<void> {
   try {
-    const authState = await authService.getAuthState();
+    const authState = await authService.getAuthState(environment);
 
     if (authState.isAuthenticated && authState.token) {
       console.log('✅ Authenticated');

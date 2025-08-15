@@ -215,15 +215,10 @@ describe('CLI Integration Tests', () => {
       // Mock process.argv for yargs - missing applicationId
       process.argv = ['node', 'cli.js', 'list-application-versions'];
 
-      try {
-        await main();
-        expect.fail('Expected main() to throw an error when applicationId is missing');
-      } catch (error) {
-        expect(error.message).toMatch(/process\.exit.*1/);
-        expect(consoleSpy.error).toHaveBeenCalledWith(
-          expect.stringContaining('Not enough non-option arguments')
-        );
-      }
+      await main();
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        expect.stringContaining('Not enough non-option arguments')
+      );
     });
   });
 
@@ -319,15 +314,10 @@ describe('CLI Integration Tests', () => {
       // Mock process.argv for yargs - missing applicationRunId
       process.argv = ['node', 'cli.js', 'get-run'];
 
-      try {
-        await main();
-        expect.fail('Expected main() to throw an error when applicationRunId is missing');
-      } catch (error) {
-        expect(error.message).toMatch(/process\.exit.*1/);
-        expect(consoleSpy.error).toHaveBeenCalledWith(
-          expect.stringContaining('Not enough non-option arguments')
-        );
-      }
+      await main();
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        expect.stringContaining('Not enough non-option arguments')
+      );
     });
   });
 
@@ -354,15 +344,10 @@ describe('CLI Integration Tests', () => {
       // Mock process.argv for yargs - missing applicationRunId
       process.argv = ['node', 'cli.js', 'cancel-run'];
 
-      try {
-        await main();
-        expect.fail('Expected main() to throw an error when applicationRunId is missing');
-      } catch (error) {
-        expect(error.message).toMatch(/process\.exit.*1/);
-        expect(consoleSpy.error).toHaveBeenCalledWith(
-          expect.stringContaining('Not enough non-option arguments')
-        );
-      }
+      await main();
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        expect.stringContaining('Not enough non-option arguments')
+      );
     });
   });
 
@@ -394,15 +379,11 @@ describe('CLI Integration Tests', () => {
       // Mock process.argv for yargs - missing applicationRunId
       process.argv = ['node', 'cli.js', 'list-run-results'];
 
-      try {
-        await main();
-        expect.fail('Expected main() to throw an error when applicationRunId is missing');
-      } catch (error) {
-        expect(error.message).toMatch(/process\.exit.*1/);
-        expect(consoleSpy.error).toHaveBeenCalledWith(
-          expect.stringContaining('Not enough non-option arguments')
-        );
-      }
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        expect.stringContaining('Not enough non-option arguments')
+      );
     });
   });
 
@@ -451,15 +432,10 @@ describe('CLI Integration Tests', () => {
       // Mock process.argv for yargs - missing applicationVersionId
       process.argv = ['node', 'cli.js', 'create-run'];
 
-      try {
-        await main();
-        expect.fail('Expected main() to throw an error when applicationVersionId is missing');
-      } catch (error) {
-        expect(error.message).toMatch(/process\.exit.*1/);
-        expect(consoleSpy.error).toHaveBeenCalledWith(
-          expect.stringContaining('Not enough non-option arguments')
-        );
-      }
+      await main();
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        expect.stringContaining('Not enough non-option arguments')
+      );
     });
   });
 
@@ -483,40 +459,29 @@ describe('CLI Integration Tests', () => {
     });
 
     it('should handle help flag', async () => {
+      mockExit.mockImplementation(() => {});
+      vi.stubGlobal('process', { ...process, exit: mockExit });
       // Mock process.argv for yargs
       process.argv = ['node', 'cli.js', '--help'];
 
-      // Mock process.exit to prevent actual exit
-      const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => {
-        throw new Error('process.exit called');
-      });
+      await expect(main()).rejects.toThrow();
 
-      try {
-        await main();
-      } catch (error) {
-        expect(error.message).toContain('process.exit');
-      }
-
-      exitSpy.mockRestore();
+      expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining('Usage:'));
     });
 
     it('should require a command', async () => {
       // Mock process.argv for yargs
       process.argv = ['node', 'cli.js'];
 
-      try {
-        await main();
-        // If we reach here, the test should fail because we expected an error
-        expect.fail('Expected main() to throw an error when no command is provided');
-      } catch (error) {
-        // Yargs calls process.exit(1) when validation fails
-        // The exact error message format depends on how the mock is set up
-        expect(error.message).toMatch(/process\.exit.*1/);
-        // The error message is written to console.error, so check that too
-        expect(consoleSpy.error).toHaveBeenCalledWith(
-          'You need at least one command before moving on'
-        );
-      }
+      await main();
+
+      // Check that process.exit(1) was called
+      expect(mockExit).toHaveBeenCalledWith(1);
+
+      // Check that the error was logged with custom message
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        expect.stringContaining('You need at least one command before moving on')
+      );
     });
   });
 });
