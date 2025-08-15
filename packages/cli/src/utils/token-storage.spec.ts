@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { describe, it, expect, vi, beforeEach, MockInstance } from 'vitest';
-import { saveData, loadData, hasData, removeData } from './token-storage.js';
+import {
+  saveData,
+  loadData,
+  hasData,
+  removeData,
+  FileSystemTokenStorage,
+} from './token-storage.js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as os from 'node:os';
@@ -53,7 +59,7 @@ describe('Token Storage Module', () => {
       const testData = { token: 'test-token', expires: 3600 };
       mockEntry.setPassword.mockResolvedValue(true);
 
-      await saveData(testData);
+      await saveData('test-token', testData);
 
       expect(mockEntry.setPassword).toHaveBeenCalledWith(JSON.stringify(testData));
       expect(console.log).toHaveBeenCalledWith('✅ Data saved securely to OS keychain');
@@ -65,7 +71,7 @@ describe('Token Storage Module', () => {
         throw new Error('Keychain error');
       });
 
-      await saveData(testData);
+      await saveData('test-token', testData);
 
       expect(consoleSpy.warn).toHaveBeenCalledWith(
         'Warning: Could not save to OS keychain, falling back to file storage'
@@ -83,7 +89,7 @@ describe('Token Storage Module', () => {
         timestamp: Date.now(),
       };
 
-      await saveData(complexData);
+      await saveData('complex-data', complexData);
 
       expect(mockEntry.setPassword).toHaveBeenCalledWith(JSON.stringify(complexData));
     });
@@ -94,7 +100,7 @@ describe('Token Storage Module', () => {
       const testData = { token: 'test-token', expires: 3600 };
       mockEntry.getPassword.mockReturnValue(JSON.stringify(testData));
 
-      const result = await loadData();
+      const result = await loadData('test-token');
 
       expect(result).toEqual(testData);
       expect(mockEntry.getPassword).toHaveBeenCalled();
@@ -104,7 +110,7 @@ describe('Token Storage Module', () => {
       mockEntry.getPassword.mockReturnValue(null);
       vi.mocked(fs.existsSync).mockReturnValue(false);
 
-      const result = await loadData();
+      const result = await loadData('test-token');
 
       expect(result).toBeNull();
     });
@@ -116,7 +122,7 @@ describe('Token Storage Module', () => {
       const testData = { token: 'file-token' };
       vi.mocked(fs.promises.readFile).mockResolvedValue(JSON.stringify(testData));
 
-      const result = await loadData();
+      const result = await loadData('test-token');
 
       expect(consoleSpy.warn).toHaveBeenCalledWith(
         expect.stringContaining('Warning: Could not load data from keychain')
@@ -127,7 +133,7 @@ describe('Token Storage Module', () => {
     it('should handle JSON parse errors gracefully', async () => {
       mockEntry.getPassword.mockReturnValue('invalid-json');
 
-      const result = await loadData();
+      const result = await loadData('test-token');
 
       expect(consoleSpy.warn).toHaveBeenCalled();
       expect(result).toBeNull();
@@ -138,7 +144,7 @@ describe('Token Storage Module', () => {
       const testData = { token: 'file-token' };
       vi.mocked(fs.promises.readFile).mockResolvedValue(JSON.stringify(testData));
 
-      const result = await loadData();
+      const result = await loadData('test-token');
 
       expect(result).toEqual(testData);
     });
@@ -148,7 +154,7 @@ describe('Token Storage Module', () => {
     it('should return true when data exists', async () => {
       mockEntry.getPassword.mockReturnValue('{"token": "test"}');
 
-      const result = await hasData();
+      const result = await hasData('test-token');
 
       expect(result).toBe(true);
     });
@@ -157,7 +163,7 @@ describe('Token Storage Module', () => {
       mockEntry.getPassword.mockReturnValue(null);
       vi.mocked(fs.existsSync).mockReturnValue(false);
 
-      const result = await hasData();
+      const result = await hasData('test-token');
 
       expect(result).toBe(false);
     });
@@ -166,7 +172,7 @@ describe('Token Storage Module', () => {
       mockEntry.getPassword.mockReturnValue(undefined);
       vi.mocked(fs.existsSync).mockReturnValue(false);
 
-      const result = await hasData();
+      const result = await hasData('test-token');
 
       expect(result).toBe(false);
     });
@@ -176,7 +182,7 @@ describe('Token Storage Module', () => {
     it('should remove data from OS keychain successfully', async () => {
       mockEntry.deletePassword.mockResolvedValue(true);
 
-      await removeData();
+      await removeData('test-token');
 
       expect(mockEntry.deletePassword).toHaveBeenCalled();
       expect(consoleSpy.log).toHaveBeenCalledWith('✅ Data removed from OS keychain');
@@ -187,7 +193,7 @@ describe('Token Storage Module', () => {
         throw new Error('Keychain error');
       });
 
-      await removeData();
+      await removeData('test-token');
 
       expect(consoleSpy.warn).toHaveBeenCalledWith(
         expect.stringContaining('Warning: Could not remove data from keychain')
@@ -199,109 +205,162 @@ describe('Token Storage Module', () => {
     it('should clean up both keychain and file storage', async () => {
       mockEntry.deletePassword.mockResolvedValue(true);
 
-      await removeData();
+      await removeData('test-token');
 
       expect(mockEntry.deletePassword).toHaveBeenCalled();
       expect(fs.promises.unlink).toHaveBeenCalled();
     });
-  });
 
-  describe('Cross-platform path handling', () => {
-    it('should use correct path for macOS', async () => {
-      vi.mocked(os.platform).mockReturnValue('darwin');
-      vi.mocked(os.homedir).mockReturnValue('/Users/testuser');
+    describe('Cross-platform path handling', () => {
+      it('should use correct path for macOS', async () => {
+        vi.mocked(os.platform).mockReturnValue('darwin');
+        vi.mocked(os.homedir).mockReturnValue('/Users/testuser');
 
-      const testData = { token: 'test' };
-      mockEntry.setPassword.mockImplementation(() => {
-        throw new Error('Force file fallback');
+        const testData = { token: 'test' };
+        mockEntry.setPassword.mockImplementation(() => {
+          throw new Error('Force file fallback');
+        });
+
+        await saveData('test-token', testData);
+
+        expect(path.join).toHaveBeenCalledWith(
+          '/Users/testuser',
+          'Library',
+          'Application Support',
+          'aignostics-platform'
+        );
       });
 
-      await saveData(testData);
+      it('should use correct path for Windows', async () => {
+        vi.mocked(os.platform).mockReturnValue('win32');
+        vi.mocked(os.homedir).mockReturnValue('C:\\Users\\testuser');
+        process.env.APPDATA = 'C:\\Users\\testuser\\AppData\\Roaming';
 
-      expect(path.join).toHaveBeenCalledWith(
-        '/Users/testuser',
-        'Library',
-        'Application Support',
-        'aignostics-platform'
-      );
-    });
+        const testData = { token: 'test' };
+        mockEntry.setPassword.mockImplementation(() => {
+          throw new Error('Force file fallback');
+        });
 
-    it('should use correct path for Windows', async () => {
-      vi.mocked(os.platform).mockReturnValue('win32');
-      vi.mocked(os.homedir).mockReturnValue('C:\\Users\\testuser');
-      process.env.APPDATA = 'C:\\Users\\testuser\\AppData\\Roaming';
+        await saveData('test-token', testData);
 
-      const testData = { token: 'test' };
-      mockEntry.setPassword.mockImplementation(() => {
-        throw new Error('Force file fallback');
+        expect(path.join).toHaveBeenCalledWith(
+          'C:\\Users\\testuser\\AppData\\Roaming',
+          'aignostics-platform'
+        );
       });
 
-      await saveData(testData);
+      it('should use XDG_CONFIG_HOME when available on Linux', async () => {
+        vi.mocked(os.platform).mockReturnValue('linux');
+        process.env.XDG_CONFIG_HOME = '/custom/config';
 
-      expect(path.join).toHaveBeenCalledWith(
-        'C:\\Users\\testuser\\AppData\\Roaming',
-        'aignostics-platform'
-      );
-    });
+        const testData = { token: 'test' };
+        mockEntry.setPassword.mockImplementation(() => {
+          throw new Error('Force file fallback');
+        });
 
-    it('should use XDG_CONFIG_HOME when available on Linux', async () => {
-      vi.mocked(os.platform).mockReturnValue('linux');
-      process.env.XDG_CONFIG_HOME = '/custom/config';
+        await saveData('test-token', testData);
 
-      const testData = { token: 'test' };
-      mockEntry.setPassword.mockImplementation(() => {
-        throw new Error('Force file fallback');
+        expect(path.join).toHaveBeenCalledWith('/custom/config', 'aignostics-platform');
       });
 
-      await saveData(testData);
+      it('should create config directory if it does not exist', async () => {
+        vi.mocked(fs.existsSync).mockReturnValue(false);
+        const testData = { token: 'test' };
+        mockEntry.setPassword.mockImplementation(() => {
+          throw new Error('Force file fallback');
+        });
 
-      expect(path.join).toHaveBeenCalledWith('/custom/config', 'aignostics-platform');
-    });
+        await saveData('test-token', testData);
 
-    it('should create config directory if it does not exist', async () => {
-      vi.mocked(fs.existsSync).mockReturnValue(false);
-      const testData = { token: 'test' };
-      mockEntry.setPassword.mockImplementation(() => {
-        throw new Error('Force file fallback');
-      });
-
-      await saveData(testData);
-
-      expect(fs.mkdirSync).toHaveBeenCalledWith(expect.any(String), {
-        recursive: true,
-        mode: 0o700,
+        expect(fs.mkdirSync).toHaveBeenCalledWith(expect.any(String), {
+          recursive: true,
+          mode: 0o700,
+        });
       });
     });
-  });
 
-  describe('File storage fallback', () => {
-    it('should handle file write errors gracefully', async () => {
-      mockEntry.setPassword.mockImplementation(() => {
-        throw new Error('Keychain unavailable');
+    describe('File storage fallback', () => {
+      it('should handle file write errors gracefully', async () => {
+        mockEntry.setPassword.mockImplementation(() => {
+          throw new Error('Keychain unavailable');
+        });
+        vi.mocked(fs.promises.writeFile).mockRejectedValue(new Error('Disk full'));
+
+        await expect(saveData('test-token', { token: 'test' })).rejects.toThrow(
+          'Failed to save data to file'
+        );
       });
-      vi.mocked(fs.promises.writeFile).mockRejectedValue(new Error('Disk full'));
 
-      await expect(saveData({ token: 'test' })).rejects.toThrow('Failed to save data to file');
+      it('should handle file read errors gracefully', async () => {
+        mockEntry.getPassword.mockReturnValue(null);
+        vi.mocked(fs.promises.readFile).mockRejectedValue(new Error('File not readable'));
+
+        const result = await loadData('test-token');
+
+        expect(result).toBeNull();
+        expect(consoleSpy.warn).toHaveBeenCalledWith(
+          expect.stringContaining('Warning: Could not load data from file')
+        );
+      });
+
+      it('should ignore file removal errors', async () => {
+        mockEntry.deletePassword.mockResolvedValue(true);
+        vi.mocked(fs.promises.unlink).mockRejectedValue(new Error('File not found'));
+
+        // Should not throw
+        await expect(removeData('test-token')).resolves.not.toThrow();
+      });
     });
 
-    it('should handle file read errors gracefully', async () => {
-      mockEntry.getPassword.mockReturnValue(null);
-      vi.mocked(fs.promises.readFile).mockRejectedValue(new Error('File not readable'));
+    describe('FileSystemTokenStorage class', () => {
+      let storage: FileSystemTokenStorage;
 
-      const result = await loadData();
+      beforeEach(() => {
+        storage = new FileSystemTokenStorage();
+      });
 
-      expect(result).toBeNull();
-      expect(consoleSpy.warn).toHaveBeenCalledWith(
-        expect.stringContaining('Warning: Could not load data from file')
-      );
-    });
+      it('should save data using the save method', async () => {
+        const testData = { token: 'test-token', expires: 3600 };
+        mockEntry.setPassword.mockResolvedValue(true);
 
-    it('should ignore file removal errors', async () => {
-      mockEntry.deletePassword.mockResolvedValue(true);
-      vi.mocked(fs.promises.unlink).mockRejectedValue(new Error('File not found'));
+        await storage.save('test-key', testData);
 
-      // Should not throw
-      await expect(removeData()).resolves.not.toThrow();
+        expect(mockEntry.setPassword).toHaveBeenCalledWith(JSON.stringify(testData));
+      });
+
+      it('should load data using the load method', async () => {
+        const testData = { token: 'test-token', expires: 3600 };
+        mockEntry.getPassword.mockReturnValue(JSON.stringify(testData));
+
+        const result = await storage.load('test-key');
+
+        expect(result).toEqual(testData);
+      });
+
+      it('should remove data using the remove method', async () => {
+        mockEntry.deletePassword.mockResolvedValue(true);
+
+        await storage.remove('test-key');
+
+        expect(mockEntry.deletePassword).toHaveBeenCalled();
+      });
+
+      it('should check existence using the exists method', async () => {
+        mockEntry.getPassword.mockReturnValue('{"token": "test"}');
+
+        const result = await storage.exists('test-key');
+
+        expect(result).toBe(true);
+      });
+
+      it('should return false for exists when data does not exist', async () => {
+        mockEntry.getPassword.mockReturnValue(null);
+        vi.mocked(fs.existsSync).mockReturnValue(false);
+
+        const result = await storage.exists('test-key');
+
+        expect(result).toBe(false);
+      });
     });
   });
 });

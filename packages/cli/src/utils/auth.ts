@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { Issuer, generators } from 'openid-client';
+import { environmentConfig, EnvironmentKey } from './environment';
 
 /**
  * Authentication utilities for the Aignostics Platform SDK
@@ -11,10 +12,10 @@ import { Issuer, generators } from 'openid-client';
  * Token storage interface that the auth module depends on
  */
 export interface TokenStorage {
-  save(data: Record<string, unknown>): Promise<void>;
-  load(): Promise<Record<string, unknown> | null>;
-  remove(): Promise<void>;
-  exists(): Promise<boolean>;
+  save(name: string, data: Record<string, unknown>): Promise<void>;
+  load(name: string): Promise<Record<string, unknown> | null>;
+  remove(name: string): Promise<void>;
+  exists(name: string): Promise<boolean>;
 }
 
 /**
@@ -65,7 +66,7 @@ export interface LoginConfig {
 /**
  * OAuth login configuration with callback URL
  */
-export interface LoginWithCallbackConfig extends LoginConfig {
+export interface LoginWithCallbackConfig {
   redirectUri: string;
   codeVerifier: string;
 }
@@ -79,25 +80,29 @@ export class AuthService {
   /**
    * Perform OAuth2 PKCE login flow with external callback handling
    */
-  async loginWithCallback(config: LoginWithCallbackConfig): Promise<string> {
+  async loginWithCallback(
+    environment: EnvironmentKey,
+    config: LoginWithCallbackConfig
+  ): Promise<string> {
+    const oauthConfig = environmentConfig[environment];
     const open = (await import('open')).default;
 
     try {
-      const issuer = await Issuer.discover(config.issuerURL);
+      const issuer = await Issuer.discover(oauthConfig.issuerURL);
       const client = new issuer.Client({
-        client_id: config.clientID,
+        client_id: oauthConfig.clientID,
         redirect_uris: [config.redirectUri],
         response_types: ['code'],
-        scope: config.scope || 'openid profile email offline_access',
-        audience: config.audience || 'https://aignostics-platform-samia',
+        scope: oauthConfig.scope,
+        audience: oauthConfig.audience,
         token_endpoint_auth_method: 'none',
       });
 
       const codeChallenge = generators.codeChallenge(config.codeVerifier);
 
       const authorizationUrl = client.authorizationUrl({
-        scope: config.scope || 'openid profile email offline_access',
-        audience: config.audience || 'https://aignostics-platform-samia',
+        scope: oauthConfig.scope,
+        audience: oauthConfig.audience,
         code_challenge: codeChallenge,
         code_challenge_method: 'S256',
       });
@@ -114,15 +119,20 @@ export class AuthService {
   /**
    * Complete the OAuth flow with authorization code
    */
-  async completeLogin(config: LoginWithCallbackConfig, authCode: string): Promise<void> {
+  async completeLogin(
+    environment: EnvironmentKey,
+    config: LoginWithCallbackConfig,
+    authCode: string
+  ): Promise<void> {
+    const oauthConfig = environmentConfig[environment];
     try {
-      const issuer = await Issuer.discover(config.issuerURL);
+      const issuer = await Issuer.discover(oauthConfig.issuerURL);
       const client = new issuer.Client({
-        client_id: config.clientID,
+        client_id: oauthConfig.clientID,
         redirect_uris: [config.redirectUri],
         response_types: ['code'],
-        scope: config.scope || 'openid profile email offline_access',
-        audience: config.audience || 'https://aignostics-platform-samia',
+        scope: oauthConfig.scope,
+        audience: oauthConfig.audience,
         token_endpoint_auth_method: 'none',
       });
 
@@ -137,6 +147,7 @@ export class AuthService {
 
       // Save the token securely
       await this.saveToken(
+        environment,
         tokenSchema.omit({ stored_at: true }).parse({
           access_token: tokenSet.access_token,
           refresh_token: tokenSet.refresh_token,
@@ -154,21 +165,24 @@ export class AuthService {
   /**
    * Save token data with timestamp
    */
-  private async saveToken(tokenData: Omit<TokenData, 'stored_at'>): Promise<TokenData> {
+  private async saveToken(
+    environment: EnvironmentKey,
+    tokenData: Omit<TokenData, 'stored_at'>
+  ): Promise<TokenData> {
     const dataToStore: TokenData = {
       ...tokenData,
       stored_at: Date.now(),
     };
-    await this.tokenStorage.save(dataToStore);
+    await this.tokenStorage.save(environment, dataToStore);
     return dataToStore;
   }
 
   /**
    * Load and validate token data
    */
-  private async loadToken(): Promise<TokenData | null> {
+  private async loadToken(environment: EnvironmentKey): Promise<TokenData | null> {
     try {
-      const data = await this.tokenStorage.load();
+      const data = await this.tokenStorage.load(environment);
       const result = tokenSchema.safeParse(data);
 
       if (!result.success) {
@@ -201,7 +215,11 @@ export class AuthService {
   /**
    * Refresh an expired token using the refresh token
    */
-  private async refreshToken(config: LoginConfig, tokenData: TokenData): Promise<TokenData | null> {
+  private async refreshToken(
+    environment: EnvironmentKey,
+    tokenData: TokenData
+  ): Promise<TokenData | null> {
+    const config = environmentConfig[environment];
     if (!tokenData.refresh_token) {
       return null;
     }
@@ -229,7 +247,7 @@ export class AuthService {
         scope: tokenSet.scope,
       };
 
-      return this.saveToken(newTokenData);
+      return this.saveToken(environment, newTokenData);
     } catch (error) {
       console.warn(`Warning: Token refresh failed: ${String(error)}`);
       return null;
@@ -241,9 +259,10 @@ export class AuthService {
    * @param config Optional login config for token refresh. If not provided and refresh is needed, returns null
    * @returns Valid access token or null if not found/expired/refresh failed
    */
-  async getValidAccessToken(config?: LoginConfig): Promise<string | null> {
+  async getValidAccessToken(environment: EnvironmentKey): Promise<string | null> {
     try {
-      const tokenData = await this.loadToken();
+      const config = environmentConfig[environment];
+      const tokenData = await this.loadToken(environment);
 
       if (!tokenData) {
         return null;
@@ -257,7 +276,7 @@ export class AuthService {
       // If token is expired but we have a refresh token and config, try to refresh
       if (tokenData.refresh_token && config) {
         console.log('Access token expired, attempting to refresh...');
-        const refreshedTokenData = await this.refreshToken(config, tokenData);
+        const refreshedTokenData = await this.refreshToken(environment, tokenData);
 
         if (refreshedTokenData) {
           console.log('✅ Token refreshed successfully');
@@ -277,9 +296,9 @@ export class AuthService {
   /**
    * Get current authentication state
    */
-  async getAuthState(): Promise<AuthState> {
+  async getAuthState(environment: EnvironmentKey): Promise<AuthState> {
     try {
-      const tokenData = await this.loadToken();
+      const tokenData = await this.loadToken(environment);
 
       if (!tokenData) {
         return { isAuthenticated: false };
@@ -309,9 +328,9 @@ export class AuthService {
   /**
    * Logout and remove stored tokens
    */
-  async logout(): Promise<void> {
+  async logout(environment: EnvironmentKey): Promise<void> {
     try {
-      await this.tokenStorage.remove();
+      await this.tokenStorage.remove(environment);
     } catch (error) {
       console.error('❌ Error during logout:', error);
       throw error;

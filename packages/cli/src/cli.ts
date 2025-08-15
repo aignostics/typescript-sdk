@@ -17,6 +17,8 @@ import {
   handleLogout,
   handleStatus,
 } from './cli-functions.js';
+import { EnvironmentKey, environmentConfig } from './utils/environment.js';
+import { AuthenticationError } from '@aignostics/sdk';
 
 // Create a shared auth service instance for the CLI
 const authService = new AuthService(new FileSystemTokenStorage());
@@ -29,73 +31,52 @@ export async function main() {
     .strict()
     .scriptName('aignostics-platform')
     .usage('Usage: $0 <command> [options]')
-    .option('endpoint', {
-      describe: 'API endpoint to use',
+    .option('environment', {
+      describe: 'Environment to use (e.g., production, staging)',
       type: 'string',
-      default: 'https://platform.aignostics.com',
+      default: 'production',
+      choices: Object.keys(environmentConfig),
     })
     .command('info', 'Display SDK information', {}, handleInfo)
     .command(
       'test-api',
       'Test API connection',
-      {
-        endpoint: {
-          describe: 'API endpoint to test',
-          type: 'string',
-          default: 'https://platform.aignostics.com',
-        },
-      },
-      yargs => testApi(yargs.endpoint, authService)
+      yargs => yargs,
+      argv => testApi(argv.environment as EnvironmentKey, authService)
     )
     .command(
       'list-applications',
       'List applications',
-      {
-        endpoint: {
-          describe: 'API endpoint to test',
-          type: 'string',
-          default: 'https://platform.aignostics.com',
-        },
-      },
-      argv => listApplications(argv.endpoint, authService)
+      yargs => yargs,
+      argv => listApplications(argv.environment as EnvironmentKey, authService)
     )
     .command(
       'list-application-versions <applicationId>',
       'List versions for a specific application',
       yargs =>
-        yargs
-          .positional('applicationId', {
-            describe: 'Application ID to get versions for',
-            type: 'string',
-            demandOption: true,
-          })
-          .option('endpoint', {
-            describe: 'API endpoint to use',
-            type: 'string',
-            default: 'https://platform.aignostics.com',
-          }),
-      argv => listApplicationVersions(argv.endpoint, authService, argv.applicationId)
+        yargs.positional('applicationId', {
+          describe: 'Application ID to get versions for',
+          type: 'string',
+          demandOption: true,
+        }),
+      argv =>
+        listApplicationVersions(argv.environment as EnvironmentKey, authService, argv.applicationId)
     )
     .command(
       'list-application-runs',
       'List application runs',
-      {
-        endpoint: {
-          describe: 'API endpoint to use',
-          type: 'string',
-          default: 'https://platform.aignostics.com',
-        },
-        applicationId: {
-          describe: 'Filter by application ID',
-          type: 'string',
-        },
-        applicationVersion: {
-          describe: 'Filter by application version',
-          type: 'string',
-        },
-      },
+      yargs =>
+        yargs
+          .option('applicationId', {
+            describe: 'Filter by application ID',
+            type: 'string',
+          })
+          .option('applicationVersion', {
+            describe: 'Filter by application version',
+            type: 'string',
+          }),
       argv =>
-        listApplicationRuns(argv.endpoint, authService, {
+        listApplicationRuns(argv.environment as EnvironmentKey, authService, {
           applicationId: argv.applicationId,
           applicationVersion: argv.applicationVersion,
         })
@@ -104,52 +85,35 @@ export async function main() {
       'get-run <applicationRunId>',
       'Get details of a specific application run',
       yargs =>
-        yargs
-          .positional('applicationRunId', {
-            describe: 'Application run ID to get details for',
-            type: 'string',
-            demandOption: true,
-          })
-          .option('endpoint', {
-            describe: 'API endpoint to use',
-            type: 'string',
-            default: 'https://platform.aignostics.com',
-          }),
-      argv => getRun(argv.endpoint, authService, argv.applicationRunId)
+        yargs.positional('applicationRunId', {
+          describe: 'Application run ID to get details for',
+          type: 'string',
+          demandOption: true,
+        }),
+      argv => getRun(argv.environment as EnvironmentKey, authService, argv.applicationRunId)
     )
     .command(
       'cancel-run <applicationRunId>',
       'Cancel a specific application run',
       yargs =>
-        yargs
-          .positional('applicationRunId', {
-            describe: 'Application run ID to cancel',
-            type: 'string',
-            demandOption: true,
-          })
-          .option('endpoint', {
-            describe: 'API endpoint to use',
-            type: 'string',
-            default: 'https://platform.aignostics.com',
-          }),
-      argv => cancelApplicationRun(argv.endpoint, authService, argv.applicationRunId)
+        yargs.positional('applicationRunId', {
+          describe: 'Application run ID to cancel',
+          type: 'string',
+          demandOption: true,
+        }),
+      argv =>
+        cancelApplicationRun(argv.environment as EnvironmentKey, authService, argv.applicationRunId)
     )
     .command(
       'list-run-results <applicationRunId>',
       'List results for a specific application run',
       yargs =>
-        yargs
-          .positional('applicationRunId', {
-            describe: 'Application run ID to get results for',
-            type: 'string',
-            demandOption: true,
-          })
-          .option('endpoint', {
-            describe: 'API endpoint to use',
-            type: 'string',
-            default: 'https://platform.aignostics.com',
-          }),
-      argv => listRunResults(argv.endpoint, authService, argv.applicationRunId)
+        yargs.positional('applicationRunId', {
+          describe: 'Application run ID to get results for',
+          type: 'string',
+          demandOption: true,
+        }),
+      argv => listRunResults(argv.environment as EnvironmentKey, authService, argv.applicationRunId)
     )
     .command(
       'create-run <applicationVersionId>',
@@ -161,50 +125,42 @@ export async function main() {
             type: 'string',
             demandOption: true,
           })
-          .option('endpoint', {
-            describe: 'API endpoint to use',
-            type: 'string',
-            default: 'https://platform.aignostics.com',
-          })
           .option('items', {
             describe: 'JSON string of items to process (array of objects)',
             type: 'string',
             default: '[]',
           }),
       argv =>
-        createApplicationRun(argv.endpoint, authService, argv.applicationVersionId, argv.items)
+        createApplicationRun(
+          argv.environment as EnvironmentKey,
+          authService,
+          argv.applicationVersionId,
+          argv.items
+        )
     )
-    .command(
-      'login',
-      'Login to the Aignostics Platform',
-      {
-        issuerURL: {
-          describe: 'Issuer URL for OpenID Connect',
-          type: 'string',
-          // defaults to the production issues URL
-          default: 'https://aignostics-platform.eu.auth0.com/oauth',
-        },
-        clientID: {
-          describe: 'Client ID for the application',
-          type: 'string',
-          // defaults to the production client id
-          default: 'YtJ7F9lAtxx16SZGQlYPe6wcjlXB78MM',
-        },
-      },
-      async argv => {
-        await handleLogin(argv.issuerURL, argv.clientID, authService);
-      }
-    )
-    .command('logout', 'Logout and remove stored token', {}, async () => {
-      await handleLogout(authService);
+    .command('login', 'Login to the Aignostics Platform', {}, async argv => {
+      await handleLogin(argv.environment as EnvironmentKey, authService);
     })
-    .command('status', 'Check authentication status', {}, async () => {
-      await handleStatus(authService);
+    .command('logout', 'Logout and remove stored token', {}, async argv => {
+      await handleLogout(argv.environment as EnvironmentKey, authService);
+    })
+    .command('status', 'Check authentication status', {}, async argv => {
+      await handleStatus(argv.environment as EnvironmentKey, authService);
     })
     .help()
     .alias('help', 'h')
     .version()
     .alias('version', 'v')
     .demandCommand(1, 'You need at least one command before moving on')
+    .fail((msg, err) => {
+      if (err === undefined) {
+        console.error(`❌ ${msg}`);
+      } else if (err instanceof AuthenticationError) {
+        console.error('❌ Authentication error, please use the login command to reauthenticate');
+      } else {
+        console.error(`❌ An unexpected error occurred: ${err}`);
+      }
+      process.exit(1);
+    })
     .parse();
 }

@@ -81,6 +81,7 @@ describe('CLI Functions Unit Tests', () => {
     vi.mocked(PlatformSDKHttp).mockImplementation(config => {
       // Capture and call the tokenProvider to ensure coverage
       if (config?.tokenProvider) {
+        // TODO: get rid of this by adding integration tests that actually cover this
         void config.tokenProvider();
       }
       return platformSDKMock as unknown as PlatformSDKHttp;
@@ -101,16 +102,28 @@ describe('CLI Functions Unit Tests', () => {
       // Set up mock server for successful response
       platformSDKMock.testConnection.mockResolvedValue(true);
 
-      await testApi('https://api.example.com', mockAuthService);
+      await testApi('production', mockAuthService);
 
       expect(consoleSpy.log).toHaveBeenCalledWith('✅ API connection successful');
     });
 
     it('should handle API connection failure', async () => {
       // Set up mock server for error response
+      platformSDKMock.testConnection.mockResolvedValue(false);
+
+      await testApi('production', mockAuthService);
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ API connection failed, bad response status code'
+      );
+      expect(mockExit).not.toHaveBeenCalled();
+    });
+
+    it('should handle API connection failure', async () => {
+      // Set up mock server for error response
       platformSDKMock.testConnection.mockRejectedValue(new Error('Connection failed'));
 
-      await testApi('https://api.example.com', mockAuthService);
+      await testApi('production', mockAuthService);
 
       expect(consoleSpy.error).toHaveBeenCalledWith('❌ API connection failed:', expect.any(Error));
       expect(mockExit).toHaveBeenCalledWith(1);
@@ -120,7 +133,7 @@ describe('CLI Functions Unit Tests', () => {
       // Set up mock server for network error
       platformSDKMock.testConnection.mockRejectedValue(new Error('Network error'));
 
-      await testApi('https://api.example.com', mockAuthService);
+      await testApi('production', mockAuthService);
 
       expect(consoleSpy.error).toHaveBeenCalledWith('❌ API connection failed:', expect.any(Error));
       expect(mockExit).toHaveBeenCalledWith(1);
@@ -138,7 +151,7 @@ describe('CLI Functions Unit Tests', () => {
       // Set up mock server for successful response
       platformSDKMock.listApplications.mockResolvedValue(listApplicationsResponse);
 
-      await listApplications('https://api.example.com', mockAuthService);
+      await listApplications('production', mockAuthService);
 
       expect(consoleSpy.log).toHaveBeenCalledWith(
         'Applications:',
@@ -151,7 +164,7 @@ describe('CLI Functions Unit Tests', () => {
       // Set up mock server for empty response
       platformSDKMock.listApplications.mockResolvedValue(listApplicationsResponse);
 
-      await listApplications('https://api.example.com', mockAuthService);
+      await listApplications('production', mockAuthService);
 
       expect(consoleSpy.log).toHaveBeenCalledWith(
         'Applications:',
@@ -163,7 +176,7 @@ describe('CLI Functions Unit Tests', () => {
       // Set up mock server for error response
       platformSDKMock.listApplications.mockRejectedValue(new Error('API error'));
 
-      await expect(listApplications('https://api.example.com', mockAuthService)).rejects.toThrow();
+      await expect(listApplications('production', mockAuthService)).rejects.toThrow();
     });
   });
 
@@ -182,7 +195,7 @@ describe('CLI Functions Unit Tests', () => {
       ];
       platformSDKMock.listApplicationVersions.mockResolvedValue(versionsResponse);
 
-      await listApplicationVersions('https://api.example.com', mockAuthService, 'app1');
+      await listApplicationVersions('production', mockAuthService, 'app1');
 
       expect(consoleSpy.log).toHaveBeenCalledWith(
         'Application versions for app1:',
@@ -193,7 +206,7 @@ describe('CLI Functions Unit Tests', () => {
     it('should handle API error', async () => {
       platformSDKMock.listApplicationVersions.mockRejectedValue(new Error('API error'));
 
-      await listApplicationVersions('https://api.example.com', mockAuthService, 'app1');
+      await listApplicationVersions('production', mockAuthService, 'app1');
 
       expect(consoleSpy.error).toHaveBeenCalledWith(
         '❌ Failed to list application versions:',
@@ -217,7 +230,7 @@ describe('CLI Functions Unit Tests', () => {
       ];
       platformSDKMock.listApplicationRuns.mockResolvedValue(runsResponse);
 
-      await listApplicationRuns('https://api.example.com', mockAuthService);
+      await listApplicationRuns('production', mockAuthService);
 
       expect(consoleSpy.log).toHaveBeenCalledWith(
         'Application runs:',
@@ -238,7 +251,7 @@ describe('CLI Functions Unit Tests', () => {
       ];
       platformSDKMock.listApplicationRuns.mockResolvedValue(runsResponse);
 
-      await listApplicationRuns('https://api.example.com', mockAuthService, {
+      await listApplicationRuns('production', mockAuthService, {
         applicationId: 'app1',
         applicationVersion: 'v1.0.0',
       });
@@ -256,7 +269,7 @@ describe('CLI Functions Unit Tests', () => {
     it('should handle API error', async () => {
       platformSDKMock.listApplicationRuns.mockRejectedValue(new Error('API error'));
 
-      await listApplicationRuns('https://api.example.com', mockAuthService);
+      await listApplicationRuns('production', mockAuthService);
 
       expect(consoleSpy.error).toHaveBeenCalledWith(
         '❌ Failed to list application runs:',
@@ -278,7 +291,7 @@ describe('CLI Functions Unit Tests', () => {
       };
       platformSDKMock.getRun.mockResolvedValue(runResponse);
 
-      await getRun('https://api.example.com', mockAuthService, 'run-1');
+      await getRun('production', mockAuthService, 'run-1');
 
       expect(consoleSpy.log).toHaveBeenCalledWith(
         'Run details for run-1:',
@@ -289,7 +302,7 @@ describe('CLI Functions Unit Tests', () => {
     it('should handle API error', async () => {
       platformSDKMock.getRun.mockRejectedValue(new Error('API error'));
 
-      await getRun('https://api.example.com', mockAuthService, 'run-1');
+      await getRun('production', mockAuthService, 'run-1');
 
       expect(consoleSpy.error).toHaveBeenCalledWith('❌ Failed to get run:', expect.any(Error));
       expect(mockExit).toHaveBeenCalledWith(1);
@@ -300,7 +313,7 @@ describe('CLI Functions Unit Tests', () => {
     it('should cancel application run successfully', async () => {
       platformSDKMock.cancelApplicationRun.mockResolvedValue(undefined);
 
-      await cancelApplicationRun('https://api.example.com', mockAuthService, 'run-1');
+      await cancelApplicationRun('production', mockAuthService, 'run-1');
 
       expect(consoleSpy.log).toHaveBeenCalledWith(
         '✅ Successfully cancelled application run: run-1'
@@ -310,7 +323,7 @@ describe('CLI Functions Unit Tests', () => {
     it('should handle API error', async () => {
       platformSDKMock.cancelApplicationRun.mockRejectedValue(new Error('API error'));
 
-      await cancelApplicationRun('https://api.example.com', mockAuthService, 'run-1');
+      await cancelApplicationRun('production', mockAuthService, 'run-1');
 
       expect(consoleSpy.error).toHaveBeenCalledWith(
         '❌ Failed to cancel application run:',
@@ -335,7 +348,7 @@ describe('CLI Functions Unit Tests', () => {
       ];
       platformSDKMock.listRunResults.mockResolvedValue(resultsResponse);
 
-      await listRunResults('https://api.example.com', mockAuthService, 'run-1');
+      await listRunResults('production', mockAuthService, 'run-1');
 
       expect(consoleSpy.log).toHaveBeenCalledWith(
         'Run results for run-1:',
@@ -346,7 +359,7 @@ describe('CLI Functions Unit Tests', () => {
     it('should handle API error', async () => {
       platformSDKMock.listRunResults.mockRejectedValue(new Error('API error'));
 
-      await listRunResults('https://api.example.com', mockAuthService, 'run-1');
+      await listRunResults('production', mockAuthService, 'run-1');
 
       expect(consoleSpy.error).toHaveBeenCalledWith(
         '❌ Failed to list run results:',
@@ -363,12 +376,7 @@ describe('CLI Functions Unit Tests', () => {
       };
       platformSDKMock.createApplicationRun.mockResolvedValue(runResponse);
 
-      await createApplicationRun(
-        'https://api.example.com',
-        mockAuthService,
-        'test-app:v1.0.0',
-        '[]'
-      );
+      await createApplicationRun('production', mockAuthService, 'test-app:v1.0.0', '[]');
 
       expect(platformSDKMock.createApplicationRun).toHaveBeenCalledWith({
         application_version_id: 'test-app:v1.0.0',
@@ -399,7 +407,7 @@ describe('CLI Functions Unit Tests', () => {
       platformSDKMock.createApplicationRun.mockResolvedValue(runResponse);
 
       await createApplicationRun(
-        'https://api.example.com',
+        'production',
         mockAuthService,
         'test-app:v1.0.0',
         JSON.stringify(items)
@@ -416,12 +424,7 @@ describe('CLI Functions Unit Tests', () => {
     });
 
     it('should handle invalid JSON in items parameter', async () => {
-      await createApplicationRun(
-        'https://api.example.com',
-        mockAuthService,
-        'test-app:v1.0.0',
-        'invalid-json'
-      );
+      await createApplicationRun('production', mockAuthService, 'test-app:v1.0.0', 'invalid-json');
 
       expect(consoleSpy.error).toHaveBeenCalledWith('❌ Invalid items JSON:', expect.any(Error));
       expect(mockExit).toHaveBeenCalledWith(1);
@@ -430,7 +433,7 @@ describe('CLI Functions Unit Tests', () => {
 
     it('should handle non-array items parameter', async () => {
       await createApplicationRun(
-        'https://api.example.com',
+        'production',
         mockAuthService,
         'test-app:v1.0.0',
         '{"not": "an array"}'
@@ -449,12 +452,7 @@ describe('CLI Functions Unit Tests', () => {
     it('should handle API error during run creation', async () => {
       platformSDKMock.createApplicationRun.mockRejectedValue(new Error('API error'));
 
-      await createApplicationRun(
-        'https://api.example.com',
-        mockAuthService,
-        'test-app:v1.0.0',
-        '[]'
-      );
+      await createApplicationRun('production', mockAuthService, 'test-app:v1.0.0', '[]');
 
       expect(consoleSpy.error).toHaveBeenCalledWith(
         '❌ Failed to create application run:',
@@ -490,28 +488,21 @@ describe('CLI Functions Unit Tests', () => {
       vi.mocked(mockAuthService.loginWithCallback).mockResolvedValue('');
       vi.mocked(mockAuthService.completeLogin).mockResolvedValue(undefined);
 
-      await handleLogin('https://test-issuer.com', 'test-client-id', mockAuthService);
+      await handleLogin('production', mockAuthService);
 
       // Verify the flow
       expect(crypto.randomBytes).toHaveBeenCalledWith(32);
       expect(startCallbackServer).toHaveBeenCalled();
-      expect(mockAuthService.loginWithCallback).toHaveBeenCalledWith({
-        issuerURL: 'https://test-issuer.com',
-        clientID: 'test-client-id',
+      expect(mockAuthService.loginWithCallback).toHaveBeenCalledWith('production', {
         redirectUri: 'http://localhost:8989',
         codeVerifier: mockCodeVerifierHex,
-        audience: 'https://aignostics-platform-samia',
-        scope: 'openid profile email offline_access',
       });
       expect(waitForCallback).toHaveBeenCalledWith(mockServer);
       expect(mockAuthService.completeLogin).toHaveBeenCalledWith(
+        'production',
         {
-          issuerURL: 'https://test-issuer.com',
-          clientID: 'test-client-id',
           redirectUri: 'http://localhost:8989',
           codeVerifier: mockCodeVerifierHex,
-          audience: 'https://aignostics-platform-samia',
-          scope: 'openid profile email offline_access',
         },
         mockAuthCode
       );
@@ -529,9 +520,10 @@ describe('CLI Functions Unit Tests', () => {
       vi.mocked(mockAuthService.loginWithCallback).mockResolvedValue('');
       vi.mocked(mockAuthService.completeLogin).mockResolvedValue(undefined);
 
-      await handleLogin('https://test-issuer.com', 'test-client-id', mockAuthService);
+      await handleLogin('production', mockAuthService);
 
       expect(mockAuthService.loginWithCallback).toHaveBeenCalledWith(
+        'production',
         expect.objectContaining({
           redirectUri: 'http://localhost:8989', // Should fallback to 8989
         })
@@ -543,9 +535,9 @@ describe('CLI Functions Unit Tests', () => {
 
       vi.mocked(mockAuthService.loginWithCallback).mockRejectedValue(mockError);
 
-      await expect(
-        handleLogin('https://test-issuer.com', 'test-client-id', mockAuthService)
-      ).rejects.toThrow('Authentication failed');
+      await expect(handleLogin('production', mockAuthService)).rejects.toThrow(
+        'Authentication failed'
+      );
 
       expect(mockConsole.error).toHaveBeenCalledWith('❌ Authentication failed:', mockError);
       expect(mockServer.close).toHaveBeenCalled();
@@ -557,9 +549,7 @@ describe('CLI Functions Unit Tests', () => {
       vi.mocked(mockAuthService.loginWithCallback).mockResolvedValue('');
       (waitForCallback as Mock).mockRejectedValue(mockError);
 
-      await expect(
-        handleLogin('https://test-issuer.com', 'test-client-id', mockAuthService)
-      ).rejects.toThrow('Callback timeout');
+      await expect(handleLogin('production', mockAuthService)).rejects.toThrow('Callback timeout');
 
       expect(mockConsole.error).toHaveBeenCalledWith('❌ Authentication failed:', mockError);
       expect(mockServer.close).toHaveBeenCalled();
@@ -572,9 +562,9 @@ describe('CLI Functions Unit Tests', () => {
       vi.mocked(mockAuthService.loginWithCallback).mockResolvedValue('');
       vi.mocked(mockAuthService.completeLogin).mockRejectedValue(mockError);
 
-      await expect(
-        handleLogin('https://test-issuer.com', 'test-client-id', mockAuthService)
-      ).rejects.toThrow('Token exchange failed');
+      await expect(handleLogin('production', mockAuthService)).rejects.toThrow(
+        'Token exchange failed'
+      );
 
       expect(mockConsole.error).toHaveBeenCalledWith('❌ Authentication failed:', mockError);
       expect(mockServer.close).toHaveBeenCalled();
@@ -596,7 +586,7 @@ describe('CLI Functions Unit Tests', () => {
     it('should call logout function', async () => {
       vi.mocked(mockAuthService.logout).mockResolvedValue(undefined);
 
-      await handleLogout(mockAuthService);
+      await handleLogout('production', mockAuthService);
 
       expect(mockAuthService.logout).toHaveBeenCalled();
     });
@@ -605,7 +595,7 @@ describe('CLI Functions Unit Tests', () => {
       const mockError = new Error('Logout failed');
       vi.mocked(mockAuthService.logout).mockRejectedValue(mockError);
 
-      await expect(handleLogout(mockAuthService)).rejects.toThrow('Logout failed');
+      await expect(handleLogout('production', mockAuthService)).rejects.toThrow('Logout failed');
     });
   });
 
@@ -642,7 +632,7 @@ describe('CLI Functions Unit Tests', () => {
 
       vi.mocked(mockAuthService.getAuthState).mockResolvedValue(mockAuthState);
 
-      await handleStatus(mockAuthService);
+      await handleStatus('production', mockAuthService);
 
       expect(mockConsole.log).toHaveBeenCalledWith('✅ Authenticated');
       expect(mockConsole.log).toHaveBeenCalledWith('Token details:');
@@ -671,7 +661,7 @@ describe('CLI Functions Unit Tests', () => {
 
       vi.mocked(mockAuthService.getAuthState).mockResolvedValue(mockAuthState);
 
-      await handleStatus(mockAuthService);
+      await handleStatus('production', mockAuthService);
 
       expect(mockConsole.log).toHaveBeenCalledWith('✅ Authenticated');
       expect(mockConsole.log).toHaveBeenCalledWith('Token details:');
@@ -690,7 +680,7 @@ describe('CLI Functions Unit Tests', () => {
 
       vi.mocked(mockAuthService.getAuthState).mockResolvedValue(mockAuthState);
 
-      await handleStatus(mockAuthService);
+      await handleStatus('production', mockAuthService);
 
       expect(mockConsole.log).toHaveBeenCalledWith(
         '❌ Not authenticated. Run "aignostics-platform login" to authenticate.'
@@ -701,7 +691,9 @@ describe('CLI Functions Unit Tests', () => {
       const mockError = new Error('Failed to check auth state');
       vi.mocked(mockAuthService.getAuthState).mockRejectedValue(mockError);
 
-      await expect(handleStatus(mockAuthService)).rejects.toThrow('process.exit called');
+      await expect(handleStatus('production', mockAuthService)).rejects.toThrow(
+        'process.exit called'
+      );
 
       expect(mockConsole.error).toHaveBeenCalledWith('❌ Error checking status:', mockError);
     });

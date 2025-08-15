@@ -15,9 +15,7 @@ The official TypeScript SDK for the Aignostics Platform, providing type-safe acc
 
 - 🚀 **Type-safe API client** - Generated from OpenAPI specifications
 - 🔧 **CLI tool** - Command-line interface for platform operations
-- � **Monorepo structure** - Independent packages with shared tooling
-- 🧪 **Comprehensive testing** - 85%+ code coverage with Vitest
-- 🔄 **Automatic releases** - Semantic versioning per package
+- 🧪 **Comprehensive testing** - 85%+ code coverage with unit and integration tests
 - 🛡️ **Code quality** - ESLint, Prettier, and SonarQube integration
 
 ## Installation
@@ -50,6 +48,12 @@ const sdk = new PlatformSDK({
   baseURL: 'https://api.aignostics.com',
   tokenProvider: () => 'your-access-token-here',
 });
+
+// List applications
+const applications = await sdk.listApplications();
+
+// List application runs
+const runs = await sdk.listApplicationRuns();
 ```
 
 ### Quick Start - CLI
