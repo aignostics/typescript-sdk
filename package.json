@@ -49,10 +49,6 @@
     "url": "https://github.com/aignostics/typescript-sdk/issues"
   },
   "homepage": "https://github.com/aignostics/typescript-sdk#readme",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com",
-    "access": "restricted"
-  },
   "devDependencies": {
     "@eslint/js": "^9.31.0",
     "@nx/eslint": "^21.3.5",
