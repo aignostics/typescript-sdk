@@ -7,8 +7,7 @@
     "dev": "nx serve demo",
     "build": "nx build demo",
     "start": "nx serve demo --prod",
-    "lint": "nx lint demo",
-    "type-check": "nx type-check demo"
+    "lint": "nx lint demo"
   },
   "dependencies": {
     "@aignostics/sdk": "*",
@@ -19,6 +18,7 @@
     "react-dom": "19.0.0"
   },
   "devDependencies": {
+    "@nx/eslint-plugin": "^21.3.11",
     "@tailwindcss/postcss": "^4.1.11",
     "@types/node": "^24.0.13",
     "@types/react": "19.0.0",

@@ -26,7 +26,7 @@
       "options": {
         "buildTarget": "demo:build",
         "dev": true,
-        "port": 8989
+        "port": 3000
       },
       "configurations": {
         "development": {
@@ -56,7 +56,7 @@
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["packages/demo/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["packages/demo/src/**/*.{ts,tsx,js,jsx}"]
       }
     }
   }

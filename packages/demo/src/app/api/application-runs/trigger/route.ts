@@ -47,18 +47,18 @@ export async function POST(request: NextRequest) {
 
     // Trigger the application run using the SDK
     // Convert input_artifacts to the items structure expected by the SDK
-    const items = [
-      {
-        reference: 'user_input_slide',
-        input_artifacts: body.input_artifacts.map(artifact => ({
-          name: artifact.name,
+    const items = body.input_artifacts.map(artifact => ({
+      reference: artifact.name,
+      input_artifacts: [
+        {
+          name: 'user_slide',
           // In a real implementation, you would provide the download_url
           // For now, we'll use a placeholder as this is a demo
           download_url: artifact.download_url,
           metadata: artifact.metadata,
-        })),
-      },
-    ];
+        },
+      ],
+    }));
 
     const result = await sdk.createApplicationRun({
       application_version_id: `${body.application_id}:v${body.version}`,

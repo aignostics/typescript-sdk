@@ -13,7 +13,7 @@ export async function GET() {
 
     // Initialize the SDK with the user's access token
     const sdk = new PlatformSDKHttp({
-      baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://platform-dev.aignostics.com',
+      baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://platform-dev.aignostics.ai',
       tokenProvider: () => session.accessToken || null,
     });
 
