@@ -25,6 +25,7 @@
     "baseUrl": ".",
     "paths": {
       "@aignostics/sdk": ["packages/sdk/src/index.ts"],
+      "@aignostics/sdk/test": ["packages/sdk/src/test-utils/index.ts"],
       "@aignostics/cli": ["packages/cli/src/index.ts"]
     }
   },

@@ -1,113 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { main } from './cli.js';
-
-// Mock the CLI functions to avoid side effects
-vi.mock('./cli-functions', () => ({
-  // eslint-disable-next-line @typescript-eslint/require-await
-  handleInfo: vi.fn(async () => {
-    console.log('Aignostics Platform SDK');
-    console.log('Version:', '0.0.0-development');
-  }),
-  // eslint-disable-next-line @typescript-eslint/require-await
-  testApi: vi.fn(async () => {
-    console.log('✅ API connection successful');
-  }),
-  // eslint-disable-next-line @typescript-eslint/require-await
-  listApplications: vi.fn(async () => {
-    console.log(
-      'Applications:',
-      JSON.stringify(
-        [
-          { application_id: '1', name: 'Test App 1' },
-          { application_id: '2', name: 'Test App 2' },
-        ],
-        null,
-        2
-      )
-    );
-  }),
-  // eslint-disable-next-line @typescript-eslint/require-await
-  listApplicationVersions: vi.fn(async () => {
-    console.log(
-      'Application versions for app1:',
-      JSON.stringify(
-        [
-          {
-            application_version_id: 'v1.0.0',
-            version: '1.0.0',
-            application_id: 'app1',
-            changelog: 'Initial version',
-          },
-        ],
-        null,
-        2
-      )
-    );
-  }),
-  // eslint-disable-next-line @typescript-eslint/require-await
-  listApplicationRuns: vi.fn(async () => {
-    console.log(
-      'Application runs:',
-      JSON.stringify(
-        [
-          {
-            application_run_id: 'run-1',
-            application_version_id: 'v1.0.0',
-            status: 'COMPLETED',
-            created_at: '2023-01-01T00:00:00Z',
-          },
-        ],
-        null,
-        2
-      )
-    );
-  }),
-  // eslint-disable-next-line @typescript-eslint/require-await
-  getRun: vi.fn(async () => {
-    console.log(
-      'Run details for run-1:',
-      JSON.stringify(
-        {
-          application_run_id: 'run-1',
-          application_version_id: 'v1.0.0',
-          status: 'COMPLETED',
-          created_at: '2023-01-01T00:00:00Z',
-        },
-        null,
-        2
-      )
-    );
-  }),
-  // eslint-disable-next-line @typescript-eslint/require-await
-  cancelApplicationRun: vi.fn(async () => {
-    console.log('✅ Successfully cancelled application run: run-1');
-  }),
-  // eslint-disable-next-line @typescript-eslint/require-await
-  listRunResults: vi.fn(async () => {
-    console.log(
-      'Run results for run-1:',
-      JSON.stringify(
-        [
-          {
-            item_id: 'item-1',
-            reference: 'test-ref-1',
-            status: 'SUCCEEDED',
-            created_at: '2023-01-01T00:00:00Z',
-          },
-        ],
-        null,
-        2
-      )
-    );
-  }),
-  // eslint-disable-next-line @typescript-eslint/require-await
-  createApplicationRun: vi.fn(async () => {
-    console.log(
-      '✅ Application run created successfully:',
-      JSON.stringify({ application_run_id: 'run-123' }, null, 2)
-    );
-  }),
-}));
+import { factories, handlers, server } from '@aignostics/sdk/test';
+import { http, HttpResponse } from 'msw';
 
 // Mock process.exit to prevent test runner from exiting
 const mockExit = vi.fn();
@@ -115,6 +9,41 @@ vi.stubGlobal('process', {
   ...process,
   exit: mockExit,
 });
+
+// Mock auth service to avoid real authentication
+vi.mock('./utils/auth.js', () => ({
+  AuthService: vi.fn().mockImplementation(() => ({
+    getValidAccessToken: vi.fn().mockResolvedValue('mock-token'),
+    loginWithCallback: vi.fn().mockResolvedValue(''),
+    completeLogin: vi.fn().mockResolvedValue(undefined),
+    logout: vi.fn().mockResolvedValue(undefined),
+    getAuthState: vi.fn().mockResolvedValue({
+      isAuthenticated: true,
+      token: {
+        type: 'Bearer',
+        scope: 'openid profile email offline_access',
+        expiresAt: new Date('2025-01-01T12:59:59.000Z'),
+        storedAt: new Date('2024-12-01T10:00:00.000Z'),
+      },
+    }),
+  })),
+}));
+
+// Mock OAuth callback server
+vi.mock('./utils/oauth-callback-server.js', () => ({
+  startCallbackServer: vi.fn().mockResolvedValue({
+    address: vi.fn().mockReturnValue({ port: 8989 }),
+    close: vi.fn(),
+  }),
+  waitForCallback: vi.fn().mockResolvedValue('test-auth-code'),
+}));
+
+// Mock crypto for login
+vi.mock('crypto', () => ({
+  default: {
+    randomBytes: vi.fn().mockReturnValue(Buffer.from('test-code-verifier', 'utf-8')),
+  },
+}));
 
 describe('CLI Integration Tests', () => {
   let consoleSpy: {
@@ -127,6 +56,8 @@ describe('CLI Integration Tests', () => {
   beforeEach(() => {
     // Store original argv
     originalArgv = process.argv;
+
+    server.use(...handlers.success);
 
     // Mock console methods to avoid noise in tests
     consoleSpy = {
@@ -178,23 +109,26 @@ describe('CLI Integration Tests', () => {
 
       expect(consoleSpy.log).toHaveBeenCalledWith(
         'Applications:',
-        expect.stringContaining('Test App 1')
+        expect.stringContaining('application_id')
       );
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        'Applications:',
-        expect.stringContaining('Test App 2')
-      );
+      expect(consoleSpy.log).toHaveBeenCalledWith('Applications:', expect.stringContaining('name'));
     });
   });
 
   describe('list-application-versions command', () => {
     it('should list application versions successfully', async () => {
+      const application = factories.application.build();
+      server.use(
+        http.get('*/v1/applications/:applicationId', () =>
+          HttpResponse.json(application, { status: 200 })
+        )
+      );
       // Mock process.argv for yargs
       process.argv = [
         'node',
         'cli.js',
         'list-application-versions',
-        'app1',
+        application.application_id,
         '--endpoint',
         'https://api.example.com',
       ];
@@ -202,22 +136,33 @@ describe('CLI Integration Tests', () => {
       await main();
 
       expect(consoleSpy.log).toHaveBeenCalledWith(
-        'Application versions for app1:',
-        expect.stringContaining('v1.0.0')
-      );
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        'Application versions for app1:',
-        expect.stringContaining('Initial version')
+        `Application versions for ${application.application_id}:`,
+        expect.toSatisfy(
+          str =>
+            typeof str === 'string' &&
+            application.versions.every(version => str.includes(version.number))
+        )
       );
     });
 
-    it('should require applicationId parameter', async () => {
-      // Mock process.argv for yargs - missing applicationId
-      process.argv = ['node', 'cli.js', 'list-application-versions'];
+    it('should print error responses', async () => {
+      const application = factories.application.build();
+      server.use(http.get('*/v1/applications/:applicationId', () => HttpResponse.error()));
+      // Mock process.argv for yargs
+      process.argv = [
+        'node',
+        'cli.js',
+        'list-application-versions',
+        application.application_id,
+        '--endpoint',
+        'https://api.example.com',
+      ];
 
       await main();
+
       expect(consoleSpy.error).toHaveBeenCalledWith(
-        expect.stringContaining('Not enough non-option arguments')
+        expect.stringContaining('❌ Failed to list application versions:'),
+        expect.any(Error)
       );
     });
   });
@@ -237,11 +182,11 @@ describe('CLI Integration Tests', () => {
 
       expect(consoleSpy.log).toHaveBeenCalledWith(
         'Application runs:',
-        expect.stringContaining('run-1')
+        expect.stringContaining('run_id')
       );
       expect(consoleSpy.log).toHaveBeenCalledWith(
         'Application runs:',
-        expect.stringContaining('COMPLETED')
+        expect.stringContaining('state')
       );
     });
 
@@ -261,7 +206,7 @@ describe('CLI Integration Tests', () => {
 
       expect(consoleSpy.log).toHaveBeenCalledWith(
         'Application runs:',
-        expect.stringContaining('run-1')
+        expect.stringContaining('run_id')
       );
     });
 
@@ -281,7 +226,7 @@ describe('CLI Integration Tests', () => {
 
       expect(consoleSpy.log).toHaveBeenCalledWith(
         'Application runs:',
-        expect.stringContaining('run-1')
+        expect.stringContaining('run_id')
       );
     });
   });
@@ -302,11 +247,11 @@ describe('CLI Integration Tests', () => {
 
       expect(consoleSpy.log).toHaveBeenCalledWith(
         'Run details for run-1:',
-        expect.stringContaining('run-1')
+        expect.stringContaining('run_id')
       );
       expect(consoleSpy.log).toHaveBeenCalledWith(
         'Run details for run-1:',
-        expect.stringContaining('COMPLETED')
+        expect.stringContaining('state')
       );
     });
 
@@ -367,11 +312,11 @@ describe('CLI Integration Tests', () => {
 
       expect(consoleSpy.log).toHaveBeenCalledWith(
         'Run results for run-1:',
-        expect.stringContaining('item-1')
+        expect.stringContaining('item_id')
       );
       expect(consoleSpy.log).toHaveBeenCalledWith(
         'Run results for run-1:',
-        expect.stringContaining('SUCCEEDED')
+        expect.stringContaining('status')
       );
     });
 
@@ -405,7 +350,7 @@ describe('CLI Integration Tests', () => {
 
       expect(consoleSpy.log).toHaveBeenCalledWith(
         '✅ Application run created successfully:',
-        expect.stringContaining('run-123')
+        expect.stringContaining('run_id')
       );
     });
 
@@ -424,7 +369,7 @@ describe('CLI Integration Tests', () => {
 
       expect(consoleSpy.log).toHaveBeenCalledWith(
         '✅ Application run created successfully:',
-        expect.stringContaining('run-123')
+        expect.stringContaining('run_id')
       );
     });
 
@@ -452,7 +397,7 @@ describe('CLI Integration Tests', () => {
       try {
         await main();
       } catch (error) {
-        expect(error.message).toContain('process.exit');
+        expect((error as Error).message).toContain('process.exit');
       }
 
       exitSpy.mockRestore();

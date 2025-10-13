@@ -52,10 +52,10 @@ export async function main() {
     )
     .command(
       'list-application-versions <applicationId>',
-      'List versions for a specific application',
+      'List application versions',
       yargs =>
         yargs.positional('applicationId', {
-          describe: 'Application ID to get versions for',
+          describe: 'Application ID',
           type: 'string',
           demandOption: true,
         }),
@@ -116,12 +116,17 @@ export async function main() {
       argv => listRunResults(argv.environment as EnvironmentKey, authService, argv.applicationRunId)
     )
     .command(
-      'create-run <applicationVersionId>',
+      'create-run <applicationId> <versionNumber>',
       'Create a new application run',
       yargs =>
         yargs
-          .positional('applicationVersionId', {
-            describe: 'Application version ID to run',
+          .positional('applicationId', {
+            describe: 'Application ID to run',
+            type: 'string',
+            demandOption: true,
+          })
+          .positional('versionNumber', {
+            describe: 'Version number of the application to run',
             type: 'string',
             demandOption: true,
           })
@@ -134,7 +139,8 @@ export async function main() {
         createApplicationRun(
           argv.environment as EnvironmentKey,
           authService,
-          argv.applicationVersionId,
+          argv.applicationId,
+          argv.versionNumber,
           argv.items
         )
     )

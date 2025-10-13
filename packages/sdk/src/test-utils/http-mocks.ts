@@ -1,107 +1,144 @@
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
+import { Factory } from 'fishery';
+import { faker } from '@faker-js/faker';
+import type {
+  ApplicationReadShortResponse,
+  ApplicationReadResponse,
+  ApplicationVersion,
+  RunReadResponse,
+  RunCreationResponse,
+  ItemResultReadResponse,
+  OutputArtifactResultReadResponse,
+} from '../generated/index.js';
+
+// Factories for generating mock data
+const applicationVersionFactory = Factory.define<ApplicationVersion>(() => ({
+  number: faker.system.semver(),
+  released_at: faker.date.past().toISOString(),
+}));
+
+const applicationShortFactory = Factory.define<ApplicationReadShortResponse>(() => ({
+  application_id: faker.string.uuid(),
+  name: faker.company.name(),
+  description: faker.lorem.sentence(),
+  regulatory_classes: faker.helpers.arrayElements(['RUO', 'IVDR', 'FDA'], { min: 1, max: 2 }),
+  latest_version: applicationVersionFactory.build(),
+}));
+
+const applicationFactory = Factory.define<ApplicationReadResponse>(() => ({
+  application_id: faker.string.uuid(),
+  name: faker.company.name(),
+  description: faker.lorem.sentence(),
+  regulatory_classes: faker.helpers.arrayElements(['RUO', 'IVDR', 'FDA'], { min: 1, max: 2 }),
+  versions: applicationVersionFactory.buildList(faker.number.int({ min: 1, max: 3 })),
+}));
+
+const outputArtifactFactory = Factory.define<OutputArtifactResultReadResponse>(() => ({
+  output_artifact_id: faker.string.uuid(),
+  name: faker.system.fileName(),
+  metadata: {
+    mime_type: faker.helpers.arrayElement(['image/tiff', 'application/json', 'text/csv']),
+    size_bytes: faker.number.int({ min: 1000, max: 1000000 }),
+  },
+  state: faker.helpers.arrayElement(['PENDING', 'PROCESSING', 'TERMINATED']),
+  output: faker.helpers.arrayElement(['NONE', 'AVAILABLE', 'DELETED_BY_USER', 'DELETED_BY_SYSTEM']),
+  download_url: faker.internet.url(),
+  error_code: null,
+}));
+
+const itemResultFactory = Factory.define<ItemResultReadResponse>(() => ({
+  item_id: faker.string.uuid(),
+  run_id: faker.string.uuid(),
+  external_id: `slide_${faker.number.int({ min: 1, max: 1000 })}`,
+  custom_metadata: {
+    case_id: faker.string.uuid(),
+    specimen_type: faker.helpers.arrayElement(['biopsy', 'resection', 'cytology']),
+  },
+  custom_metadata_checksum: faker.string.alphanumeric(8),
+  status: faker.helpers.arrayElement([
+    'PENDING',
+    'CANCELED_USER',
+    'CANCELED_SYSTEM',
+    'USER_ERROR',
+    'SYSTEM_ERROR',
+    'SUCCEEDED',
+  ]),
+  state: faker.helpers.arrayElement(['PENDING', 'PROCESSING', 'TERMINATED']),
+  output: faker.helpers.arrayElement(['NONE', 'FULL']),
+  termination_reason: faker.helpers.arrayElement([
+    'SUCCEEDED',
+    'USER_ERROR',
+    'SYSTEM_ERROR',
+    'SKIPPED',
+  ]),
+  error_message: null,
+  message: faker.lorem.sentence(),
+  terminated_at: faker.date.recent().toISOString(),
+  output_artifacts: outputArtifactFactory.buildList(faker.number.int({ min: 0, max: 3 })),
+  error_code: null,
+}));
+
+const runFactory = Factory.define<RunReadResponse>(() => ({
+  run_id: faker.string.uuid(),
+  application_id: faker.string.uuid(),
+  version_number: faker.system.semver(),
+  custom_metadata: {
+    study_id: faker.string.uuid(),
+    batch_name: faker.string.alpha(10),
+  },
+  custom_metadata_checksum: faker.string.alphanumeric(8),
+  state: faker.helpers.arrayElement(['PENDING', 'PROCESSING', 'TERMINATED']),
+  output: faker.helpers.arrayElement(['NONE', 'PARTIAL', 'FULL']),
+  termination_reason: faker.helpers.arrayElement([
+    'ALL_ITEMS_PROCESSED',
+    'CANCELED_BY_SYSTEM',
+    'CANCELED_BY_USER',
+  ]),
+  error_code: null,
+  error_message: null,
+  submitted_at: faker.date.past().toISOString(),
+  terminated_at: faker.date.recent().toISOString(),
+  statistics: {
+    item_count: faker.number.int({ min: 1, max: 50 }),
+    item_pending_count: faker.number.int({ min: 0, max: 10 }),
+    item_processing_count: faker.number.int({ min: 0, max: 5 }),
+    item_user_error_count: faker.number.int({ min: 0, max: 2 }),
+    item_system_error_count: faker.number.int({ min: 0, max: 1 }),
+    item_skipped_count: faker.number.int({ min: 0, max: 3 }),
+    item_succeeded_count: faker.number.int({ min: 0, max: 20 }),
+  },
+  submitted_by: faker.string.uuid(),
+}));
+
+const runCreationResponseFactory = Factory.define<RunCreationResponse>(() => ({
+  run_id: faker.string.uuid(),
+}));
 
 /**
- * Mock responses for API endpoints
+ * Mock responses for API endpoints using factories
  */
 export const mockResponses = {
   // Mock successful applications list response
-  applicationsSuccess: [
-    {
-      application_id: '1',
-      name: 'Test Application 1',
-      description: 'A test application',
-      regulatory_classes: [],
-    },
-    {
-      application_id: '2',
-      name: 'Test Application 2',
-      description: 'Another test application',
-      regulatory_classes: [],
-    },
-  ],
+  applicationsSuccess: applicationShortFactory.buildList(3),
 
   // Mock empty applications list
   applicationsEmpty: [],
 
-  // Mock application versions response
-  applicationVersionsSuccess: [
-    {
-      application_version_id: 'v1.0.0',
-      version: '1.0.0',
-      application_id: '1',
-      changelog: 'Initial version',
-      input_artifacts: [],
-      output_artifacts: [],
-      created_at: '2023-01-01T00:00:00Z',
-    },
-    {
-      application_version_id: 'v1.1.0',
-      version: '1.1.0',
-      application_id: '1',
-      changelog: 'Bug fixes and improvements',
-      input_artifacts: [],
-      output_artifacts: [],
-      created_at: '2023-02-01T00:00:00Z',
-    },
-  ],
+  // Mock single application response
+  applicationSuccess: applicationFactory.build(),
 
   // Mock application runs response
-  applicationRunsSuccess: [
-    {
-      application_run_id: 'run-1',
-      application_version_id: 'v1.0.0',
-      organization_id: 'org-1',
-      status: 'COMPLETED',
-      created_at: '2023-01-01T00:00:00Z',
-      updated_at: '2023-01-01T01:00:00Z',
-    },
-    {
-      application_run_id: 'run-2',
-      application_version_id: 'v1.1.0',
-      organization_id: 'org-1',
-      status: 'RUNNING',
-      created_at: '2023-01-02T00:00:00Z',
-      updated_at: '2023-01-02T00:30:00Z',
-    },
-  ],
+  applicationRunsSuccess: runFactory.buildList(2),
 
   // Mock single run response
-  runSuccess: {
-    application_run_id: 'run-1',
-    application_version_id: 'v1.0.0',
-    organization_id: 'org-1',
-    status: 'COMPLETED',
-    created_at: '2023-01-01T00:00:00Z',
-    updated_at: '2023-01-01T01:00:00Z',
-  },
+  runSuccess: runFactory.build(),
 
   // Mock create application run response
-  createRunSuccess: {
-    application_run_id: 'new-run-123',
-  },
+  createRunSuccess: runCreationResponseFactory.build(),
 
   // Mock run results response
-  runResultsSuccess: [
-    {
-      item_id: 'item-1',
-      reference: 'test-ref-1',
-      status: 'SUCCEEDED',
-      input_artifacts: [],
-      output_artifacts: [],
-      created_at: '2023-01-01T00:00:00Z',
-      updated_at: '2023-01-01T01:00:00Z',
-    },
-    {
-      item_id: 'item-2',
-      reference: 'test-ref-2',
-      status: 'SUCCEEDED',
-      input_artifacts: [],
-      output_artifacts: [],
-      created_at: '2023-01-01T00:00:00Z',
-      updated_at: '2023-01-01T01:00:00Z',
-    },
-  ],
+  runResultsSuccess: itemResultFactory.buildList(2),
 
   // Mock error response
   error: {
@@ -121,6 +158,17 @@ export const mockResponses = {
   },
 };
 
+// Export factories for use in tests
+export const factories = {
+  applicationShort: applicationShortFactory,
+  application: applicationFactory,
+  applicationVersion: applicationVersionFactory,
+  run: runFactory,
+  runCreationResponse: runCreationResponseFactory,
+  itemResult: itemResultFactory,
+  outputArtifact: outputArtifactFactory,
+};
+
 /**
  * HTTP request handlers for different scenarios
  */
@@ -130,22 +178,22 @@ export const handlers = {
     http.get('*/v1/applications', () => {
       return HttpResponse.json(mockResponses.applicationsSuccess, { status: 200 });
     }),
-    http.get('*/v1/applications/:applicationId/versions', () => {
-      return HttpResponse.json(mockResponses.applicationVersionsSuccess, { status: 200 });
+    http.get('*/v1/applications/:applicationId', () => {
+      return HttpResponse.json(mockResponses.applicationSuccess, { status: 200 });
     }),
     http.get('*/v1/runs', () => {
       return HttpResponse.json(mockResponses.applicationRunsSuccess, { status: 200 });
     }),
     http.post('*/v1/runs', () => {
-      return HttpResponse.json(mockResponses.createRunSuccess, { status: 200 });
+      return HttpResponse.json(mockResponses.createRunSuccess, { status: 201 });
     }),
-    http.get('*/v1/runs/:applicationRunId', () => {
+    http.get('*/v1/runs/:runId', () => {
       return HttpResponse.json(mockResponses.runSuccess, { status: 200 });
     }),
-    http.post('*/v1/runs/:applicationRunId/cancel', () => {
-      return HttpResponse.json({}, { status: 200 });
+    http.post('*/v1/runs/:runId/cancel', () => {
+      return HttpResponse.json({}, { status: 202 });
     }),
-    http.get('*/v1/runs/:applicationRunId/results', () => {
+    http.get('*/v1/runs/:runId/items', () => {
       return HttpResponse.json(mockResponses.runResultsSuccess, { status: 200 });
     }),
   ],
@@ -155,13 +203,13 @@ export const handlers = {
     http.get('*/v1/applications', () => {
       return HttpResponse.json(mockResponses.applicationsEmpty, { status: 200 });
     }),
-    http.get('*/v1/applications/:applicationId/versions', () => {
-      return HttpResponse.json([], { status: 200 });
+    http.get('*/v1/applications/:applicationId', () => {
+      return HttpResponse.json(mockResponses.applicationSuccess, { status: 200 });
     }),
     http.get('*/v1/runs', () => {
       return HttpResponse.json([], { status: 200 });
     }),
-    http.get('*/v1/runs/:applicationRunId/results', () => {
+    http.get('*/v1/runs/:runId/items', () => {
       return HttpResponse.json([], { status: 200 });
     }),
   ],
@@ -171,7 +219,7 @@ export const handlers = {
     http.get('*/v1/applications', () => {
       return HttpResponse.json(mockResponses.error, { status: 404 });
     }),
-    http.get('*/v1/applications/:applicationId/versions', () => {
+    http.get('*/v1/applications/:applicationId', () => {
       return HttpResponse.json(mockResponses.error, { status: 404 });
     }),
     http.get('*/v1/runs', () => {
@@ -180,13 +228,13 @@ export const handlers = {
     http.post('*/v1/runs', () => {
       return HttpResponse.json(mockResponses.error, { status: 404 });
     }),
-    http.get('*/v1/runs/:applicationRunId', () => {
+    http.get('*/v1/runs/:runId', () => {
       return HttpResponse.json(mockResponses.error, { status: 404 });
     }),
-    http.post('*/v1/runs/:applicationRunId/cancel', () => {
+    http.post('*/v1/runs/:runId/cancel', () => {
       return HttpResponse.json(mockResponses.error, { status: 404 });
     }),
-    http.get('*/v1/runs/:applicationRunId/results', () => {
+    http.get('*/v1/runs/:runId/items', () => {
       return HttpResponse.json(mockResponses.error, { status: 404 });
     }),
   ],
@@ -195,7 +243,7 @@ export const handlers = {
     http.get('*/v1/applications', () => {
       return HttpResponse.json(mockResponses.validationError, { status: 422 });
     }),
-    http.get('*/v1/applications/:applicationId/versions', () => {
+    http.get('*/v1/applications/:applicationId', () => {
       return HttpResponse.json(mockResponses.validationError, { status: 422 });
     }),
     http.get('*/v1/runs', () => {
@@ -204,13 +252,13 @@ export const handlers = {
     http.post('*/v1/runs', () => {
       return HttpResponse.json(mockResponses.validationError, { status: 422 });
     }),
-    http.get('*/v1/runs/:applicationRunId', () => {
+    http.get('*/v1/runs/:runId', () => {
       return HttpResponse.json(mockResponses.validationError, { status: 422 });
     }),
-    http.post('*/v1/runs/:applicationRunId/cancel', () => {
+    http.post('*/v1/runs/:runId/cancel', () => {
       return HttpResponse.json(mockResponses.validationError, { status: 422 });
     }),
-    http.get('*/v1/runs/:applicationRunId/results', () => {
+    http.get('*/v1/runs/:runId/items', () => {
       return HttpResponse.json(mockResponses.validationError, { status: 422 });
     }),
   ],
@@ -219,7 +267,7 @@ export const handlers = {
     http.get('*/v1/applications', () => {
       return HttpResponse.json(mockResponses.error, { status: 500 });
     }),
-    http.get('*/v1/applications/:applicationId/versions', () => {
+    http.get('*/v1/applications/:applicationId', () => {
       return HttpResponse.json(mockResponses.error, { status: 500 });
     }),
     http.get('*/v1/runs', () => {
@@ -228,13 +276,13 @@ export const handlers = {
     http.post('*/v1/runs', () => {
       return HttpResponse.json(mockResponses.error, { status: 500 });
     }),
-    http.get('*/v1/runs/:applicationRunId', () => {
+    http.get('*/v1/runs/:runId', () => {
       return HttpResponse.json(mockResponses.error, { status: 500 });
     }),
-    http.post('*/v1/runs/:applicationRunId/cancel', () => {
+    http.post('*/v1/runs/:runId/cancel', () => {
       return HttpResponse.json(mockResponses.error, { status: 500 });
     }),
-    http.get('*/v1/runs/:applicationRunId/results', () => {
+    http.get('*/v1/runs/:runId/items', () => {
       return HttpResponse.json(mockResponses.error, { status: 500 });
     }),
   ],
@@ -244,7 +292,7 @@ export const handlers = {
     http.get('*/v1/applications', () => {
       return HttpResponse.error();
     }),
-    http.get('*/v1/applications/:applicationId/versions', () => {
+    http.get('*/v1/applications/:applicationId', () => {
       return HttpResponse.error();
     }),
     http.get('*/v1/runs', () => {
@@ -253,13 +301,13 @@ export const handlers = {
     http.post('*/v1/runs', () => {
       return HttpResponse.error();
     }),
-    http.get('*/v1/runs/:applicationRunId', () => {
+    http.get('*/v1/runs/:runId', () => {
       return HttpResponse.error();
     }),
-    http.post('*/v1/runs/:applicationRunId/cancel', () => {
+    http.post('*/v1/runs/:runId/cancel', () => {
       return HttpResponse.error();
     }),
-    http.get('*/v1/runs/:applicationRunId/results', () => {
+    http.get('*/v1/runs/:runId/items', () => {
       return HttpResponse.error();
     }),
   ],
@@ -275,7 +323,7 @@ export function createMockServer(handlerSet: keyof typeof handlers = 'success') 
 /**
  * Default mock server for successful responses
  */
-export const server = createMockServer('success');
+export const server = setupServer();
 
 /**
  * Helper function to reset handlers for a specific scenario

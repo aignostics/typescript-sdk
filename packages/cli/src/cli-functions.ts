@@ -61,8 +61,11 @@ export async function listApplicationVersions(
     tokenProvider: () => authService.getValidAccessToken(environment),
   });
   try {
-    const response = await sdk.listApplicationVersions(applicationId);
-    console.log(`Application versions for ${applicationId}:`, JSON.stringify(response, null, 2));
+    const response = await sdk.getApplication(applicationId);
+    console.log(
+      `Application versions for ${applicationId}:`,
+      JSON.stringify(response.versions, null, 2)
+    );
   } catch (error) {
     console.error('❌ Failed to list application versions:', error);
     process.exit(1);
@@ -148,7 +151,8 @@ export async function listRunResults(
 export async function createApplicationRun(
   environment: EnvironmentKey,
   authService: AuthService,
-  applicationVersionId: string,
+  applicationId: string,
+  versionNumber: string,
   itemsJson: string
 ): Promise<void> {
   const { endpoint } = environmentConfig[environment];
@@ -172,7 +176,8 @@ export async function createApplicationRun(
     }
 
     const response = await sdk.createApplicationRun({
-      application_version_id: applicationVersionId,
+      application_id: applicationId,
+      version_number: versionNumber,
       items: items,
     });
     console.log('✅ Application run created successfully:', JSON.stringify(response, null, 2));

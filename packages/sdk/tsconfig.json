@@ -8,6 +8,7 @@
     "src/**/*.spec.ts",
     "src/**/*.test.ts",
     "vite.config.ts",
+    "vitest.setup.ts",
     "tsup.config.ts"
   ]
 }

@@ -4,7 +4,6 @@ import {
   handleInfo,
   testApi,
   listApplications,
-  listApplicationVersions,
   listApplicationRuns,
   getRun,
   cancelApplicationRun,
@@ -38,7 +37,6 @@ vi.mock('@aignostics/sdk', () => ({
 const platformSDKMock = {
   testConnection: vi.fn(),
   listApplications: vi.fn(),
-  listApplicationVersions: vi.fn(),
   listApplicationRuns: vi.fn(),
   getRun: vi.fn(),
   cancelApplicationRun: vi.fn(),
@@ -46,6 +44,7 @@ const platformSDKMock = {
   createApplicationRun: vi.fn(),
   getConfig: vi.fn(),
   getVersion: vi.fn(),
+  getApplication: vi.fn(),
 } satisfies PlatformSDK;
 
 // Mock AuthService
@@ -177,42 +176,6 @@ describe('CLI Functions Unit Tests', () => {
       platformSDKMock.listApplications.mockRejectedValue(new Error('API error'));
 
       await expect(listApplications('production', mockAuthService)).rejects.toThrow();
-    });
-  });
-
-  describe('listApplicationVersions', () => {
-    it('should list application versions successfully', async () => {
-      const versionsResponse = [
-        {
-          application_version_id: 'v1.0.0',
-          version: '1.0.0',
-          application_id: 'app1',
-          changelog: 'Initial version',
-          input_artifacts: [],
-          output_artifacts: [],
-          created_at: '2023-01-01T00:00:00Z',
-        },
-      ];
-      platformSDKMock.listApplicationVersions.mockResolvedValue(versionsResponse);
-
-      await listApplicationVersions('production', mockAuthService, 'app1');
-
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        'Application versions for app1:',
-        JSON.stringify(versionsResponse, null, 2)
-      );
-    });
-
-    it('should handle API error', async () => {
-      platformSDKMock.listApplicationVersions.mockRejectedValue(new Error('API error'));
-
-      await listApplicationVersions('production', mockAuthService, 'app1');
-
-      expect(consoleSpy.error).toHaveBeenCalledWith(
-        '❌ Failed to list application versions:',
-        expect.any(Error)
-      );
-      expect(mockExit).toHaveBeenCalledWith(1);
     });
   });
 
@@ -376,10 +339,11 @@ describe('CLI Functions Unit Tests', () => {
       };
       platformSDKMock.createApplicationRun.mockResolvedValue(runResponse);
 
-      await createApplicationRun('production', mockAuthService, 'test-app:v1.0.0', '[]');
+      await createApplicationRun('production', mockAuthService, 'test-app', 'v1.0.0', '[]');
 
       expect(platformSDKMock.createApplicationRun).toHaveBeenCalledWith({
-        application_version_id: 'test-app:v1.0.0',
+        application_id: 'test-app',
+        version_number: 'v1.0.0',
         items: [],
       });
       expect(consoleSpy.log).toHaveBeenCalledWith(
@@ -409,12 +373,14 @@ describe('CLI Functions Unit Tests', () => {
       await createApplicationRun(
         'production',
         mockAuthService,
-        'test-app:v1.0.0',
+        'test-app',
+        'v1.0.0',
         JSON.stringify(items)
       );
 
       expect(platformSDKMock.createApplicationRun).toHaveBeenCalledWith({
-        application_version_id: 'test-app:v1.0.0',
+        application_id: 'test-app',
+        version_number: 'v1.0.0',
         items: items,
       });
       expect(consoleSpy.log).toHaveBeenCalledWith(
@@ -424,7 +390,13 @@ describe('CLI Functions Unit Tests', () => {
     });
 
     it('should handle invalid JSON in items parameter', async () => {
-      await createApplicationRun('production', mockAuthService, 'test-app:v1.0.0', 'invalid-json');
+      await createApplicationRun(
+        'production',
+        mockAuthService,
+        'test-app',
+        'v1.0.0',
+        'invalid-json'
+      );
 
       expect(consoleSpy.error).toHaveBeenCalledWith('❌ Invalid items JSON:', expect.any(Error));
       expect(mockExit).toHaveBeenCalledWith(1);
@@ -435,7 +407,8 @@ describe('CLI Functions Unit Tests', () => {
       await createApplicationRun(
         'production',
         mockAuthService,
-        'test-app:v1.0.0',
+        'test-app',
+        'v1.0.0',
         '{"not": "an array"}'
       );
 
@@ -452,7 +425,7 @@ describe('CLI Functions Unit Tests', () => {
     it('should handle API error during run creation', async () => {
       platformSDKMock.createApplicationRun.mockRejectedValue(new Error('API error'));
 
-      await createApplicationRun('production', mockAuthService, 'test-app:v1.0.0', '[]');
+      await createApplicationRun('production', mockAuthService, 'test-app', 'v1.0.0', '[]');
 
       expect(consoleSpy.error).toHaveBeenCalledWith(
         '❌ Failed to create application run:',

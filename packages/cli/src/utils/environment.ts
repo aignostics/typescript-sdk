@@ -7,7 +7,7 @@ export const environmentConfig = {
     scope: 'openid profile email offline_access',
   },
   staging: {
-    endpoint: 'https://platform-staging.aignostics.ai',
+    endpoint: 'https://platform-staging.aignostics.com',
     issuerURL: 'https://aignostics-platform-staging.eu.auth0.com/oauth',
     clientID: 'fQkbvYzQPPVwLxc3uque5JsyFW00rJ7b',
     audience: 'https://aignostics-platform-staging-samia',

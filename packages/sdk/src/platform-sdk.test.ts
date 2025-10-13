@@ -105,31 +105,30 @@ describe('PlatformSDK', () => {
     );
   });
 
-  it('should list application versions successfully', async () => {
+  it('should get application successfully', async () => {
     // Mock token provider to return a valid token
     mockTokenProvider.mockResolvedValue('mocked-token');
 
     // Use mock server with successful response
     setMockScenario('success');
 
-    const result = await sdk.listApplicationVersions('test-app-id');
-    expect(Array.isArray(result)).toBe(true);
-    expect(result.length).toBeGreaterThan(0);
-    expect(result[0]).toHaveProperty('application_version_id');
-    expect(result[0]).toHaveProperty('version');
-    expect(result[0]).toHaveProperty('application_id');
+    const result = await sdk.getApplication('test-app-id');
+    expect(result).toHaveProperty('application_id');
+    expect(result).toHaveProperty('name');
+    expect(result).toHaveProperty('description');
+    expect(result).toHaveProperty('regulatory_classes');
+    expect(result).toHaveProperty('versions');
+    expect(Array.isArray(result.versions)).toBe(true);
   });
 
-  it('should handle list application versions failure', async () => {
+  it('should handle get application failure', async () => {
     // Mock token provider to return a valid token
     mockTokenProvider.mockResolvedValue('mocked-token');
 
     // Use mock server with error response
     setMockScenario('notFoundError');
 
-    await expect(sdk.listApplicationVersions('test-app-id')).rejects.toThrow(
-      'Resource not found: '
-    );
+    await expect(sdk.getApplication('test-app-id')).rejects.toThrow('Resource not found: ');
   });
 
   it('should list application runs successfully', async () => {
@@ -142,8 +141,8 @@ describe('PlatformSDK', () => {
     const result = await sdk.listApplicationRuns();
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toBeGreaterThan(0);
-    expect(result[0]).toHaveProperty('application_run_id');
-    expect(result[0]).toHaveProperty('status');
+    expect(result[0]).toHaveProperty('run_id');
+    expect(result[0]).toHaveProperty('state');
   });
 
   it('should list application runs with filters successfully', async () => {
@@ -178,9 +177,9 @@ describe('PlatformSDK', () => {
     setMockScenario('success');
 
     const result = await sdk.getRun('test-run-id');
-    expect(result).toHaveProperty('application_run_id');
-    expect(result).toHaveProperty('status');
-    expect(result).toHaveProperty('application_version_id');
+    expect(result).toHaveProperty('run_id');
+    expect(result).toHaveProperty('state');
+    expect(result).toHaveProperty('version_number');
   });
 
   it('should handle get run failure', async () => {
@@ -225,8 +224,8 @@ describe('PlatformSDK', () => {
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toBeGreaterThan(0);
     expect(result[0]).toHaveProperty('item_id');
-    expect(result[0]).toHaveProperty('status');
-    expect(result[0]).toHaveProperty('reference');
+    expect(result[0]).toHaveProperty('state');
+    expect(result[0]).toHaveProperty('external_id');
   });
 
   it('should list run results failure', async () => {
@@ -247,10 +246,11 @@ describe('PlatformSDK', () => {
     setMockScenario('success');
 
     const runRequest = {
-      application_version_id: 'test-app:v1.0.0',
+      application_id: 'test-app:v1.0.0',
+      version_number: 'v1.0.0',
       items: [
         {
-          reference: 'test-item-1',
+          external_id: 'test-item-1',
           input_artifacts: [
             {
               name: 'input_slide',
@@ -270,7 +270,7 @@ describe('PlatformSDK', () => {
 
     const result = await sdk.createApplicationRun(runRequest);
     expect(result).toBeDefined();
-    expect(typeof result.application_run_id).toBe('string');
+    expect(typeof result.run_id).toBe('string');
   });
 
   it('should handle create application run failure', async () => {
@@ -281,10 +281,11 @@ describe('PlatformSDK', () => {
     setMockScenario('notFoundError');
 
     const runRequest = {
-      application_version_id: 'test-app:v1.0.0',
+      application_id: 'test-app',
+      version_number: 'v1.0.0',
       items: [
         {
-          reference: 'test-item-1',
+          external_id: 'test-item-1',
           input_artifacts: [
             {
               name: 'input_slide',
@@ -309,21 +310,20 @@ describe('PlatformSDK', () => {
     const errorMessage =
       'No access token available. Please provide a tokenProvider in the SDK configuration that returns a valid token.';
 
-    await expect(sdk.listApplicationVersions('test-app-id')).rejects.toThrow(AuthenticationError);
-    await expect(sdk.listApplicationVersions('test-app-id')).rejects.toThrow(errorMessage);
-
     await expect(sdk.listApplicationRuns()).rejects.toThrow(AuthenticationError);
     await expect(sdk.listApplicationRuns()).rejects.toThrow(errorMessage);
 
     await expect(
       sdk.createApplicationRun({
-        application_version_id: 'test-app:v1.0.0',
+        application_id: 'test-app',
+        version_number: 'v1.0.0',
         items: [],
       })
     ).rejects.toThrow(AuthenticationError);
     await expect(
       sdk.createApplicationRun({
-        application_version_id: 'test-app:v1.0.0',
+        application_id: 'test-app',
+        version_number: 'v1.0.0',
         items: [],
       })
     ).rejects.toThrow(errorMessage);

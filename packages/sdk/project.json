@@ -9,7 +9,7 @@
       "options": {
         "commands": [
           "rm -rf packages/sdk/src/generated",
-          "docker run --rm -v ${PWD}:/local --user $(id -u):$(id -g) openapitools/openapi-generator-cli:v7.14.0 generate -i https://platform.aignostics.com/api/v1/openapi.json -g typescript-axios -o /local/packages/sdk/src/generated --additional-properties=supportsES6=true,withInterfaces=true,typescriptThreePlus=true,useSingleRequestParameter=true,importFileExtension=.js"
+          "docker run --rm -v ${PWD}:/local --user $(id -u):$(id -g) openapitools/openapi-generator-cli:v7.14.0 generate -i https://platform-staging.aignostics.com/api/v1/openapi.json -g typescript-axios -o /local/packages/sdk/src/generated --additional-properties=supportsES6=true,withInterfaces=true,typescriptThreePlus=true,useSingleRequestParameter=true,importFileExtension=.js"
         ],
         "parallel": false
       }
