@@ -1,12 +1,12 @@
 import packageJson from '../package.json' with { type: 'json' };
 import {
-  ApplicationReadResponse,
-  ApplicationVersionReadResponse,
   RunReadResponse,
   ItemResultReadResponse,
   RunCreationRequest,
   RunCreationResponse,
   PublicApi,
+  ApplicationReadShortResponse,
+  ApplicationReadResponse,
 } from './generated/index.js';
 import { APIError, AuthenticationError, UnexpectedError } from './errors.js';
 import { isAxiosError } from 'axios';
@@ -88,8 +88,8 @@ export interface PlatformSDK {
   getVersion(): string;
   getConfig(): PlatformSDKConfig;
   testConnection(): Promise<boolean>;
-  listApplications(): Promise<ApplicationReadResponse[]>;
-  listApplicationVersions(applicationId: string): Promise<ApplicationVersionReadResponse[]>;
+  listApplications(): Promise<ApplicationReadShortResponse[]>;
+  getApplication(applicationId: string): Promise<ApplicationReadResponse>;
   listApplicationRuns(options?: {
     applicationId?: string;
     applicationVersion?: string;
@@ -195,7 +195,7 @@ export class PlatformSDKHttp implements PlatformSDK {
    * }
    * ```
    */
-  async listApplications(): Promise<ApplicationReadResponse[]> {
+  async listApplications(): Promise<ApplicationReadShortResponse[]> {
     const client = await this.#getClient();
     try {
       const response = await client.listApplicationsV1ApplicationsGet();
@@ -206,39 +206,41 @@ export class PlatformSDKHttp implements PlatformSDK {
   }
 
   /**
-   * Retrieve all versions of a specific application
+   * Retrieve detailed information about a specific application
    *
-   * This method fetches all available versions for a given application ID.
-   * Application versions represent different iterations or configurations of
-   * an AI model, allowing you to choose specific versions for processing.
+   * This method fetches comprehensive details about an application, including
+   * its name, description, regulatory classes, and all available versions.
+   * This provides more detailed information compared to the summary returned
+   * by `listApplications()`.
    *
-   * @param applicationId - The unique identifier of the application
-   * @returns A promise that resolves to an array of application version objects
-   * @throws {AuthenticationError} If no valid authentication token is available
-   * @throws {Error} If the request fails due to network issues, invalid application ID, or API errors
+   * @param applicationId - The unique identifier of the application to retrieve
+   * @returns A promise that resolves to the complete application details
+   * @throws {Error} If the request fails due to network issues, authentication problems, invalid application ID, or API errors
    *
    * @example
    * ```typescript
    * const sdk = new PlatformSDKHttp({ tokenProvider: () => 'your-token' });
    *
    * try {
-   *   const versions = await sdk.listApplicationVersions('app-123');
-   *   console.log(`Found ${versions.length} versions for application`);
-   *   versions.forEach(version => {
-   *     console.log(`- Version ${version.version} (ID: ${version.id})`);
+   *   const application = await sdk.getApplication('app-123');
+   *   console.log(`Application: ${application.name}`);
+   *   console.log(`Description: ${application.description}`);
+   *   console.log(`Available versions: ${application.versions.length}`);
+   *
+   *   application.versions.forEach(version => {
+   *     console.log(`- ${version.version} (ID: ${version.application_version_id})`);
    *   });
    * } catch (error) {
-   *   console.error('Failed to list application versions:', error.message);
+   *   console.error('Failed to get application details:', error.message);
    * }
    * ```
    */
-  async listApplicationVersions(applicationId: string): Promise<ApplicationVersionReadResponse[]> {
+  async getApplication(applicationId: string): Promise<ApplicationReadResponse> {
     const client = await this.#getClient();
     try {
-      const response =
-        await client.listVersionsByApplicationIdV1ApplicationsApplicationIdVersionsGet({
-          applicationId,
-        });
+      const response = await client.readApplicationByIdV1ApplicationsApplicationIdGet({
+        applicationId,
+      });
       return response.data;
     } catch (error) {
       handleRequestError(error);
@@ -289,7 +291,7 @@ export class PlatformSDKHttp implements PlatformSDK {
   }): Promise<RunReadResponse[]> {
     const client = await this.#getClient();
     try {
-      const response = await client.listApplicationRunsV1RunsGet({
+      const response = await client.listRunsV1RunsGet({
         applicationId: options?.applicationId,
         applicationVersion: options?.applicationVersion,
       });
@@ -341,7 +343,7 @@ export class PlatformSDKHttp implements PlatformSDK {
   async createApplicationRun(request: RunCreationRequest): Promise<RunCreationResponse> {
     const client = await this.#getClient();
     try {
-      const response = await client.createApplicationRunV1RunsPost({
+      const response = await client.createRunV1RunsPost({
         runCreationRequest: request,
       });
       return response.data;
@@ -378,8 +380,8 @@ export class PlatformSDKHttp implements PlatformSDK {
   async getRun(applicationRunId: string): Promise<RunReadResponse> {
     const client = await this.#getClient();
     try {
-      const response = await client.getRunV1RunsApplicationRunIdGet({
-        applicationRunId,
+      const response = await client.getRunV1RunsRunIdGet({
+        runId: applicationRunId,
       });
 
       return response.data;
@@ -418,8 +420,8 @@ export class PlatformSDKHttp implements PlatformSDK {
   async cancelApplicationRun(applicationRunId: string): Promise<void> {
     const client = await this.#getClient();
     try {
-      await client.cancelApplicationRunV1RunsApplicationRunIdCancelPost({
-        applicationRunId,
+      await client.cancelRunV1RunsRunIdCancelPost({
+        runId: applicationRunId,
       });
     } catch (error) {
       handleRequestError(error);
@@ -459,8 +461,8 @@ export class PlatformSDKHttp implements PlatformSDK {
   async listRunResults(applicationRunId: string): Promise<ItemResultReadResponse[]> {
     const client = await this.#getClient();
     try {
-      const response = await client.listRunResultsV1RunsApplicationRunIdResultsGet({
-        applicationRunId,
+      const response = await client.listRunItemsV1RunsRunIdItemsGet({
+        runId: applicationRunId,
       });
 
       return response.data;

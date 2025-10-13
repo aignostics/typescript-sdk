@@ -38,6 +38,9 @@ jobs:
       - name: Generate SDK code from OpenAPI
         run: npx nx codegen sdk
 
+      - name: Build packages
+        run: npx nx run-many -t build
+
       - name: Run linting
         run: npx nx run-many -t lint
 
@@ -46,9 +49,6 @@ jobs:
 
       - name: Run type checking
         run: npx nx run-many -t typecheck
-
-      - name: Build packages
-        run: npx nx run-many -t build
 
       - name: Run tests with coverage
         run: npx nx run-many -t test --coverage
