@@ -13920,7 +13920,7 @@ SOFTWARE.
 
 ## axios
 
-**Version:** 1.11.0  
+**Version:** 1.12.2  
 **License:** MIT
 
 ```
