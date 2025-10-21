@@ -241,7 +241,7 @@ if (await hasValidToken()) {
 
 1. **Refresh Token Support**: Automatic token renewal
 2. **Multiple Profiles**: Support for different environments/accounts
-3. **Keychain Integration**: OS-native secure storage (keytar/keychain)
+3. **Keychain Integration**: OS-native secure storage (@napi-rs/keyring)
 4. **Token Sharing**: Secure token sharing between applications
 
 ### Security Improvements
