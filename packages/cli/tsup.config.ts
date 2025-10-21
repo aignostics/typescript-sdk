@@ -14,7 +14,6 @@ export default defineConfig({
     '@aignostics/sdk',
     '@napi-rs/keyring',
     'express',
-    'keytar',
     'open',
     'openid-client',
     'yargs',
