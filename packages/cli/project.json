@@ -19,6 +19,13 @@
         "passWithNoTests": true
       }
     },
+    "test:e2e": {
+      "executor": "@nx/vite:test",
+      "options": {
+        "config": "packages/cli/e2e/vite.config.e2e.ts",
+        "passWithNoTests": true
+      }
+    },
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],

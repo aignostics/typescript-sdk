@@ -188,6 +188,19 @@ export async function createApplicationRun(
   }
 }
 
+export async function handleLoginWithRefreshToken(
+  environment: EnvironmentKey,
+  refreshToken: string,
+  authService: AuthService
+): Promise<void> {
+  try {
+    await authService.loginWithRefreshToken(environment, refreshToken);
+  } catch (error) {
+    console.error('❌ Login with refresh token failed:', error);
+    process.exit(1);
+  }
+}
+
 export async function handleLogin(environment: EnvironmentKey, authService: AuthService) {
   const codeVerifier = crypto.randomBytes(32).toString('hex');
 
