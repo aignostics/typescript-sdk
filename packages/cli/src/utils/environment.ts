@@ -14,7 +14,7 @@ export const environmentConfig = {
     scope: 'openid profile email offline_access',
   },
   develop: {
-    endpoint: 'https://platform-dev.aignostics.com',
+    endpoint: 'https://platform-dev.aignostics.ai',
     issuerURL: 'https://dev-8ouohmmrbuh2h4vu.eu.auth0.com/oauth',
     clientID: 'gqduveFvx7LX90drQPGzr4JGUYdh24gA',
     audience: 'https://dev-8ouohmmrbuh2h4vu-samia',

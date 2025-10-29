@@ -1,14 +1,16 @@
 {
   "extends": "./tsconfig.app.json",
   "compilerOptions": {
-    "types": ["vitest/globals", "node"],
+    "types": ["vitest/globals", "node"]
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.spec.ts",
     "src/**/*.test.ts",
+    "src/e2e/**/*.ts",
     "vite.config.ts",
     "vitest.setup.ts",
-    "tsup.config.ts"
+    "tsup.config.ts",
+    "e2e/vite.config.e2e.ts"
   ]
 }
