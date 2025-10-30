@@ -1,0 +1,70 @@
+name: 'Ketryx report'
+
+on:
+    # MANUAL:
+    # Go to: Actions tab → Ketryx Report → Run workflow
+    workflow_dispatch:
+      inputs:
+        branch:
+          description: 'Branch to test (leave empty for main)'
+          required: false
+          type: string
+          default: ''
+    
+    # REUSABLE WORKFLOW: Allows other workflows to call this one
+    # This is how ci-cd.yml calls this workflow before releases
+    workflow_call:
+        # INPUTS: Data passed from calling workflow (ci-cd.yml)
+        inputs:
+            commit-sha:
+                description: 'The commit SHA to report'
+                required: true
+                type: string
+                # Example: ci-cd.yml passes ${{ github.sha }} here
+            build-name:
+                description: 'The build name to report'
+                required: true
+                type: string
+        # TODO: secrets to be configured in repository settings -> Add this to: Settings → Secrets → Actions → Repository secrets
+        secrets:
+            KETRYX_PROJECT:
+                description: 'Ketryx project ID'
+                required: true
+            KETRYX_API_KEY:
+                description: 'Ketryx API key'
+                required: true
+
+    # TODO: disable after testing is done
+    push:
+        branches:
+            - main
+
+    # TODO: enable once testing is done
+    # push:
+    #     tags:
+    #         - 'sdk-v*'    # Matches semantic-release SDK tags
+    #         - 'cli-v*'    # Matches semantic-release CLI tags
+
+
+jobs:
+    ketryx_report:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+              with:
+                ref: ${{ inputs.branch || github.ref }}
+            # Download test results that ci-cd.yml already generated
+            - name: Download test results
+              uses: actions/download-artifact@v4
+              with:
+                name: test-results
+                path: test-results/
+            - name: Report to Ketryx
+              uses: Ketryx/ketryx-github-action@v1.4.0
+              with:
+                project: ${{ secrets.KETRYX_PROJECT }}
+                api-key: ${{ secrets.KETRYX_API_KEY }}
+                commit-sha: ${{ inputs.commit-sha }}
+                build-name: ${{ inputs.build-name }}
+                test-junit-path: test-results/*.xml
