@@ -3,15 +3,6 @@
   "compilerOptions": {
     "noEmit": true
   },
-  "include": [
-    "packages/*/src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "docs",
-    "coverage",
-    "packages/*/dist",
-    "packages/*/coverage"
-  ]
+  "include": ["packages/*/src/**/*", "packages/*/e2e/**/*"],
+  "exclude": ["node_modules", "dist", "docs", "coverage", "packages/*/dist", "packages/*/coverage"]
 }

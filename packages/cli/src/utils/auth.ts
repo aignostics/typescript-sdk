@@ -21,7 +21,7 @@ export interface TokenStorage {
 /**
  * Token data schema for validation
  */
-const tokenSchema = z.object({
+export const tokenSchema = z.object({
   access_token: z.string(),
   refresh_token: z.string().nullable().default(null),
   expires_at_ms: z.number().nullable().default(null),
@@ -30,7 +30,7 @@ const tokenSchema = z.object({
   stored_at: z.number(),
 });
 
-const tokenSetValidationSchema = z.object({
+export const tokenSetValidationSchema = z.object({
   access_token: z.string(),
   refresh_token: z.string().optional(),
   expires_at: z.number(),
@@ -76,6 +76,44 @@ export interface LoginWithCallbackConfig {
  */
 export class AuthService {
   constructor(private readonly tokenStorage: TokenStorage) {}
+
+  loginWithRefreshToken = async (
+    environment: EnvironmentKey,
+    refreshToken: string
+  ): Promise<void> => {
+    const oauthConfig = environmentConfig[environment];
+
+    try {
+      const issuer = await Issuer.discover(oauthConfig.issuerURL);
+      const client = new issuer.Client({
+        client_id: oauthConfig.clientID,
+        redirect_uris: [], // Not needed for refresh
+        response_types: ['code'],
+        scope: oauthConfig.scope || 'openid profile email offline_access',
+        audience: oauthConfig.audience || 'https://aignostics-platform-samia',
+        token_endpoint_auth_method: 'none',
+      });
+
+      const tokenSet = tokenSetValidationSchema.parse(await client.refresh(refreshToken));
+
+      // Save the new token securely
+      await this.saveToken(
+        environment,
+        tokenSchema.omit({ stored_at: true }).parse({
+          access_token: tokenSet.access_token,
+          refresh_token: tokenSet.refresh_token || refreshToken, // Keep old refresh token if not renewed
+          expires_at_ms: tokenSet.expires_at * 1000,
+          token_type: tokenSet.token_type,
+          scope: tokenSet.scope,
+        })
+      );
+
+      console.log('🎉 Login with refresh token successful! Token saved securely.');
+    } catch (error) {
+      console.error('❌ Login with refresh token failed:', error);
+      throw error;
+    }
+  };
 
   /**
    * Perform OAuth2 PKCE login flow with external callback handling

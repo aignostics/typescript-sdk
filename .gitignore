@@ -36,6 +36,7 @@ logs/
 
 # Generated code
 packages/sdk/src/generated/
+test-results/
 
 # Environment variables
 .env

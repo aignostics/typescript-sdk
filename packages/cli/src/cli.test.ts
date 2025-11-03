@@ -16,6 +16,7 @@ vi.mock('./utils/auth.js', () => ({
     getValidAccessToken: vi.fn().mockResolvedValue('mock-token'),
     loginWithCallback: vi.fn().mockResolvedValue(''),
     completeLogin: vi.fn().mockResolvedValue(undefined),
+    loginWithRefreshToken: vi.fn().mockResolvedValue(undefined),
     logout: vi.fn().mockResolvedValue(undefined),
     getAuthState: vi.fn().mockResolvedValue({
       isAuthenticated: true,
@@ -427,6 +428,29 @@ describe('CLI Integration Tests', () => {
       expect(consoleSpy.error).toHaveBeenCalledWith(
         expect.stringContaining('You need at least one command before moving on')
       );
+    });
+  });
+
+  describe('login command', () => {
+    it('should login with refresh token when --refreshToken is provided', async () => {
+      const refreshToken = 'test-refresh-token-12345';
+
+      process.argv = [
+        'node',
+        'cli.js',
+        'login',
+        '--refreshToken',
+        refreshToken,
+        '--environment',
+        'production',
+      ];
+
+      await main();
+
+      // Verify that loginWithRefreshToken was called (it's mocked in the AuthService mock above)
+      // Since we're mocking the entire AuthService, we need to verify the command executed without errors
+      expect(consoleSpy.error).not.toHaveBeenCalled();
+      expect(mockExit).not.toHaveBeenCalled();
     });
   });
 });

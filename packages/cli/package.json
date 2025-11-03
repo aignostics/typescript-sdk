@@ -20,6 +20,7 @@
   "scripts": {
     "build": "nx build",
     "test": "nx test",
+    "test:e2e": "nx test:e2e -- --reporter=verbose",
     "lint": "nx lint",
     "typecheck": "nx typecheck"
   },
