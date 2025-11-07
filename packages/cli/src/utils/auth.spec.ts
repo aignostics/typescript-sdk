@@ -254,6 +254,148 @@ describe('AuthService', () => {
     });
   });
 
+  describe('loginWithRefreshToken', () => {
+    it('should successfully login with refresh token and save new tokens', async () => {
+      const refreshToken = 'valid-refresh-token';
+      const newTokenSet = {
+        access_token: 'new-access-token',
+        refresh_token: 'new-refresh-token',
+        expires_at: Math.floor((Date.now() + 3600000) / 1000), // 1 hour from now
+        token_type: 'Bearer' as const,
+        scope: 'openid profile email',
+      };
+
+      const mockClient = {
+        refresh: vi.fn(() => newTokenSet),
+      };
+      const mockIssuer = {
+        Client: vi.fn(() => mockClient),
+      };
+
+      vi.mocked(Issuer.discover).mockResolvedValue(mockIssuer as unknown as Issuer<BaseClient>);
+      mockTokenStorage.save.mockResolvedValue(undefined);
+
+      await authService.loginWithRefreshToken(environment, refreshToken);
+
+      expect(Issuer.discover).toHaveBeenCalledWith(environmentConfig.production.issuerURL);
+      expect(mockIssuer.Client).toHaveBeenCalledWith({
+        client_id: environmentConfig.production.clientID,
+        redirect_uris: [],
+        response_types: ['code'],
+        scope: environmentConfig.production.scope || 'openid profile email offline_access',
+        audience: environmentConfig.production.audience || 'https://aignostics-platform-samia',
+        token_endpoint_auth_method: 'none',
+      });
+      expect(mockClient.refresh).toHaveBeenCalledWith(refreshToken);
+      expect(mockTokenStorage.save).toHaveBeenCalledWith(environment, {
+        access_token: newTokenSet.access_token,
+        refresh_token: newTokenSet.refresh_token,
+        expires_at_ms: newTokenSet.expires_at * 1000,
+        token_type: newTokenSet.token_type,
+        scope: newTokenSet.scope,
+        stored_at: expect.any(Number) as number,
+      });
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        '🎉 Login with refresh token successful! Token saved securely.'
+      );
+    });
+
+    it('should keep old refresh token when new one is not provided', async () => {
+      const refreshToken = 'original-refresh-token';
+      const newTokenSetWithoutRefreshToken = {
+        access_token: 'new-access-token',
+        // No refresh_token in response
+        expires_at: Math.floor((Date.now() + 3600000) / 1000),
+        token_type: 'Bearer' as const,
+        scope: 'openid profile email',
+      };
+
+      const mockClient = {
+        refresh: vi.fn(() => newTokenSetWithoutRefreshToken),
+      };
+      const mockIssuer = {
+        Client: vi.fn(() => mockClient),
+      };
+      const { Issuer } = await import('openid-client');
+
+      vi.mocked(Issuer.discover).mockResolvedValue(mockIssuer as unknown as Issuer<BaseClient>);
+      mockTokenStorage.save.mockResolvedValue(undefined);
+
+      await authService.loginWithRefreshToken(environment, refreshToken);
+
+      expect(mockTokenStorage.save).toHaveBeenCalledWith(environment, {
+        access_token: 'new-access-token',
+        refresh_token: 'original-refresh-token', // Should keep original
+        expires_at_ms: newTokenSetWithoutRefreshToken.expires_at * 1000,
+        token_type: 'Bearer',
+        scope: 'openid profile email',
+        stored_at: expect.any(Number) as number,
+      });
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        '🎉 Login with refresh token successful! Token saved securely.'
+      );
+    });
+
+    it('should handle issuer discovery errors', async () => {
+      const refreshToken = 'valid-refresh-token';
+      const error = new Error('Issuer discovery failed');
+      const { Issuer } = await import('openid-client');
+
+      vi.mocked(Issuer.discover).mockRejectedValue(error);
+
+      await expect(authService.loginWithRefreshToken(environment, refreshToken)).rejects.toThrow(
+        'Issuer discovery failed'
+      );
+      expect(consoleSpy.error).toHaveBeenCalledWith('❌ Login with refresh token failed:', error);
+    });
+
+    it('should handle token refresh errors', async () => {
+      const refreshToken = 'invalid-refresh-token';
+      const error = new Error('Token refresh failed');
+
+      const mockClient = {
+        refresh: vi.fn(() => {
+          throw error;
+        }),
+      };
+      const mockIssuer = {
+        Client: vi.fn(() => mockClient),
+      };
+      const { Issuer } = await import('openid-client');
+
+      vi.mocked(Issuer.discover).mockResolvedValue(mockIssuer as unknown as Issuer<BaseClient>);
+
+      await expect(authService.loginWithRefreshToken(environment, refreshToken)).rejects.toThrow(
+        'Token refresh failed'
+      );
+      expect(consoleSpy.error).toHaveBeenCalledWith('❌ Login with refresh token failed:', error);
+    });
+
+    it('should handle invalid token response format', async () => {
+      const refreshToken = 'valid-refresh-token';
+      const invalidTokenSet = {
+        access_token: 'new-access-token',
+        // Missing required fields like expires_at, token_type
+      };
+
+      const mockClient = {
+        refresh: vi.fn(() => invalidTokenSet),
+      };
+      const mockIssuer = {
+        Client: vi.fn(() => mockClient),
+      };
+      const { Issuer } = await import('openid-client');
+
+      vi.mocked(Issuer.discover).mockResolvedValue(mockIssuer as unknown as Issuer<BaseClient>);
+
+      await expect(authService.loginWithRefreshToken(environment, refreshToken)).rejects.toThrow();
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Login with refresh token failed:',
+        expect.any(Error)
+      );
+    });
+  });
+
   describe('loginWithCallback', () => {
     const mockConfig = {
       redirectUri: 'http://localhost:3000/callback',

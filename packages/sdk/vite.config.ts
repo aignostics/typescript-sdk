@@ -9,6 +9,7 @@ export default defineConfig({
       junit: './test-results/junit.xml',
     },
     environment: 'node',
+    clearMocks: true,
     setupFiles: ['../../vitest.setup.ts', './vitest.setup.ts'],
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     coverage: {

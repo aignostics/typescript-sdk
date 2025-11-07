@@ -12,11 +12,13 @@ import {
   handleLogin,
   handleLogout,
   handleStatus,
+  handleLoginWithRefreshToken,
 } from './cli-functions.js';
 import { PlatformSDK, PlatformSDKHttp } from '@aignostics/sdk';
 import { AuthService, AuthState } from './utils/auth.js';
 import { startCallbackServer, waitForCallback } from './utils/oauth-callback-server.js';
 import crypto from 'crypto';
+import { EnvironmentKey } from './utils/environment.js';
 
 // Mock external dependencies
 vi.mock('./utils/oauth-callback-server');
@@ -54,6 +56,7 @@ const mockAuthService = {
   completeLogin: vi.fn(),
   logout: vi.fn(),
   getAuthState: vi.fn(),
+  loginWithRefreshToken: vi.fn(),
 } as unknown as AuthService;
 
 // Mock package.json
@@ -669,6 +672,59 @@ describe('CLI Functions Unit Tests', () => {
       );
 
       expect(mockConsole.error).toHaveBeenCalledWith('❌ Error checking status:', mockError);
+    });
+  });
+
+  describe('handleLoginWithRefreshToken', () => {
+    let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
+
+    beforeEach(() => {
+      consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    });
+
+    it('should successfully login with refresh token', async () => {
+      const environment: EnvironmentKey = 'production';
+      const refreshToken = 'test-refresh-token';
+
+      vi.spyOn(mockAuthService, 'loginWithRefreshToken').mockResolvedValue(undefined);
+
+      await handleLoginWithRefreshToken(environment, refreshToken, mockAuthService);
+
+      expect(mockAuthService.loginWithRefreshToken).toHaveBeenCalledWith(environment, refreshToken);
+      expect(consoleErrorSpy).not.toHaveBeenCalled();
+    });
+
+    it('should handle login failure and exit process', async () => {
+      const environment: EnvironmentKey = 'production';
+      const refreshToken = 'invalid-refresh-token';
+      const error = new Error('Invalid refresh token');
+
+      vi.spyOn(mockAuthService, 'loginWithRefreshToken').mockRejectedValue(error);
+
+      await expect(
+        handleLoginWithRefreshToken(environment, refreshToken, mockAuthService)
+      ).rejects.toThrow('process.exit called');
+
+      expect(mockAuthService.loginWithRefreshToken).toHaveBeenCalledWith(environment, refreshToken);
+      expect(consoleErrorSpy).toHaveBeenCalledWith('❌ Login with refresh token failed:', error);
+    });
+
+    it('should handle network errors during login', async () => {
+      const environment: EnvironmentKey = 'staging';
+      const refreshToken = 'test-refresh-token';
+      const networkError = new Error('Network request failed');
+
+      vi.spyOn(mockAuthService, 'loginWithRefreshToken').mockRejectedValue(networkError);
+
+      await expect(
+        handleLoginWithRefreshToken(environment, refreshToken, mockAuthService)
+      ).rejects.toThrow('process.exit called');
+
+      expect(mockAuthService.loginWithRefreshToken).toHaveBeenCalledWith(environment, refreshToken);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        '❌ Login with refresh token failed:',
+        networkError
+      );
     });
   });
 });

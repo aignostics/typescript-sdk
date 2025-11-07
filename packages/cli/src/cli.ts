@@ -16,6 +16,7 @@ import {
   handleLogin,
   handleLogout,
   handleStatus,
+  handleLoginWithRefreshToken,
 } from './cli-functions.js';
 import { EnvironmentKey, environmentConfig } from './utils/environment.js';
 import { AuthenticationError } from '@aignostics/sdk';
@@ -42,6 +43,7 @@ export async function main() {
       'test-api',
       'Test API connection',
       yargs => yargs,
+      // TODO: [TSSDK-20] eliminate the need for casting here
       argv => testApi(argv.environment as EnvironmentKey, authService)
     )
     .command(
@@ -144,9 +146,27 @@ export async function main() {
           argv.items
         )
     )
-    .command('login', 'Login to the Aignostics Platform', {}, async argv => {
-      await handleLogin(argv.environment as EnvironmentKey, authService);
-    })
+    .command(
+      'login',
+      'Login to the Aignostics Platform',
+      yargs =>
+        yargs.option('refreshToken', {
+          describe: 'Refresh token to use for login',
+          type: 'string',
+          demandOption: false,
+        }),
+      async argv => {
+        if (argv.refreshToken) {
+          await handleLoginWithRefreshToken(
+            argv.environment as EnvironmentKey,
+            argv.refreshToken,
+            authService
+          );
+          return;
+        }
+        await handleLogin(argv.environment as EnvironmentKey, authService);
+      }
+    )
     .command('logout', 'Logout and remove stored token', {}, async argv => {
       await handleLogout(argv.environment as EnvironmentKey, authService);
     })
