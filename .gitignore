@@ -16,6 +16,9 @@ build/
 coverage/
 *.lcov
 
+# Test results
+test-results/
+
 # IDE
 .vscode/
 .idea/
