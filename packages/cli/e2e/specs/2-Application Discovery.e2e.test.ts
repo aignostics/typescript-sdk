@@ -18,7 +18,7 @@ type ApplicationVersion = {
   released_at: string;
 };
 
-describe('SWR-TSSDK-2.1: Application List Retrieval', () => {
+describe('SWR Application List Retrieval', () => {
   it('should retrieve all available applications for authenticated user', async () => {
     const { stdout, exitCode } = await executeCLI(['list-applications']);
 
@@ -34,7 +34,7 @@ describe('SWR-TSSDK-2.1: Application List Retrieval', () => {
   });
 });
 
-describe('SWR-TSSDK-2.2: Application Details', () => {
+describe('SWR Application Details', () => {
   it('should provide application identification, description, and regulatory compliance information', async () => {
     const { stdout, exitCode } = await executeCLI(['list-applications']);
 
@@ -62,7 +62,7 @@ describe('SWR-TSSDK-2.2: Application Details', () => {
   });
 });
 
-describe('SWR-TSSDK-2.3: Version List Retrieval', () => {
+describe('SWR Version List Retrieval', () => {
   it('should retrieve all versions for a specified application', async () => {
     const { stdout, exitCode } = await executeCLI(['list-application-versions', 'test-app']);
 

@@ -53,6 +53,12 @@ jobs:
       - name: Run tests with coverage
         run: npx nx run-many -t test --coverage
 
+      - name: Run CLI E2E tests
+        run: npm run test:cli:e2e
+        env:
+          E2E_REFRESH_TOKEN: ${{ secrets.E2E_REFRESH_TOKEN }}
+          E2E_TEST_ENVIRONMENT: ${{ secrets.E2E_TEST_ENVIRONMENT }}
+
       - name: Upload SDK test results
         if: matrix.node-version == '20.x'
         uses: actions/upload-artifact@v4
@@ -127,10 +133,10 @@ jobs:
     if: github.ref == 'refs/heads/main'
     uses: ./.github/workflows/_report-to-ketryx.yml
     with:
-      build-name: "pre-release"
+      build-name: 'pre-release'
     secrets:
-        KETRYX_PROJECT: KXPRJ7NZ5C47Q0Q84FTG9AZ2T17N8J2 # not a secret
-        KETRYX_API_KEY: ${{ secrets.KETRYX_API_KEY }}
+      KETRYX_PROJECT: KXPRJ7NZ5C47Q0Q84FTG9AZ2T17N8J2 # not a secret
+      KETRYX_API_KEY: ${{ secrets.KETRYX_API_KEY }}
 
   release:
     permissions:
