@@ -129,7 +129,7 @@ jobs:
     with:
       build-name: "pre-release"
     secrets:
-        KETRYX_PROJECT: KXPRJ7F47PAK8VB9B4BB0G4AYCXCBSY # not a secret
+        KETRYX_PROJECT: KXPRJ7NZ5C47Q0Q84FTG9AZ2T17N8J2 # not a secret
         KETRYX_API_KEY: ${{ secrets.KETRYX_API_KEY }}
 
   release:
