@@ -5,7 +5,6 @@ export default defineConfig({
   test: {
     include: ['./**/*.e2e.test.ts'],
     environment: 'node',
-    pool: 'threads',
     globalSetup: path.resolve(__dirname, './vitest.global-setup.ts'),
     setupFiles: ['dotenv/config'],
     hookTimeout: 60000,
