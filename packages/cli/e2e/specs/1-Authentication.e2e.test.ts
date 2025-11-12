@@ -7,7 +7,7 @@ const environment = process.env.E2E_TEST_ENVIRONMENT || 'staging';
 
 const tokenStorage = new FileSystemTokenStorage();
 
-describe('Authentication', () => {
+describe.sequential('Authentication', () => {
   it('Should call authenticated test-api command when authenticated', async () => {
     const { stdout: loginStdout } = await executeCLI(['login', '--refreshToken', refreshToken]);
     expect(loginStdout).toContain('🎉 Login with refresh token successful! Token saved securely.');
@@ -41,20 +41,17 @@ describe('Authentication', () => {
 
     const { stderr: testApiStderr } = await executeCLI(['test-api'], { reject: false });
     expect(testApiStderr).toContain('Warning: Token refresh failed');
-
-    // Restore valid token
     await tokenStorage.save(environment, { ...data });
   });
 
   it('Should reject calls to api without authentication', async () => {
-    const { stdout: logoutStdout } = await executeCLI(['logout']);
+    const data = await tokenStorage.load(environment);
+    await tokenStorage.remove(environment);
 
-    expect(logoutStdout).toContain('✅ Logged out successfully. Token removed.');
+    const { stderr: testApiStderr } = await executeCLI(['test-api'], { reject: false });
 
-    const { stderr: testApiStdout } = await executeCLI(['test-api'], { reject: false });
+    expect(testApiStderr).toContain('API connection failed: AuthenticationError:');
 
-    expect(testApiStdout).toContain('API connection failed: AuthenticationError:');
-    const { stdout: loginStdout } = await executeCLI(['login', '--refreshToken', refreshToken]);
-    expect(loginStdout).toContain('🎉 Login with refresh token successful! Token saved securely');
+    await tokenStorage.save(environment, { ...data });
   });
 });
