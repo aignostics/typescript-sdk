@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { describe, it, expect } from 'vitest';
 import { executeCLI } from '../utils/command.js';
+import { setMockScenario } from '@aignostics/sdk/test';
 
 type Application = {
   application_id: string;
@@ -20,6 +21,7 @@ type ApplicationVersion = {
 
 describe('SWR Application List Retrieval', () => {
   it('should retrieve all available applications for authenticated user', async () => {
+    setMockScenario('networkError');
     const { stdout, exitCode } = await executeCLI(['list-applications']);
 
     expect(exitCode).toBe(0);
