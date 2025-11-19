@@ -6,14 +6,16 @@
 
 ```markdown
 ---
-itemId: SWR-[MODULE]-[PARENT_NUMBER]-[DESCRIPTIVE_NAME]
+itemId: SWR-[PARENT-NAME]-[DESCRIPTIVE-SUFFIX]
 itemTitle: [Brief Descriptive Title]
-itemHasParent: SHR-[MODULE]-[PARENT_NUMBER]
+itemHasParent: SHR-[PARENT-NAME]
 itemType: Requirement
 # Software requirement (user|system)
 Requirement type: [FUNCTIONAL|REGULATORY|PERFORMANCE|SECURITY|USABILITY]
 Layer: [System (backend logic)|User Interface (frontend)|GUI|CLI|API|Database|etc.]
 ---
+
+<!-- Original reference: [Optional - Reference to original requirement ID if migrating] -->
 
 [Detailed requirement description. Can be written as a plain statement or as a user story. Should clearly specify the technical implementation requirement.]
 ```
@@ -22,20 +24,20 @@ Layer: [System (backend logic)|User Interface (frontend)|GUI|CLI|API|Database|et
 
 ### YAML Frontmatter (Required)
 
-- **itemId**: Unique identifier following pattern `SWR-[MODULE]-[PARENT_NUMBER]-[DESCRIPTIVE_NAME]`
-  - `[MODULE]`: Same module as parent SHR (e.g., APPLICATION, SYSTEM, BUCKET)
-  - `[PARENT_NUMBER]`: The number from the parent SHR (e.g., if parent is SHR-APPLICATION-2, use 2)
-  - `[DESCRIPTIVE_NAME]`: Short descriptive name or sequential number (e.g., LIST-APPS, 1, 2)
-  - Example: `SWR-APPLICATION-1-LIST`, `SWR-APPLICATION-2-1`, `SWR-SYSTEM-1-GUI-HEALTH`
+- **itemId**: Unique identifier following pattern `SWR-[PARENT-NAME]-[DESCRIPTIVE-SUFFIX]`
+  - `[PARENT-NAME]`: The full descriptive name from parent SHR (e.g., APP-DISCOVERY, AUTH, ERROR-COMM)
+  - `[DESCRIPTIVE-SUFFIX]`: Short descriptive identifier for this specific requirement
+  - Use hyphenated uppercase names
+  - Example: `SWR-APP-DISCOVERY-LIST`, `SWR-APP-DISCOVERY-DETAILS`, `SWR-AUTH-TOKEN-BASED`, `SWR-ERROR-COMM-CLI-OUTPUT`
 
 - **itemTitle**: Short, descriptive title (3-8 words recommended)
   - Should be specific about the technical requirement
   - Use title case
   - Example: "List Available Applications", "Accept Optional Run Name and Description"
 
-- **itemHasParent**: Reference to parent SHR using format `SHR-[MODULE]-[NUMBER]`
-  - Must match an existing SHR itemId
-  - Example: `SHR-APPLICATION-1`, `SHR-SYSTEM-2`
+- **itemHasParent**: Reference to parent SHR using format `SHR-[PARENT-NAME]`
+  - Must match an existing SHR itemId exactly
+  - Example: `SHR-APP-DISCOVERY`, `SHR-AUTH`, `SHR-ERROR-COMM`
 
 - **itemType**: Always set to `Requirement` for requirements documents
 
@@ -94,104 +96,109 @@ Layer: [System (backend logic)|User Interface (frontend)|GUI|CLI|API|Database|et
 ### Example 1: Simple Backend Requirement
 ```markdown
 ---
-itemId: SWR-APPLICATION-1-1
+itemId: SWR-APP-DISCOVERY-LIST
 itemTitle: List Available Applications
-itemHasParent: SHR-APPLICATION-1
+itemHasParent: SHR-APP-DISCOVERY
 itemType: Requirement
 # Software requirement (user)
 Requirement type: FUNCTIONAL
 Layer: System (backend logic)
 ---
+
+<!-- Original reference: SWR-TSSDK-2.1 -->
 
 System shall provide a list of available applications for user selection.
 ```
 
-### Example 2: GUI Requirement with User Story
+### Example 2: CLI Requirement
 ```markdown
 ---
-itemId: SWR-SYSTEM-GUI-HEALTH-1
-itemTitle: GUI System Health Visibility
-itemHasParent: SHR-SYSTEM-1
+itemId: SWR-ERROR-COMM-CLI-OUTPUT
+itemTitle: CLI Error Output
+itemHasParent: SHR-ERROR-COMM
+itemType: Requirement
+# Software requirement (user)
+Requirement type: FUNCTIONAL
+Layer: CLI
+---
+
+<!-- Original reference: SWR-TSSDK-6.4 -->
+
+CLI shall write error messages to standard error stream and provide machine-readable operation status through standard exit mechanisms.
+```
+
+### Example 3: Authentication Requirement
+```markdown
+---
+itemId: SWR-AUTH-TOKEN-BASED
+itemTitle: Token-Based Authentication
+itemHasParent: SHR-AUTH
 itemType: Requirement
 # Software requirement (system)
-Requirement type: REGULATORY
-Layer: GUI
+Requirement type: SECURITY
 ---
 
-As a user, I expected the current health of Launchpad being always visible in the footer of the GUI so that I can ensure the system is operational.
+<!-- Original reference: SWR-TSSDK-1.1 -->
+
+System shall authenticate API requests using access tokens.
 ```
 
-### Example 3: Detailed Requirement with Validation
+### Example 4: Detailed Application Requirement
 ```markdown
 ---
-itemId: SWR-APPLICATION-2-13
-itemTitle: Accept Optional Run Name and Description
-itemHasParent: SHR-APPLICATION-2
+itemId: SWR-APP-DISCOVERY-DETAILS
+itemTitle: Application Details
+itemHasParent: SHR-APP-DISCOVERY
 itemType: Requirement
 # Software requirement (user)
 Requirement type: FUNCTIONAL
 Layer: System (backend logic)
 ---
 
-System shall accept optional user-provided run name and description during application run submission. The system shall validate that run names do not exceed 100 characters and descriptions do not exceed 500 characters when provided, and shall store these metadata fields with the run record.
+<!-- Original reference: SWR-TSSDK-2.2 -->
+
+System shall provide application identification, description, and regulatory compliance information for each retrieved application.
 ```
 
-### Example 4: Storage Operation Requirement
+### Example 5: Request Validation Requirement
 ```markdown
 ---
-itemId: SWR-BUCKET-1-1
-itemTitle: Upload Directory Structure to Bucket Storage
-itemHasParent: SHR-BUCKET-1
+itemId: SWR-APP-EXEC-REQUEST-VALIDATION
+itemTitle: Request Validation
+itemHasParent: SHR-APP-EXEC
 itemType: Requirement
 # Software requirement (user)
 Requirement type: FUNCTIONAL
 Layer: System (backend logic)
 ---
 
-System shall upload local directory structures with multiple files and subdirectories to bucket storage while preserving file organization.
-```
+<!-- Original reference: SWR-TSSDK-3.3 -->
 
-### Example 5: Complex Multi-Granularity Requirement
-```markdown
----
-itemId: SWR-APPLICATION-3-1
-itemTitle: Download Application Run Results
-itemHasParent: SHR-APPLICATION-3
-itemType: Requirement
-# Software requirement (user)
-Requirement type: FUNCTIONAL
-Layer: System (backend logic)
----
-
-System shall download application run results at multiple granularity levels: all items per run, individual items, and individual artifacts per item. The system shall download to specified destination directories when requested by run identifier, retrieve results regardless of run status, and provide download confirmation with status information indicating whether run was completed or canceled.
+System shall validate run request format before submission to the platform.
 ```
 
 ## Naming Conventions
 
 ### itemId Pattern
-`SWR-[MODULE]-[PARENT_NUMBER]-[DESCRIPTIVE_NAME]`
+`SWR-[PARENT-NAME]-[DESCRIPTIVE-SUFFIX]`
 
-**Descriptive Name Options**:
-1. **Sequential numbers**: 1, 2, 3, etc.
-   - Example: SWR-APPLICATION-1-1, SWR-APPLICATION-1-2
-   - Pro: Simple, easy to generate
-   - Con: Less self-documenting
+**Structure**:
+1. **Parent Name**: Must exactly match the parent SHR's descriptive name
+   - Example: If parent is `SHR-APP-DISCOVERY`, use `SWR-APP-DISCOVERY-*`
 
-2. **Short descriptive keywords**: LIST, UPLOAD, DELETE, etc.
-   - Example: SWR-APPLICATION-1-LIST, SWR-BUCKET-1-UPLOAD
-   - Pro: More readable, self-documenting
-   - Con: Requires consistent naming
+2. **Descriptive Suffix**: Short identifier specific to this requirement
+   - Use descriptive keywords: LIST, DETAILS, CREATE, DELETE, VALIDATION, etc.
+   - Keep it concise but meaningful
+   - Use hyphens for multi-word suffixes
 
-3. **Combined approach**: Use descriptive names for major features, numbers for variations
-   - Example: SWR-APPLICATION-2-SUBMIT-1, SWR-APPLICATION-2-SUBMIT-2
-   - Pro: Balances clarity and simplicity
-   - Con: More complex to manage
+**Examples**:
+- `SWR-APP-DISCOVERY-LIST` (parent: SHR-APP-DISCOVERY)
+- `SWR-APP-DISCOVERY-DETAILS` (parent: SHR-APP-DISCOVERY)
+- `SWR-AUTH-TOKEN-BASED` (parent: SHR-AUTH)
+- `SWR-ERROR-COMM-CLI-OUTPUT` (parent: SHR-ERROR-COMM)
+- `SWR-APP-EXEC-REQUEST-VALIDATION` (parent: SHR-APP-EXEC)
 
-**Recommendation**: Use sequential numbers unless descriptive names add significant clarity.
-
-### Module and Parent Number
-- Must match the parent SHR
-- Example: If parent is `SHR-APPLICATION-2`, then SWR prefix is `SWR-APPLICATION-2-*`
+**Recommendation**: Use descriptive suffixes that clearly indicate the specific functionality being implemented.
 
 ## Relationship to SHR
 
@@ -203,10 +210,11 @@ Each SWR must:
 
 **Example Breakdown**:
 ```
-SHR-APPLICATION-1: "Application Discovery and Navigation"
-├── SWR-APPLICATION-1-1: "List Available Applications"
-├── SWR-APPLICATION-1-2: "Display Application Details"
-└── SWR-APPLICATION-1-3: "Navigate to Application View"
+SHR-APP-DISCOVERY: "Application Discovery"
+├── SWR-APP-DISCOVERY-LIST: "List Available Applications"
+├── SWR-APP-DISCOVERY-DETAILS: "Application Details"
+├── SWR-APP-DISCOVERY-VERSION-LIST: "List Application Versions"
+└── SWR-APP-DISCOVERY-VERSION-DETAILS: "Application Version Details"
 ```
 
 ## Layer Guidelines
@@ -259,16 +267,18 @@ System shall [action1] at multiple [scope] levels: [option1], [option2], and [op
 ## Validation Checklist
 
 Before finalizing an SWR, verify:
-- [ ] itemId follows SWR-[MODULE]-[PARENT_NUMBER]-[DESCRIPTIVE_NAME] pattern
+- [ ] itemId follows SWR-[PARENT-NAME]-[DESCRIPTIVE-SUFFIX] pattern
+- [ ] itemId parent name exactly matches the parent SHR's name
 - [ ] itemTitle is clear and descriptive
-- [ ] itemHasParent references a valid SHR
+- [ ] itemHasParent references a valid SHR (exact match)
 - [ ] itemType is set to "Requirement"
 - [ ] Software requirement type (user|system) is specified
 - [ ] Requirement type is one of the valid values
-- [ ] Layer is specified (if applicable)
+- [ ] Layer is specified (optional but recommended)
 - [ ] Requirement description is clear and implementable
 - [ ] Requirement is testable/verifiable
 - [ ] YAML frontmatter is properly formatted
+- [ ] Optional comment included for original reference if migrating
 - [ ] Requirement implements part of the parent SHR
 
 ## Notes for AI Agents

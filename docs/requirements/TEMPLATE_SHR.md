@@ -1,4 +1,4 @@
-# SHR Template - Stakeholder Health Requirement
+# SHR Template - Stakeholder Requirement
 
 **Purpose**: Use this template to create Stakeholder Requirements (SHR) - high-level requirements that describe what stakeholders need from the system.
 
@@ -6,12 +6,14 @@
 
 ```markdown
 ---
-itemId: SHR-[MODULE]-[NUMBER]
+itemId: SHR-[DESCRIPTIVE-NAME]
 itemTitle: [Brief Descriptive Title]
 itemType: Requirement
 # Stakeholder requirement (user)
-Requirement type: [ENVIRONMENT|FUNCTIONAL|REGULATORY|PERFORMANCE|SECURITY|USABILITY]
+Requirement type: [FUNCTIONAL|REGULATORY|PERFORMANCE|SECURITY|USABILITY]
 ---
+
+<!-- Original reference: [Optional - Reference to original requirement ID if migrating] -->
 
 ## Description
 
@@ -22,10 +24,12 @@ Requirement type: [ENVIRONMENT|FUNCTIONAL|REGULATORY|PERFORMANCE|SECURITY|USABIL
 
 ### YAML Frontmatter (Required)
 
-- **itemId**: Unique identifier following pattern `SHR-[MODULE]-[NUMBER]`
-  - `[MODULE]`: The system module or domain (e.g., APPLICATION, SYSTEM, BUCKET, DATASET, VISUALIZATION)
-  - `[NUMBER]`: Sequential number starting from 1 for each module
-  - Example: `SHR-APPLICATION-1`, `SHR-SYSTEM-2`
+- **itemId**: Unique identifier following pattern `SHR-[DESCRIPTIVE-NAME]`
+  - `[DESCRIPTIVE-NAME]`: Hyphenated descriptive identifier using module prefix and feature name
+  - Should be clear, concise, and self-documenting
+  - Use uppercase with hyphens (kebab-case in uppercase)
+  - Common module prefixes: APP, AUTH, SYSTEM, BUCKET, DATASET, ERROR, API
+  - Example: `SHR-APP-DISCOVERY`, `SHR-AUTH`, `SHR-ERROR-COMM`, `SHR-APP-RUN-MGMT`
 
 - **itemTitle**: Short, descriptive title (3-8 words recommended)
   - Should be clear and specific
@@ -35,12 +39,13 @@ Requirement type: [ENVIRONMENT|FUNCTIONAL|REGULATORY|PERFORMANCE|SECURITY|USABIL
 - **itemType**: Always set to `Requirement` for requirements documents
 
 - **Requirement type**: Choose one based on the nature of the requirement:
-  - `ENVIRONMENT`: Requirements about the operating context, user workflows, or system environment
-  - `FUNCTIONAL`: Requirements describing specific system functions or capabilities
+  - `FUNCTIONAL`: Requirements describing specific system functions or capabilities (most common)
   - `REGULATORY`: Requirements derived from regulations, standards, or compliance needs
   - `PERFORMANCE`: Requirements about system performance, speed, or efficiency
   - `SECURITY`: Requirements about system security, access control, or data protection
   - `USABILITY`: Requirements about user experience, accessibility, or ease of use
+
+  Note: ENVIRONMENT type has been removed - use FUNCTIONAL for user workflows and system context requirements
 
 ### Description Section (Required)
 
@@ -58,67 +63,74 @@ Requirement type: [ENVIRONMENT|FUNCTIONAL|REGULATORY|PERFORMANCE|SECURITY|USABIL
 ### Example 1: User-Facing Capability
 ```markdown
 ---
-itemId: SHR-APPLICATION-1
-itemTitle: Application Discovery and Navigation
+itemId: SHR-APP-DISCOVERY
+itemTitle: Application Discovery
 itemType: Requirement
 # Stakeholder requirement (user)
-Requirement type: ENVIRONMENT
+Requirement type: FUNCTIONAL
 ---
+
+<!-- Original reference: SHR-TSSDK-2 -->
 
 ## Description
 
-Users shall be able to view available AI applications and navigate to specific application views to access application functionality.
+Users shall be able to discover available AI applications and their versions.
 ```
 
-### Example 2: System Capability with Detail
+### Example 2: Security Requirement
 ```markdown
 ---
-itemId: SHR-SYSTEM-1
-itemTitle: System Health Monitoring and Observability
+itemId: SHR-AUTH
+itemTitle: Authenticated Platform Access
 itemType: Requirement
 # Stakeholder requirement (user)
-Requirement type: ENVIRONMENT
+Requirement type: SECURITY
 ---
+
+<!-- Original reference: SHR-TSSDK-1 -->
 
 ## Description
 
-Users shall be able to monitor the operational health and status of the system through multiple interfaces to ensure system reliability, diagnose issues, and maintain confidence in system availability. The system shall provide transparent, real-time visibility into its operational state across all user interaction points.
+Access to the Aignostics Platform shall require valid user authentication credentials.
 ```
 
-### Example 3: Workflow Requirement
+### Example 3: Error Handling Requirement
 ```markdown
 ---
-itemId: SHR-APPLICATION-2
-itemTitle: Application Run Management
+itemId: SHR-ERROR-COMM
+itemTitle: Error Communication
 itemType: Requirement
 # Stakeholder requirement (user)
-Requirement type: ENVIRONMENT
+Requirement type: FUNCTIONAL
 ---
+
+<!-- Original reference: SHR-TSSDK-6 -->
 
 ## Description
 
-Users shall be able to execute AI applications on their data by preparing data, submitting runs, monitoring run status, managing run lifecycle including cancellation, and accessing results.
+Users shall receive clear information when operations fail.
 ```
 
 ## Naming Conventions
 
-### Module Names
-Use clear, consistent module names that reflect your system architecture:
-- APPLICATION (for application management features)
+### Module Prefixes
+Use clear, consistent module prefixes that reflect your system architecture:
+- APP (for application-related features)
+- AUTH (for authentication/authorization)
 - SYSTEM (for system-wide capabilities)
 - BUCKET (for storage management)
 - DATASET (for data operations)
-- VISUALIZATION (for visualization tools)
-- USER (for user management)
-- AUTH (for authentication/authorization)
+- ERROR (for error handling and communication)
 - API (for API-specific requirements)
+- USER (for user management)
 - etc.
 
-### Numbering
-- Start from 1 for each module
-- Increment sequentially (1, 2, 3, ...)
-- Use the same number space across all requirement types for the module
-- Example: SHR-APPLICATION-1, SHR-APPLICATION-2, SHR-APPLICATION-3
+### Descriptive Names
+- Use hyphenated uppercase names (e.g., `SHR-APP-DISCOVERY`, `SHR-APP-RUN-MGMT`)
+- Combine module prefix with feature name
+- Keep names concise but descriptive
+- Use common abbreviations where clear (MGMT for Management, EXEC for Execution, COMM for Communication)
+- Example: `SHR-APP-DISCOVERY`, `SHR-AUTH`, `SHR-ERROR-COMM`, `SHR-APP-RESULTS`
 
 ## Best Practices
 
@@ -132,15 +144,16 @@ Use clear, consistent module names that reflect your system architecture:
 ## Validation Checklist
 
 Before finalizing an SHR, verify:
-- [ ] itemId follows SHR-[MODULE]-[NUMBER] pattern
+- [ ] itemId follows SHR-[DESCRIPTIVE-NAME] pattern (e.g., SHR-APP-DISCOVERY)
 - [ ] itemTitle is clear and descriptive
 - [ ] itemType is set to "Requirement"
-- [ ] Requirement type is one of the valid values
+- [ ] Requirement type is one of the valid values (FUNCTIONAL, SECURITY, etc.)
 - [ ] Description section exists with ## heading
 - [ ] Description explains WHAT stakeholders need (not HOW)
 - [ ] Language is clear and unambiguous
 - [ ] Requirement is testable/verifiable
 - [ ] YAML frontmatter is properly formatted
+- [ ] Optional comment included for original reference if migrating
 
 ## Notes for AI Agents
 

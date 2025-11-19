@@ -2,7 +2,9 @@
 
 When creating or editing requirement documents:
 
-1. **Use the template** at `docs/requirements/SWR-TEMPLATE.md`
+1. **Use the template** at `docs/requirements/TEMPLATE_SHR.md` for Stakeholder Requirement 
+
+2. **Use the template** at `docs/requirements/TEMPLATE_SWR.md` for Software Requirements 
 
 2. **Set Requirement Type** using this mapping:
 
