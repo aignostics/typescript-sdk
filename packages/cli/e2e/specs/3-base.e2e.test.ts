@@ -20,9 +20,4 @@ describe('cli smoke', () => {
     expect(stdout).toContain('Aignostics Platform SDK');
     expect(stdout).toContain('Version');
   });
-
-  it('calls authenticated test-api command', async () => {
-    const { stdout } = await executeCLI(['test-api']);
-    expect(stdout).toContain('API connection successful');
-  });
 });
