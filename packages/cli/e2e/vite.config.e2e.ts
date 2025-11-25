@@ -14,5 +14,7 @@ export default defineConfig({
     outputFile: {
       junit: './test-results/junit-e2e.xml',
     },
+    // Disable concurrent test file execution to prevent auth state conflicts
+    fileParallelism: false,
   },
 });

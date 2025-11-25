@@ -131,6 +131,63 @@ describe('PlatformSDK', () => {
     await expect(sdk.getApplication('test-app-id')).rejects.toThrow('Resource not found: ');
   });
 
+  it('should get application version details successfully', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with successful response
+    setMockScenario('success');
+
+    const result = await sdk.getApplicationVersionDetails('test-app-id', 'v1.0.0');
+    expect(result).toHaveProperty('version_number');
+    expect(result).toHaveProperty('changelog');
+    expect(result).toHaveProperty('input_artifacts');
+    expect(result).toHaveProperty('output_artifacts');
+    expect(result).toHaveProperty('released_at');
+    expect(Array.isArray(result.input_artifacts)).toBe(true);
+    expect(Array.isArray(result.output_artifacts)).toBe(true);
+    expect(result.version_number).toBe('v1.0.0');
+  });
+
+  it('should handle get application version details failure for invalid application', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with error response
+    setMockScenario('notFoundError');
+
+    await expect(sdk.getApplicationVersionDetails('invalid-app-id', 'v1.0.0')).rejects.toThrow(
+      'Resource not found: '
+    );
+  });
+
+  it('should handle get application version details failure for invalid version', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with error response
+    setMockScenario('notFoundError');
+
+    await expect(
+      sdk.getApplicationVersionDetails('test-app-id', 'invalid-version')
+    ).rejects.toThrow('Resource not found: ');
+  });
+
+  it('should handle no token for get application version details', async () => {
+    // Mock token provider to return null
+    mockTokenProvider.mockResolvedValue(null);
+
+    const errorMessage =
+      'No access token available. Please provide a tokenProvider in the SDK configuration that returns a valid token.';
+
+    await expect(sdk.getApplicationVersionDetails('test-app-id', 'v1.0.0')).rejects.toThrow(
+      AuthenticationError
+    );
+    await expect(sdk.getApplicationVersionDetails('test-app-id', 'v1.0.0')).rejects.toThrow(
+      errorMessage
+    );
+  });
+
   it('should list application runs successfully', async () => {
     // Mock token provider to return a valid token
     mockTokenProvider.mockResolvedValue('mocked-token');

@@ -88,3 +88,28 @@ describe('SWR Version List Retrieval', () => {
     });
   });
 });
+
+describe('SWR Specific Version Details', () => {
+  it('should provide details for a specific application version', async () => {
+    const { stdout, exitCode } = await executeCLI([
+      'get-application-version-details',
+      'test-app',
+      '0.99.0',
+    ]);
+
+    expect(exitCode).toBe(0);
+
+    // Match the JSON object after the prefix
+    const detailsMatch = String(stdout).match(
+      /Application version details for test-app v0\.99\.0: (\{[\s\S]*\})/
+    );
+    expect(detailsMatch).toBeTruthy();
+
+    const versionDetails = JSON.parse(detailsMatch![1]);
+    expect(versionDetails).toMatchObject({
+      version_number: '0.99.0',
+      changelog: expect.any(String),
+      input_artifacts: expect.any(Array),
+    });
+  });
+});
