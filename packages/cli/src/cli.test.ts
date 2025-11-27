@@ -168,6 +168,74 @@ describe('CLI Integration Tests', () => {
     });
   });
 
+  describe('get-application-version-details command', () => {
+    it('should get application version details successfully', async () => {
+      const application = factories.application.build();
+      const version = application.versions[0];
+
+      server.use(
+        http.get('*/v1/applications/:applicationId/versions/:versionNumber', () =>
+          HttpResponse.json(version, { status: 200 })
+        )
+      );
+
+      process.argv = [
+        'node',
+        'cli.js',
+        'get-application-version-details',
+        application.application_id,
+        version.number,
+        '--endpoint',
+        'https://api.example.com',
+      ];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        `Application version details for ${application.application_id} v${version.number}:`,
+        expect.stringContaining(version.number)
+      );
+    });
+
+    it('should print error responses', async () => {
+      const application = factories.application.build();
+      const version = application.versions[0];
+
+      server.use(
+        http.get('*/v1/applications/:applicationId/versions/:versionNumber', () =>
+          HttpResponse.error()
+        )
+      );
+
+      process.argv = [
+        'node',
+        'cli.js',
+        'get-application-version-details',
+        application.application_id,
+        version.number,
+        '--endpoint',
+        'https://api.example.com',
+      ];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        expect.stringContaining('❌ Failed to get application version details:'),
+        expect.any(Error)
+      );
+    });
+
+    it('should require applicationId and versionNumber parameters', async () => {
+      process.argv = ['node', 'cli.js', 'get-application-version-details'];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        expect.stringContaining('Not enough non-option arguments')
+      );
+    });
+  });
+
   describe('list-application-runs command', () => {
     it('should list application runs successfully', async () => {
       // Mock process.argv for yargs

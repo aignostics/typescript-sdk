@@ -50,6 +50,29 @@ export async function listApplications(
   console.log('Applications:', JSON.stringify(response, null, 2));
 }
 
+export async function getApplicationVersionDetails(
+  environment: EnvironmentKey,
+  authService: AuthService,
+  applicationId: string,
+  versionNumber: string
+): Promise<void> {
+  const { endpoint } = environmentConfig[environment];
+  const sdk = new PlatformSDKHttp({
+    baseURL: endpoint,
+    tokenProvider: () => authService.getValidAccessToken(environment),
+  });
+  try {
+    const response = await sdk.getApplicationVersionDetails(applicationId, versionNumber);
+    console.log(
+      `Application version details for ${applicationId} v${versionNumber}:`,
+      JSON.stringify(response, null, 2)
+    );
+  } catch (error) {
+    console.error('❌ Failed to get application version details:', error);
+    process.exit(1);
+  }
+}
+
 export async function listApplicationVersions(
   environment: EnvironmentKey,
   authService: AuthService,

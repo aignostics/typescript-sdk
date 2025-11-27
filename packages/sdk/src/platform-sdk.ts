@@ -7,6 +7,7 @@ import {
   PublicApi,
   ApplicationReadShortResponse,
   ApplicationReadResponse,
+  VersionReadResponse,
 } from './generated/index.js';
 import { APIError, AuthenticationError, UnexpectedError } from './errors.js';
 import { isAxiosError } from 'axios';
@@ -98,6 +99,10 @@ export interface PlatformSDK {
   getRun(applicationRunId: string): Promise<RunReadResponse>;
   cancelApplicationRun(applicationRunId: string): Promise<void>;
   listRunResults(applicationRunId: string): Promise<ItemResultReadResponse[]>;
+  getApplicationVersionDetails(
+    applicationId: string,
+    version: string
+  ): Promise<VersionReadResponse>;
 }
 /**
  * Main SDK class for interacting with the Aignostics Platform
@@ -199,6 +204,50 @@ export class PlatformSDKHttp implements PlatformSDK {
     const client = await this.#getClient();
     try {
       const response = await client.listApplicationsV1ApplicationsGet();
+      return response.data;
+    } catch (error) {
+      handleRequestError(error);
+    }
+  }
+
+  /**
+   * Retrieve detailed information about a specific application version
+   *
+   * This method fetches comprehensive details about a specific version of an
+   * application, including its changelog, release date, and any version-specific
+   * configurations or features.
+   *
+   * @param applicationId - The unique identifier of the application
+   * @param version - The version string of the application to retrieve
+   * @returns A promise that resolves to the application version details
+   * @throws {Error} If the request fails due to network issues, authentication problems, invalid application ID or version, or API errors
+   *
+   * @example
+   * ```typescript
+   * const sdk = new PlatformSDKHttp({ tokenProvider: () => 'your-token' });
+   *
+   * try {
+   *   const appVersion = await sdk.getApplicationVersionDetails('app-123', 'v1.2.0');
+   *   console.log(`Application Version: ${appVersion.version}`);
+   *   console.log(`Release Date: ${appVersion.release_date}`);
+   *   console.log(`Changelog: ${appVersion.changelog}`);
+   * } catch (error) {
+   *   console.error('Failed to get application version details:', error.message);
+   * }
+   * ```
+   */
+
+  async getApplicationVersionDetails(
+    applicationId: string,
+    version: string
+  ): Promise<VersionReadResponse> {
+    const client = await this.#getClient();
+    try {
+      const response =
+        await client.applicationVersionDetailsV1ApplicationsApplicationIdVersionsVersionGet({
+          applicationId,
+          version,
+        });
       return response.data;
     } catch (error) {
       handleRequestError(error);

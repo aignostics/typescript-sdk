@@ -17,6 +17,7 @@ import {
   handleLogout,
   handleStatus,
   handleLoginWithRefreshToken,
+  getApplicationVersionDetails,
 } from './cli-functions.js';
 import { EnvironmentKey, environmentConfig } from './utils/environment.js';
 import { AuthenticationError } from '@aignostics/sdk';
@@ -63,6 +64,29 @@ export async function main() {
         }),
       argv =>
         listApplicationVersions(argv.environment as EnvironmentKey, authService, argv.applicationId)
+    )
+    .command(
+      'get-application-version-details <applicationId> <versionNumber>',
+      'Get application version details',
+      yargs =>
+        yargs
+          .positional('applicationId', {
+            describe: 'Application ID to get version details for',
+            type: 'string',
+            demandOption: true,
+          })
+          .positional('versionNumber', {
+            describe: 'Version number of the application to get details for',
+            type: 'string',
+            demandOption: true,
+          }),
+      argv =>
+        getApplicationVersionDetails(
+          argv.environment as EnvironmentKey,
+          authService,
+          argv.applicationId,
+          argv.versionNumber
+        )
     )
     .command(
       'list-application-runs',
