@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { executeCLI } from '../utils/command.js';
 import { RunReadResponse } from '@aignostics/sdk';
 
-describe('SWR Application Run management', async () => {
+describe('SWR Application Run management', () => {
   it('Should retrieve a list of application runs with optional filtering by application ID and application version.', async () => {
     const { stdout, exitCode } = await executeCLI([
       'list-application-runs',
