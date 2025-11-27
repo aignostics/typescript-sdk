@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { executeCLI } from '../utils/command.js';
 
-describe.skip('cli smoke', () => {
+describe('cli smoke', () => {
   it('prints help and exits 0', async () => {
     const { stdout, exitCode } = await executeCLI(['--help']);
     expect(exitCode).toBe(0);
