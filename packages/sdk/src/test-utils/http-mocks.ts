@@ -10,6 +10,9 @@ import type {
   RunCreationResponse,
   ItemResultReadResponse,
   OutputArtifactResultReadResponse,
+  VersionReadResponse,
+  InputArtifact,
+  OutputArtifact,
 } from '../generated/index.js';
 
 // Factories for generating mock data
@@ -32,6 +35,44 @@ const applicationFactory = Factory.define<ApplicationReadResponse>(() => ({
   description: faker.lorem.sentence(),
   regulatory_classes: faker.helpers.arrayElements(['RUO', 'IVDR', 'FDA'], { min: 1, max: 2 }),
   versions: applicationVersionFactory.buildList(faker.number.int({ min: 1, max: 3 })),
+}));
+
+const inputArtifactFactory = Factory.define<InputArtifact>(() => ({
+  name: faker.system.fileName(),
+  mime_type: faker.helpers.arrayElement(['image/tiff', 'image/jpeg', 'image/png']),
+  metadata_schema: {
+    type: 'object',
+    properties: {
+      checksum_base64_crc32c: { type: 'string' },
+      mime_type: { type: 'string' },
+      height: { type: 'integer' },
+      width: { type: 'integer' },
+      mpp: { type: 'number' },
+    },
+    required: ['checksum_base64_crc32c', 'mime_type'],
+  },
+}));
+
+const outputArtifactSchemaFactory = Factory.define<OutputArtifact>(() => ({
+  name: faker.system.fileName(),
+  mime_type: faker.helpers.arrayElement(['application/json', 'image/tiff', 'text/csv']),
+  metadata_schema: {
+    type: 'object',
+    properties: {
+      mime_type: { type: 'string' },
+      size_bytes: { type: 'integer' },
+    },
+  },
+  scope: 'ITEM',
+  visibility: 'EXTERNAL',
+}));
+
+const versionDetailsFactory = Factory.define<VersionReadResponse>(() => ({
+  version_number: faker.system.semver(),
+  changelog: faker.lorem.paragraph(),
+  input_artifacts: inputArtifactFactory.buildList(faker.number.int({ min: 1, max: 3 })),
+  output_artifacts: outputArtifactSchemaFactory.buildList(faker.number.int({ min: 1, max: 5 })),
+  released_at: faker.date.past().toISOString(),
 }));
 
 const outputArtifactFactory = Factory.define<OutputArtifactResultReadResponse>(() => ({
@@ -128,6 +169,9 @@ export const mockResponses = {
   // Mock single application response
   applicationSuccess: applicationFactory.build(),
 
+  // Mock application version details response
+  versionDetailsSuccess: versionDetailsFactory.build({ version_number: 'v1.0.0' }),
+
   // Mock application runs response
   applicationRunsSuccess: runFactory.buildList(2),
 
@@ -163,6 +207,9 @@ export const factories = {
   applicationShort: applicationShortFactory,
   application: applicationFactory,
   applicationVersion: applicationVersionFactory,
+  versionDetails: versionDetailsFactory,
+  inputArtifact: inputArtifactFactory,
+  outputArtifactSchema: outputArtifactSchemaFactory,
   run: runFactory,
   runCreationResponse: runCreationResponseFactory,
   itemResult: itemResultFactory,
@@ -180,6 +227,9 @@ export const handlers = {
     }),
     http.get('*/v1/applications/:applicationId', () => {
       return HttpResponse.json(mockResponses.applicationSuccess, { status: 200 });
+    }),
+    http.get('*/v1/applications/:applicationId/versions/:version', () => {
+      return HttpResponse.json(mockResponses.versionDetailsSuccess, { status: 200 });
     }),
     http.get('*/v1/runs', () => {
       return HttpResponse.json(mockResponses.applicationRunsSuccess, { status: 200 });
@@ -206,6 +256,9 @@ export const handlers = {
     http.get('*/v1/applications/:applicationId', () => {
       return HttpResponse.json(mockResponses.applicationSuccess, { status: 200 });
     }),
+    http.get('*/v1/applications/:applicationId/versions/:version', () => {
+      return HttpResponse.json(mockResponses.versionDetailsSuccess, { status: 200 });
+    }),
     http.get('*/v1/runs', () => {
       return HttpResponse.json([], { status: 200 });
     }),
@@ -220,6 +273,9 @@ export const handlers = {
       return HttpResponse.json(mockResponses.error, { status: 404 });
     }),
     http.get('*/v1/applications/:applicationId', () => {
+      return HttpResponse.json(mockResponses.error, { status: 404 });
+    }),
+    http.get('*/v1/applications/:applicationId/versions/:version', () => {
       return HttpResponse.json(mockResponses.error, { status: 404 });
     }),
     http.get('*/v1/runs', () => {
@@ -246,6 +302,9 @@ export const handlers = {
     http.get('*/v1/applications/:applicationId', () => {
       return HttpResponse.json(mockResponses.validationError, { status: 422 });
     }),
+    http.get('*/v1/applications/:applicationId/versions/:version', () => {
+      return HttpResponse.json(mockResponses.validationError, { status: 422 });
+    }),
     http.get('*/v1/runs', () => {
       return HttpResponse.json(mockResponses.validationError, { status: 422 });
     }),
@@ -268,6 +327,9 @@ export const handlers = {
       return HttpResponse.json(mockResponses.error, { status: 500 });
     }),
     http.get('*/v1/applications/:applicationId', () => {
+      return HttpResponse.json(mockResponses.error, { status: 500 });
+    }),
+    http.get('*/v1/applications/:applicationId/versions/:version', () => {
       return HttpResponse.json(mockResponses.error, { status: 500 });
     }),
     http.get('*/v1/runs', () => {
@@ -293,6 +355,9 @@ export const handlers = {
       return HttpResponse.error();
     }),
     http.get('*/v1/applications/:applicationId', () => {
+      return HttpResponse.error();
+    }),
+    http.get('*/v1/applications/:applicationId/versions/:version', () => {
       return HttpResponse.error();
     }),
     http.get('*/v1/runs', () => {

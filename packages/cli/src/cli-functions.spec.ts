@@ -4,6 +4,8 @@ import {
   handleInfo,
   testApi,
   listApplications,
+  getApplicationVersionDetails,
+  listApplicationVersions,
   listApplicationRuns,
   getRun,
   cancelApplicationRun,
@@ -39,6 +41,7 @@ vi.mock('@aignostics/sdk', () => ({
 const platformSDKMock = {
   testConnection: vi.fn(),
   listApplications: vi.fn(),
+  getApplicationVersionDetails: vi.fn(),
   listApplicationRuns: vi.fn(),
   getRun: vi.fn(),
   cancelApplicationRun: vi.fn(),
@@ -179,6 +182,73 @@ describe('CLI Functions Unit Tests', () => {
       platformSDKMock.listApplications.mockRejectedValue(new Error('API error'));
 
       await expect(listApplications('production', mockAuthService)).rejects.toThrow();
+    });
+  });
+
+  describe('getApplicationVersionDetails', () => {
+    it('should get application version details successfully', async () => {
+      const versionDetails = {
+        application_id: 'app1',
+        version_number: 'v1.0.0',
+        name: 'Test Application',
+        description: 'Test description',
+        created_at: '2023-01-01T00:00:00Z',
+      };
+      platformSDKMock.getApplicationVersionDetails.mockResolvedValue(versionDetails);
+
+      await getApplicationVersionDetails('production', mockAuthService, 'app1', 'v1.0.0');
+
+      expect(platformSDKMock.getApplicationVersionDetails).toHaveBeenCalledWith('app1', 'v1.0.0');
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Application version details for app1 vv1.0.0:',
+        JSON.stringify(versionDetails, null, 2)
+      );
+    });
+
+    it('should handle API error', async () => {
+      platformSDKMock.getApplicationVersionDetails.mockRejectedValue(new Error('API error'));
+
+      await getApplicationVersionDetails('production', mockAuthService, 'app1', 'v1.0.0');
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to get application version details:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('listApplicationVersions', () => {
+    it('should list application versions successfully', async () => {
+      const applicationResponse = {
+        application_id: 'app1',
+        name: 'Test Application',
+        versions: [
+          { version_number: 'v1.0.0', created_at: '2023-01-01T00:00:00Z' },
+          { version_number: 'v1.1.0', created_at: '2023-02-01T00:00:00Z' },
+        ],
+      };
+      platformSDKMock.getApplication.mockResolvedValue(applicationResponse);
+
+      await listApplicationVersions('production', mockAuthService, 'app1');
+
+      expect(platformSDKMock.getApplication).toHaveBeenCalledWith('app1');
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Application versions for app1:',
+        JSON.stringify(applicationResponse.versions, null, 2)
+      );
+    });
+
+    it('should handle API error', async () => {
+      platformSDKMock.getApplication.mockRejectedValue(new Error('API error'));
+
+      await listApplicationVersions('production', mockAuthService, 'app1');
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to list application versions:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
     });
   });
 
