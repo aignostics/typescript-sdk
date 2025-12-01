@@ -1,7 +1,7 @@
 ---
 itemId: SWR-APP-EXEC-REQUEST-VALIDATION
 itemTitle: Request Validation
-itemHasParent: SHR-APP-EXEC
+itemHasParent: SHR-APP-START-RUN
 itemType: Requirement
 Requirement type: FUNCTIONAL
 Layer: System (backend logic)

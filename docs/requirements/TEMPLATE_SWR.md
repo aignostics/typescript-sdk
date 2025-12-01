@@ -158,7 +158,7 @@ System shall provide application identification, description, and regulatory com
 ---
 itemId: SWR-APP-EXEC-REQUEST-VALIDATION
 itemTitle: Request Validation
-itemHasParent: SHR-APP-EXEC
+itemHasParent: SHR-APP-START-RUN
 itemType: Requirement
 Requirement type: FUNCTIONAL
 Layer: System (backend logic)
@@ -189,7 +189,7 @@ System shall validate run request format before submission to the platform.
 - `SWR-APP-DISCOVERY-DETAILS` (parent: SHR-APP-DISCOVERY)
 - `SWR-AUTH-TOKEN-BASED` (parent: SHR-AUTH)
 - `SWR-ERROR-COMM-CLI-OUTPUT` (parent: SHR-ERROR-COMM)
-- `SWR-APP-EXEC-REQUEST-VALIDATION` (parent: SHR-APP-EXEC)
+- `SWR-APP-EXEC-REQUEST-VALIDATION` (parent: SHR-APP-START-RUN)
 
 **Recommendation**: Use descriptive suffixes that clearly indicate the specific functionality being implemented.
 
