@@ -2,7 +2,7 @@
 itemId: SHR-APP-DISCOVERY
 itemTitle: Application Discovery
 itemType: Requirement
-Requirement type: FUNCTIONAL
+Requirement type: ENVIRONMENT
 ---
 
 ## Description

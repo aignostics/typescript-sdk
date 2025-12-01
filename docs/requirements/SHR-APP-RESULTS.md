@@ -2,7 +2,7 @@
 itemId: SHR-APP-RESULTS
 itemTitle: Application Results Access
 itemType: Requirement
-Requirement type: FUNCTIONAL
+Requirement type: ENVIRONMENT
 ---
 
 ## Description

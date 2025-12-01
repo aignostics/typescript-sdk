@@ -2,7 +2,7 @@
 itemId: SHR-APP-RUN-MGMT
 itemTitle: Application Run Management
 itemType: Requirement
-Requirement type: FUNCTIONAL
+Requirement type: ENVIRONMENT
 ---
 
 ## Description

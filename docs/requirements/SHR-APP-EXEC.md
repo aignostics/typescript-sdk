@@ -2,7 +2,7 @@
 itemId: SHR-APP-EXEC
 itemTitle: Application Execution Access
 itemType: Requirement
-Requirement type: FUNCTIONAL
+Requirement type: ENVIRONMENT
 ---
 
 ## Description

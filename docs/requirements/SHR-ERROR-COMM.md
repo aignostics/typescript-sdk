@@ -2,7 +2,7 @@
 itemId: SHR-ERROR-COMM
 itemTitle: Error Communication
 itemType: Requirement
-Requirement type: FUNCTIONAL
+Requirement type: ENVIRONMENT
 ---
 
 ## Description

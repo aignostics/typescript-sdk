@@ -2,7 +2,7 @@
 itemId: SHR-AUTH
 itemTitle: Authenticated Platform Access
 itemType: Requirement
-Requirement type: SECURITY
+Requirement type: ENVIRONMENT
 ---
 
 ## Description
