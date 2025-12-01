@@ -10,12 +10,9 @@ itemId: SWR-[PARENT-NAME]-[DESCRIPTIVE-SUFFIX]
 itemTitle: [Brief Descriptive Title]
 itemHasParent: SHR-[PARENT-NAME]
 itemType: Requirement
-# Software requirement (user|system)
 Requirement type: [FUNCTIONAL|REGULATORY|PERFORMANCE|SECURITY|USABILITY]
 Layer: [System (backend logic)|User Interface (frontend)|GUI|CLI|API|Database|etc.]
 ---
-
-<!-- Original reference: [Optional - Reference to original requirement ID if migrating] -->
 
 [Detailed requirement description. Can be written as a plain statement or as a user story. Should clearly specify the technical implementation requirement.]
 ```
@@ -69,16 +66,19 @@ Layer: [System (backend logic)|User Interface (frontend)|GUI|CLI|API|Database|et
 - **Style Options**:
 
   **Option 1 - Plain Statement** (most common):
+
   ```
   System shall provide a list of available applications for user selection.
   ```
 
   **Option 2 - User Story Format**:
+
   ```
   As a user, I expected the current health of Launchpad being always visible in the footer of the GUI so that I can ensure the system is operational.
   ```
 
   **Option 3 - Detailed Statement**:
+
   ```
   System shall accept optional user-provided run name and description during application run submission. The system shall validate that run names do not exceed 100 characters and descriptions do not exceed 500 characters when provided, and shall store these metadata fields with the run record.
   ```
@@ -94,85 +94,75 @@ Layer: [System (backend logic)|User Interface (frontend)|GUI|CLI|API|Database|et
 ## Examples
 
 ### Example 1: Simple Backend Requirement
+
 ```markdown
 ---
 itemId: SWR-APP-DISCOVERY-LIST
 itemTitle: List Available Applications
 itemHasParent: SHR-APP-DISCOVERY
 itemType: Requirement
-# Software requirement (user)
 Requirement type: FUNCTIONAL
 Layer: System (backend logic)
 ---
-
-<!-- Original reference: SWR-TSSDK-2.1 -->
 
 System shall provide a list of available applications for user selection.
 ```
 
 ### Example 2: CLI Requirement
+
 ```markdown
 ---
 itemId: SWR-ERROR-COMM-CLI-OUTPUT
 itemTitle: CLI Error Output
 itemHasParent: SHR-ERROR-COMM
 itemType: Requirement
-# Software requirement (user)
 Requirement type: FUNCTIONAL
 Layer: CLI
 ---
-
-<!-- Original reference: SWR-TSSDK-6.4 -->
 
 CLI shall write error messages to standard error stream and provide machine-readable operation status through standard exit mechanisms.
 ```
 
 ### Example 3: Authentication Requirement
+
 ```markdown
 ---
 itemId: SWR-AUTH-TOKEN-BASED
 itemTitle: Token-Based Authentication
 itemHasParent: SHR-AUTH
 itemType: Requirement
-# Software requirement (system)
 Requirement type: SECURITY
 ---
-
-<!-- Original reference: SWR-TSSDK-1.1 -->
 
 System shall authenticate API requests using access tokens.
 ```
 
 ### Example 4: Detailed Application Requirement
+
 ```markdown
 ---
 itemId: SWR-APP-DISCOVERY-DETAILS
 itemTitle: Application Details
 itemHasParent: SHR-APP-DISCOVERY
 itemType: Requirement
-# Software requirement (user)
 Requirement type: FUNCTIONAL
 Layer: System (backend logic)
 ---
-
-<!-- Original reference: SWR-TSSDK-2.2 -->
 
 System shall provide application identification, description, and regulatory compliance information for each retrieved application.
 ```
 
 ### Example 5: Request Validation Requirement
+
 ```markdown
 ---
 itemId: SWR-APP-EXEC-REQUEST-VALIDATION
 itemTitle: Request Validation
 itemHasParent: SHR-APP-EXEC
 itemType: Requirement
-# Software requirement (user)
 Requirement type: FUNCTIONAL
 Layer: System (backend logic)
 ---
-
-<!-- Original reference: SWR-TSSDK-3.3 -->
 
 System shall validate run request format before submission to the platform.
 ```
@@ -180,9 +170,11 @@ System shall validate run request format before submission to the platform.
 ## Naming Conventions
 
 ### itemId Pattern
+
 `SWR-[PARENT-NAME]-[DESCRIPTIVE-SUFFIX]`
 
 **Structure**:
+
 1. **Parent Name**: Must exactly match the parent SHR's descriptive name
    - Example: If parent is `SHR-APP-DISCOVERY`, use `SWR-APP-DISCOVERY-*`
 
@@ -192,6 +184,7 @@ System shall validate run request format before submission to the platform.
    - Use hyphens for multi-word suffixes
 
 **Examples**:
+
 - `SWR-APP-DISCOVERY-LIST` (parent: SHR-APP-DISCOVERY)
 - `SWR-APP-DISCOVERY-DETAILS` (parent: SHR-APP-DISCOVERY)
 - `SWR-AUTH-TOKEN-BASED` (parent: SHR-AUTH)
@@ -203,12 +196,14 @@ System shall validate run request format before submission to the platform.
 ## Relationship to SHR
 
 Each SWR must:
+
 1. Reference exactly one parent SHR via `itemHasParent`
 2. Implement a specific aspect of that parent SHR
 3. Be more detailed and technical than the parent SHR
 4. Focus on HOW to implement WHAT the parent SHR describes
 
 **Example Breakdown**:
+
 ```
 SHR-APP-DISCOVERY: "Application Discovery"
 ├── SWR-APP-DISCOVERY-LIST: "List Available Applications"
@@ -245,21 +240,25 @@ Choose the appropriate layer based on where the requirement is implemented:
 ## Common Patterns
 
 ### Validation Requirements
+
 ```markdown
 System shall validate that [field] does not exceed [limit] characters when provided, and shall [action] when validation fails.
 ```
 
 ### Data Operations
+
 ```markdown
 System shall [action] [data] to/from [location] while [constraint/condition].
 ```
 
 ### User Interface Requirements
+
 ```markdown
 As a user, I expect [UI element] to [behavior] in [location] so that [benefit/reason].
 ```
 
 ### Multi-Step Operations
+
 ```markdown
 System shall [action1] at multiple [scope] levels: [option1], [option2], and [option3]. The system shall [action2] when [condition], and provide [output] with [details].
 ```
@@ -267,6 +266,7 @@ System shall [action1] at multiple [scope] levels: [option1], [option2], and [op
 ## Validation Checklist
 
 Before finalizing an SWR, verify:
+
 - [ ] itemId follows SWR-[PARENT-NAME]-[DESCRIPTIVE-SUFFIX] pattern
 - [ ] itemId parent name exactly matches the parent SHR's name
 - [ ] itemTitle is clear and descriptive
@@ -284,6 +284,7 @@ Before finalizing an SWR, verify:
 ## Notes for AI Agents
 
 When generating SWR files:
+
 1. Always start by identifying the parent SHR
 2. Break down the parent SHR into logical, implementable components
 3. Create one SWR file per technical requirement

@@ -2,11 +2,8 @@
 itemId: SHR-APP-EXEC
 itemTitle: Application Execution Access
 itemType: Requirement
-# Stakeholder requirement (user)
 Requirement type: FUNCTIONAL
 ---
-
-<!-- Original reference: SHR-TSSDK-3 -->
 
 ## Description
 

@@ -2,11 +2,8 @@
 itemId: SHR-APP-DISCOVERY
 itemTitle: Application Discovery
 itemType: Requirement
-# Stakeholder requirement (user)
 Requirement type: FUNCTIONAL
 ---
-
-<!-- Original reference: SHR-TSSDK-2 -->
 
 ## Description
 

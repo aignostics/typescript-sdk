@@ -9,11 +9,8 @@
 itemId: SHR-[DESCRIPTIVE-NAME]
 itemTitle: [Brief Descriptive Title]
 itemType: Requirement
-# Stakeholder requirement (user)
 Requirement type: [FUNCTIONAL|REGULATORY|PERFORMANCE|SECURITY|USABILITY]
 ---
-
-<!-- Original reference: [Optional - Reference to original requirement ID if migrating] -->
 
 ## Description
 
@@ -61,16 +58,14 @@ Requirement type: [FUNCTIONAL|REGULATORY|PERFORMANCE|SECURITY|USABILITY]
 ## Examples
 
 ### Example 1: User-Facing Capability
+
 ```markdown
 ---
 itemId: SHR-APP-DISCOVERY
 itemTitle: Application Discovery
 itemType: Requirement
-# Stakeholder requirement (user)
 Requirement type: FUNCTIONAL
 ---
-
-<!-- Original reference: SHR-TSSDK-2 -->
 
 ## Description
 
@@ -78,16 +73,14 @@ Users shall be able to discover available AI applications and their versions.
 ```
 
 ### Example 2: Security Requirement
+
 ```markdown
 ---
 itemId: SHR-AUTH
 itemTitle: Authenticated Platform Access
 itemType: Requirement
-# Stakeholder requirement (user)
 Requirement type: SECURITY
 ---
-
-<!-- Original reference: SHR-TSSDK-1 -->
 
 ## Description
 
@@ -95,16 +88,14 @@ Access to the Aignostics Platform shall require valid user authentication creden
 ```
 
 ### Example 3: Error Handling Requirement
+
 ```markdown
 ---
 itemId: SHR-ERROR-COMM
 itemTitle: Error Communication
 itemType: Requirement
-# Stakeholder requirement (user)
 Requirement type: FUNCTIONAL
 ---
-
-<!-- Original reference: SHR-TSSDK-6 -->
 
 ## Description
 
@@ -114,7 +105,9 @@ Users shall receive clear information when operations fail.
 ## Naming Conventions
 
 ### Module Prefixes
+
 Use clear, consistent module prefixes that reflect your system architecture:
+
 - APP (for application-related features)
 - AUTH (for authentication/authorization)
 - SYSTEM (for system-wide capabilities)
@@ -126,6 +119,7 @@ Use clear, consistent module prefixes that reflect your system architecture:
 - etc.
 
 ### Descriptive Names
+
 - Use hyphenated uppercase names (e.g., `SHR-APP-DISCOVERY`, `SHR-APP-RUN-MGMT`)
 - Combine module prefix with feature name
 - Keep names concise but descriptive
@@ -144,6 +138,7 @@ Use clear, consistent module prefixes that reflect your system architecture:
 ## Validation Checklist
 
 Before finalizing an SHR, verify:
+
 - [ ] itemId follows SHR-[DESCRIPTIVE-NAME] pattern (e.g., SHR-APP-DISCOVERY)
 - [ ] itemTitle is clear and descriptive
 - [ ] itemType is set to "Requirement"
@@ -158,6 +153,7 @@ Before finalizing an SHR, verify:
 ## Notes for AI Agents
 
 When generating SHR files:
+
 1. Read the project documentation to understand modules and architecture
 2. Identify high-level stakeholder needs and capabilities
 3. Group related requirements under appropriate modules

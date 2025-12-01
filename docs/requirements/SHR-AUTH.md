@@ -2,11 +2,8 @@
 itemId: SHR-AUTH
 itemTitle: Authenticated Platform Access
 itemType: Requirement
-# Stakeholder requirement (user)
 Requirement type: SECURITY
 ---
-
-<!-- Original reference: SHR-TSSDK-1 -->
 
 ## Description
 

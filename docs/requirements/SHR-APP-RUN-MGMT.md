@@ -2,11 +2,8 @@
 itemId: SHR-APP-RUN-MGMT
 itemTitle: Application Run Management
 itemType: Requirement
-# Stakeholder requirement (user)
 Requirement type: FUNCTIONAL
 ---
-
-<!-- Original reference: SHR-TSSDK-4 -->
 
 ## Description
 
