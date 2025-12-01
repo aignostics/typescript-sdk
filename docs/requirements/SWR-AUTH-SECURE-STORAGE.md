@@ -3,7 +3,7 @@ itemId: SWR-AUTH-SECURE-STORAGE
 itemTitle: Secure Token Storage
 itemHasParent: SHR-AUTH
 itemType: Requirement
-Requirement type: SECURITY
+Requirement type: FUNCTIONAL
 Layer: CLI
 ---
 

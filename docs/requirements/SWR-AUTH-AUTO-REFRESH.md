@@ -3,7 +3,7 @@ itemId: SWR-AUTH-AUTO-REFRESH
 itemTitle: Automatic Token Refresh
 itemHasParent: SHR-AUTH
 itemType: Requirement
-Requirement type: SECURITY
+Requirement type: FUNCTIONAL
 Layer: CLI
 ---
 

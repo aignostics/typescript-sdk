@@ -3,7 +3,7 @@ itemId: SWR-AUTH-CODE-FLOW
 itemTitle: Secure Authorisation Code Authentication
 itemHasParent: SHR-AUTH
 itemType: Requirement
-Requirement type: SECURITY
+Requirement type: FUNCTIONAL
 Layer: CLI
 ---
 

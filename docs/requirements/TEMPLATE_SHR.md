@@ -79,7 +79,7 @@ Users shall be able to discover available AI applications and their versions.
 itemId: SHR-AUTH
 itemTitle: Authenticated Platform Access
 itemType: Requirement
-Requirement type: SECURITY
+Requirement type: FUNCTIONAL
 ---
 
 ## Description
