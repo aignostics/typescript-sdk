@@ -87,6 +87,15 @@ describe('SWR Version List Retrieval', () => {
       );
     });
   });
+
+  it('should return an error when the app does not exist', async () => {
+    const { stderr } = await executeCLI(['list-application-versions', 'non-existent-app'], {
+      reject: false,
+    });
+
+    expect(stderr).toMatch(/API_ERROR'/);
+    expect(stderr).toMatch(/application not found/);
+  });
 });
 
 describe('SWR Specific Version Details', () => {
@@ -111,5 +120,13 @@ describe('SWR Specific Version Details', () => {
       changelog: expect.any(String),
       input_artifacts: expect.any(Array),
     });
+  });
+
+  it('should return an error for non-existent application version', async () => {
+    const { stderr } = await executeCLI(['get-application-version-details', 'test-app', '2.0.0'], {
+      reject: false,
+    });
+    expect(stderr).toMatch(/API_ERROR/);
+    expect(stderr).toMatch(/Application version not found/);
   });
 });
