@@ -10,83 +10,88 @@ const adminPassword = process.env.E2E_ADMIN_USER_PASSWORD || '';
 
 const tokenStorage = new FileSystemTokenStorage();
 
+if (!adminEmail || !adminPassword) {
+  throw new Error(
+    'E2E_ADMIN_USER_EMAIL and E2E_ADMIN_USER_PASSWORD must be set for PKCE auth tests'
+  );
+}
+
+const PLAYWRIGHT_TIMEOUT = 10000;
+const PKCE_TEST_TIMEOUT = 60000;
+const INTERVAL_CHECK_TIMEOUT = 500;
+
 describe('Authentication', () => {
-  it('should complete login flow', async () => {
-    const browser = await chromium.launch({ headless: true });
-    let authUrl = '';
+  it(
+    'Should complete PKCE authentication login flow with browser automation',
+    async () => {
+      const browser = await chromium.launch({ headless: true });
+      try {
+        let authUrl = '';
 
-    // Step 1: Start CLI login command (non-blocking)
-    const cliPromise = executeCLI(['login']);
+        const cliPromise = executeCLI(['login']);
 
-    // Step 2: Capture the auth URL from CLI output in real-time
-    cliPromise.stdout?.on('data', data => {
-      const output = String(data);
-      console.log('CLI Output:', output);
+        const dataHandler = (data: Buffer) => {
+          const output = String(data);
 
-      // Extract URL - adjust regex based on your CLI output format
-      const urlMatch = output.match(/https:\/\/[^\s]+/);
-      if (urlMatch && !authUrl) {
-        authUrl = urlMatch[0];
-      }
+          const urlMatch = output.match(/https:\/\/[^\s]+/);
+          if (urlMatch && !authUrl) {
+            authUrl = urlMatch[0];
+            cliPromise.stdout?.off('data', dataHandler); // Clean up
+          }
+        };
+        cliPromise.stdout?.on('data', dataHandler);
 
-      console.log('Captured URL:', authUrl);
-    });
+        // Wait for URL to be captured with timeout
+        await new Promise<void>((resolve, reject) => {
+          const checkInterval = setInterval(() => {
+            if (authUrl) {
+              clearInterval(checkInterval);
+              clearTimeout(timeoutId);
+              resolve();
+            }
+          }, INTERVAL_CHECK_TIMEOUT);
 
-    // Step 3: Wait for URL to be captured
-    await new Promise(resolve => {
-      const checkInterval = setInterval(() => {
-        if (authUrl) {
-          clearInterval(checkInterval);
-          resolve(null);
+          const timeoutId = setTimeout(() => {
+            clearInterval(checkInterval);
+            reject(new Error('Timeout waiting for auth URL'));
+          }, PLAYWRIGHT_TIMEOUT);
+        });
+
+        if (!authUrl) {
+          throw new Error('Failed to capture auth URL from CLI');
         }
-      }, 500);
 
-      // Timeout after 10 seconds
-      setTimeout(() => {
-        clearInterval(checkInterval);
-        resolve(null);
-      }, 10000);
-    });
+        console.log('Auth URL:', authUrl);
 
-    if (!authUrl) {
-      throw new Error('Failed to capture auth URL from CLI');
-    }
+        const page = await browser.newPage();
+        await page.goto(authUrl);
 
-    console.log('Auth URL:', authUrl);
+        await page.waitForSelector('input[name="username"], input[type="email"]', {
+          timeout: PLAYWRIGHT_TIMEOUT,
+        });
 
-    // Step 4: Automate browser login
-    const page = await browser.newPage();
-    await page.goto(authUrl);
+        await page.fill('input[name="username"], input[type="email"]', adminEmail);
+        await page.fill('input[name="password"], input[type="password"]', adminPassword);
 
-    // Wait for Auth0 login page
-    await page.waitForSelector('input[name="username"], input[type="email"]', {
-      timeout: 10000,
-    });
+        const continueButton = page.getByRole('button', { name: 'Continue', exact: true });
+        await continueButton.click();
 
-    // Fill in credentials
-    await page.fill('input[name="username"], input[type="email"]', adminEmail);
-    await page.fill('input[name="password"], input[type="password"]', adminPassword);
+        await page.waitForURL(/success|authorized|complete|localhost/, {
+          timeout: PLAYWRIGHT_TIMEOUT,
+        });
 
-    const continueButton = page.getByRole('button', { name: 'Continue', exact: true });
-    // Click login button
-    await continueButton.click();
+        await page.close();
 
-    // Step 6: Wait for success page or redirect
-    await page.waitForURL(/success|authorized|complete|localhost/, {
-      timeout: 10000,
-    });
+        const result = await cliPromise;
 
-    await page.close();
-
-    // Step 7: Wait for CLI to complete
-    const result = await cliPromise;
-
-    console.log('CLI completed with output:', result.stdout);
-
-    // Step 8: Verify success
-    expect(result.exitCode).toBe(0);
-    expect(result.stdout).toMatch(/🔑 You are now authenticated and can use the SDK./i);
-  }, 60000); // 60 second timeout
+        expect(result.exitCode).toBe(0);
+        expect(result.stdout).toMatch(/🔑 You are now authenticated and can use the SDK./i);
+      } finally {
+        await browser.close();
+      }
+    },
+    PKCE_TEST_TIMEOUT
+  ); // 60 second timeout
 
   it('Should call authenticated test-api command when authenticated', async () => {
     const { stdout: loginStdout } = await executeCLI(['login', '--refreshToken', refreshToken]);
