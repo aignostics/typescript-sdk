@@ -337,12 +337,16 @@ export class PlatformSDKHttp implements PlatformSDK {
   async listApplicationRuns(options?: {
     applicationId?: string;
     applicationVersion?: string;
+    customMetadata?: string;
+    sort?: string[];
   }): Promise<RunReadResponse[]> {
     const client = await this.#getClient();
     try {
       const response = await client.listRunsV1RunsGet({
         applicationId: options?.applicationId,
         applicationVersion: options?.applicationVersion,
+        customMetadata: options?.customMetadata,
+        sort: options?.sort,
       });
 
       return response.data;

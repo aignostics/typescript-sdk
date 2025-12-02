@@ -100,11 +100,22 @@ export async function main() {
           .option('applicationVersion', {
             describe: 'Filter by application version',
             type: 'string',
+          })
+          .option('customMetadata', {
+            describe: 'Filter by metadata key-value pairs (JSONPath string)',
+            type: 'string',
+          })
+          .option('sort', {
+            describe:
+              'Sort by field (e.g., "run_id", "-status", "submitted_at"). Fields: run_id, application_version_id, organization_id, status, submitted_at, submitted_by.',
+            type: 'string',
           }),
       argv =>
         listApplicationRuns(argv.environment as EnvironmentKey, authService, {
           applicationId: argv.applicationId,
           applicationVersion: argv.applicationVersion,
+          customMetadata: argv.customMetadata,
+          sort: argv.sort,
         })
     )
     .command(
