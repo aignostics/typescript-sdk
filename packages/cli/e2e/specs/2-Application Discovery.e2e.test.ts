@@ -19,7 +19,10 @@ type ApplicationVersion = {
 };
 
 describe('SWR Application List Retrieval', () => {
-  it('should retrieve all available applications for authenticated user @tests:SWR-APP-DISCOVERY-LIST', async () => {
+  it('should retrieve all available applications for authenticated user', async ({ annotate }) => {
+    await annotate('SWR-APP-DISCOVERY-LIST', 'tests');
+    await annotate('TC-APP-LIST', 'id');
+
     const { stdout, exitCode } = await executeCLI(['list-applications']);
 
     expect(exitCode).toBe(0);
@@ -35,7 +38,12 @@ describe('SWR Application List Retrieval', () => {
 });
 
 describe('SWR Application Details', () => {
-  it('should provide application identification, description, and regulatory compliance information @tests:SWR-APP-DISCOVERY-VERSION-DETAILS', async () => {
+  it('should provide application identification, description, and regulatory compliance information', async ({
+    annotate,
+  }) => {
+    await annotate('SWR-APP-DISCOVERY-VERSION-DETAILS', 'tests');
+    await annotate('TC-APP-DETAILS', 'id');
+
     const { stdout, exitCode } = await executeCLI(['list-applications']);
 
     expect(exitCode).toBe(0);
@@ -63,7 +71,11 @@ describe('SWR Application Details', () => {
 });
 
 describe('SWR Version List Retrieval', () => {
-  it('should retrieve all versions for a specified application  @tests:SWR-APP-DISCOVERY-VERSION-LIST @tests:SWR-APP-DISCOVERY-DETAILS', async () => {
+  it('should retrieve all versions for a specified application', async ({ annotate }) => {
+    await annotate('SWR-APP-DISCOVERY-VERSION-LIST', 'tests');
+    await annotate('SWR-APP-DISCOVERY-DETAILS', 'tests');
+    await annotate('TC-VERSION-LIST', 'id');
+
     const { stdout, exitCode } = await executeCLI(['list-application-versions', 'test-app']);
 
     expect(exitCode).toBe(0);
@@ -88,7 +100,9 @@ describe('SWR Version List Retrieval', () => {
     });
   });
 
-  it('should return an error when the app does not exist', async () => {
+  it('should return an error when the app does not exist', async ({ annotate }) => {
+    await annotate('TC-VERSION-LIST-NOT-FOUND', 'id');
+
     const { stderr } = await executeCLI(['list-application-versions', 'non-existent-app'], {
       reject: false,
     });
@@ -99,7 +113,10 @@ describe('SWR Version List Retrieval', () => {
 });
 
 describe('SWR Specific Version Details', () => {
-  it('should provide details for a specific application version @tests:SWR-APP-DISCOVERY-VERSION-DETAILS', async () => {
+  it('should provide details for a specific application version', async ({ annotate }) => {
+    await annotate('SWR-APP-DISCOVERY-VERSION-DETAILS', 'tests');
+    await annotate('TC-VERSION-DETAILS', 'id');
+
     const { stdout, exitCode } = await executeCLI([
       'get-application-version-details',
       'test-app',
@@ -122,7 +139,11 @@ describe('SWR Specific Version Details', () => {
     });
   });
 
-  it('should return an error for non-existent application version @tests:SWR-ERROR-COMM-DIAGNOSTIC-CONTEXT @tests:SWR-ERROR-COMM-CLASSIFICATION', async () => {
+  it('should return an error for non-existent application version', async ({ annotate }) => {
+    await annotate('SWR-ERROR-COMM-DIAGNOSTIC-CONTEXT', 'tests');
+    await annotate('SWR-ERROR-COMM-CLASSIFICATION', 'tests');
+    await annotate('TC-VERSION-DETAILS-NOT-FOUND', 'id');
+
     const { stderr } = await executeCLI(['get-application-version-details', 'test-app', '2.0.0'], {
       reject: false,
     });
