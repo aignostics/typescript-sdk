@@ -78,4 +78,12 @@ describe('Application Results Access', () => {
       });
     });
   });
+
+  it('Should return an error when uuid is not valid', async () => {
+    const { stderr } = await executeCLI(['list-run-results', 'non-existent-run-id'], {
+      reject: false,
+    });
+    expect(stderr).toMatch(/API_ERROR/);
+    expect(stderr).toMatch(/Validation error/);
+  });
 });

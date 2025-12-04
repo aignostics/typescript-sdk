@@ -28,6 +28,23 @@ describe('SWR Application Execution access', async () => {
     expect(runId).toHaveProperty('run_id');
   });
 
+  it('Should return an error on on non-existent version', async () => {
+    const items = await generateInputArtifactsForTest('test-app', latestVersion, 2);
+
+    const { stderr } = await executeCLI(
+      ['create-run', 'test-app', '2.0.0', '--items', JSON.stringify(items)],
+      { reject: false }
+    );
+
+    expect(stderr).toMatch(/API_ERROR/);
+    expect(stderr).toMatch(/application version not found/);
+  });
+
+  it('Should return an error on missing arguments', async () => {
+    const { stderr } = await executeCLI(['create-run'], { reject: false });
+    expect(stderr).toContain('❌ Not enough non-option arguments: got 0, need at least 2');
+  });
+
   it('Should validate items before submission', async () => {
     const { stderr } = await executeCLI(
       ['create-run', 'test-app', latestVersion, '--items', 'invalid-json'],
