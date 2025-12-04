@@ -22,7 +22,7 @@ const INTERVAL_CHECK_TIMEOUT = 500;
 
 describe('Authentication', () => {
   it(
-    'Should complete PKCE authentication login flow with browser automation',
+    'Should complete PKCE authentication login flow with browser automation @tests:SWR-AUTH-CODE-FLOW @tests:SWR-AUTH-CUSTOM-PROVIDER',
     async () => {
       const browser = await chromium.launch({ headless: true });
       try {
@@ -93,7 +93,7 @@ describe('Authentication', () => {
     PKCE_TEST_TIMEOUT
   ); // 60 second timeout
 
-  it('Should call authenticated test-api command when authenticated', async () => {
+  it('Should call authenticated test-api command when authenticated @tests:SWR-AUTH-TOKEN-BASED @tests:SWR-AUTH-SECURE-STORAGE', async () => {
     const { stdout: loginStdout } = await executeCLI(['login', '--refreshToken', refreshToken]);
     expect(loginStdout).toContain('🎉 Login with refresh token successful! Token saved securely.');
 
@@ -101,7 +101,7 @@ describe('Authentication', () => {
     expect(testApiStdout).toContain('API connection successful');
   });
 
-  it('Should refresh token automatically when expired', async () => {
+  it('Should refresh token automatically when expired @tests:SWR-AUTH-AUTO-REFRESH', async () => {
     const data = await tokenStorage.load(environment);
 
     await tokenStorage.save(environment, {
@@ -115,7 +115,7 @@ describe('Authentication', () => {
     expect(testApiStdout).toContain('API connection successful');
   });
 
-  it('Should try to refresh token and fail with invalid refresh token', async () => {
+  it('Should try to refresh token and fail with invalid refresh token @tests:SWR-AUTH-AUTO-REFRESH', async () => {
     const data = await tokenStorage.load(environment);
 
     await tokenStorage.save(environment, {
@@ -129,9 +129,10 @@ describe('Authentication', () => {
     await tokenStorage.save(environment, { ...data });
   });
 
-  it('Should reject calls to api without authentication', async () => {
+  it('Should reject calls to api without authentication @tests:SWR-AUTH-VALIDATION @tests:SWR-AUTH-TOKEN-REMOVAL', async () => {
     const data = await tokenStorage.load(environment);
-    await tokenStorage.remove(environment);
+
+    await executeCLI(['logout'], { reject: false });
 
     const { stderr: testApiStderr } = await executeCLI(['test-api'], { reject: false });
 
