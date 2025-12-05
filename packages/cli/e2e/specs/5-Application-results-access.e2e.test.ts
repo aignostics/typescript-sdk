@@ -3,7 +3,12 @@ import { executeCLI } from '../utils/command.js';
 import { ItemResultReadResponse, RunReadResponse } from '@aignostics/sdk';
 
 describe('Application Results Access', () => {
-  it('Should retrieve items and their associated output artifacts for a specified application run by run ID', async () => {
+  it('Should retrieve items and their associated output artifacts for a specified application run by run ID', async ({
+    annotate,
+  }) => {
+    await annotate('SWR-APP-RESULTS-RETRIEVE-ITEMS', 'tests');
+    await annotate('TC-RESULTS-RETRIEVE', 'id');
+
     const { stdout, exitCode } = await executeCLI([
       'list-application-runs',
       '--applicationId',
@@ -34,7 +39,13 @@ describe('Application Results Access', () => {
     expect(Array.isArray(runResults)).toBe(true);
   });
 
-  it('Should provide execution state, output availability, termination status, and error details for each item', async () => {
+  it('Should provide execution state, output availability, termination status, and error details for each item', async ({
+    annotate,
+  }) => {
+    await annotate('SWR-APP-RESULTS-ITEM-STATUS', 'tests');
+    await annotate('SWR-APP-RESULTS-ARTIFACT-STATUS', 'tests');
+    await annotate('TC-RESULTS-STATUS', 'id');
+
     const { stdout, exitCode } = await executeCLI([
       'list-application-runs',
       '--applicationId',
@@ -79,11 +90,20 @@ describe('Application Results Access', () => {
     });
   });
 
-  it('Should return an error when uuid is not valid', async () => {
-    const { stderr } = await executeCLI(['list-run-results', 'non-existent-run-id'], {
+  it('Should return an error when uuid is not valid', async ({ annotate }) => {
+    await annotate('SWR-ERROR-COMM-MESSAGES', 'tests');
+    await annotate('SWR-ERROR-COMM-CLI-OUTPUT', 'tests');
+    await annotate('TC-RESULTS-INVALID-UUID', 'id');
+
+    const { stderr, exitCode } = await executeCLI(['list-run-results', 'non-existent-run-id'], {
       reject: false,
     });
+
+    // Verify error written to stderr
     expect(stderr).toMatch(/API_ERROR/);
     expect(stderr).toMatch(/Validation error/);
+
+    // Verify machine-readable operation status (non-zero exit code)
+    expect(exitCode).not.toBe(0);
   });
 });
