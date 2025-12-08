@@ -20,7 +20,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
+        node-version: [22.x, 24.x]
 
     steps:
       - name: Checkout code
@@ -60,21 +60,21 @@ jobs:
           E2E_TEST_ENVIRONMENT: ${{ secrets.E2E_TEST_ENVIRONMENT }}
 
       - name: Upload SDK test results
-        if: matrix.node-version == '20.x'
+        if: matrix.node-version == '24.x'
         uses: actions/upload-artifact@v4
         with:
           name: test-results-sdk
           path: packages/sdk/test-results/*.xml
 
       - name: Upload CLI test results
-        if: matrix.node-version == '20.x'
+        if: matrix.node-version == '24.x'
         uses: actions/upload-artifact@v4
         with:
           name: test-results-cli
           path: packages/cli/test-results/*.xml
 
       - name: Upload coverage to Codecov
-        if: matrix.node-version == '20.x'
+        if: matrix.node-version == '24.x'
         uses: codecov/codecov-action@v3
         with:
           files: ./packages/sdk/coverage/lcov.info,./packages/cli/coverage/lcov.info
@@ -84,7 +84,7 @@ jobs:
           fail_ci_if_error: false
 
       - name: SonarQube Scan
-        if: matrix.node-version == '20.x'
+        if: matrix.node-version == '24.x'
         uses: SonarSource/sonarqube-scan-action@v6
         with:
           args: >
@@ -106,7 +106,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '24.x'
           cache: 'npm'
 
       - name: Install dependencies
@@ -157,7 +157,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '24.x'
           cache: 'npm'
 
       - name: Install dependencies
