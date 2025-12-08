@@ -302,10 +302,174 @@ describe('CLI Functions Unit Tests', () => {
       );
     });
 
+    it('should list application runs with custom metadata filter', async () => {
+      const runsResponse = [
+        {
+          application_run_id: 'run-1',
+          application_version_id: 'v1.0.0',
+          organization_id: 'org-1',
+          status: 'COMPLETED',
+          created_at: '2023-01-01T00:00:00Z',
+          updated_at: '2023-01-01T01:00:00Z',
+        },
+      ];
+      platformSDKMock.listApplicationRuns.mockResolvedValue(runsResponse);
+
+      await listApplicationRuns('production', mockAuthService, {
+        applicationId: 'app1',
+        customMetadata: '{"key": "value"}',
+      });
+
+      expect(platformSDKMock.listApplicationRuns).toHaveBeenCalledWith({
+        applicationId: 'app1',
+        customMetadata: '{"key": "value"}',
+      });
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Application runs:',
+        JSON.stringify(runsResponse, null, 2)
+      );
+    });
+
+    it('should list application runs with sort parameter', async () => {
+      const runsResponse = [
+        {
+          application_run_id: 'run-1',
+          application_version_id: 'v1.0.0',
+          organization_id: 'org-1',
+          status: 'COMPLETED',
+          created_at: '2023-01-01T00:00:00Z',
+          updated_at: '2023-01-01T01:00:00Z',
+        },
+      ];
+      platformSDKMock.listApplicationRuns.mockResolvedValue(runsResponse);
+
+      await listApplicationRuns('production', mockAuthService, {
+        sort: '["created_at", "-updated_at"]',
+      });
+
+      expect(platformSDKMock.listApplicationRuns).toHaveBeenCalledWith({
+        sort: ['created_at', '-updated_at'],
+      });
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Application runs:',
+        JSON.stringify(runsResponse, null, 2)
+      );
+    });
+
+    it('should list application runs with all filters and sort', async () => {
+      const runsResponse = [
+        {
+          application_run_id: 'run-1',
+          application_version_id: 'v1.0.0',
+          organization_id: 'org-1',
+          status: 'COMPLETED',
+          created_at: '2023-01-01T00:00:00Z',
+          updated_at: '2023-01-01T01:00:00Z',
+        },
+      ];
+      platformSDKMock.listApplicationRuns.mockResolvedValue(runsResponse);
+
+      await listApplicationRuns('production', mockAuthService, {
+        applicationId: 'app1',
+        applicationVersion: 'v1.0.0',
+        customMetadata: '{"environment": "test"}',
+        sort: '["-created_at"]',
+      });
+
+      expect(platformSDKMock.listApplicationRuns).toHaveBeenCalledWith({
+        applicationId: 'app1',
+        applicationVersion: 'v1.0.0',
+        customMetadata: '{"environment": "test"}',
+        sort: ['-created_at'],
+      });
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Application runs:',
+        JSON.stringify(runsResponse, null, 2)
+      );
+    });
+
+    it('should handle invalid sort JSON', async () => {
+      await listApplicationRuns('production', mockAuthService, {
+        sort: 'invalid-json',
+      });
+
+      expect(consoleSpy.error).toHaveBeenCalledWith('❌ Invalid sort array:', expect.any(Error));
+      expect(mockExit).toHaveBeenCalledWith(1);
+      expect(platformSDKMock.listApplicationRuns).not.toHaveBeenCalled();
+    });
+
+    it('should handle empty customMetadata', async () => {
+      const runsResponse = [
+        {
+          application_run_id: 'run-1',
+          application_version_id: 'v1.0.0',
+          organization_id: 'org-1',
+          status: 'COMPLETED',
+          created_at: '2023-01-01T00:00:00Z',
+          updated_at: '2023-01-01T01:00:00Z',
+        },
+      ];
+      platformSDKMock.listApplicationRuns.mockResolvedValue(runsResponse);
+
+      await listApplicationRuns('production', mockAuthService, {
+        customMetadata: '{}',
+      });
+
+      expect(platformSDKMock.listApplicationRuns).toHaveBeenCalledWith({
+        customMetadata: '{}',
+      });
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Application runs:',
+        JSON.stringify(runsResponse, null, 2)
+      );
+    });
+
+    it('should handle empty sort array', async () => {
+      const runsResponse = [
+        {
+          application_run_id: 'run-1',
+          application_version_id: 'v1.0.0',
+          organization_id: 'org-1',
+          status: 'COMPLETED',
+          created_at: '2023-01-01T00:00:00Z',
+          updated_at: '2023-01-01T01:00:00Z',
+        },
+      ];
+      platformSDKMock.listApplicationRuns.mockResolvedValue(runsResponse);
+
+      await listApplicationRuns('production', mockAuthService, {
+        sort: '[]',
+      });
+
+      expect(platformSDKMock.listApplicationRuns).toHaveBeenCalledWith({
+        sort: [],
+      });
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Application runs:',
+        JSON.stringify(runsResponse, null, 2)
+      );
+    });
+
     it('should handle API error', async () => {
       platformSDKMock.listApplicationRuns.mockRejectedValue(new Error('API error'));
 
       await listApplicationRuns('production', mockAuthService);
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to list application runs:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+
+    it('should handle API error with filters', async () => {
+      platformSDKMock.listApplicationRuns.mockRejectedValue(new Error('Network error'));
+
+      await listApplicationRuns('production', mockAuthService, {
+        applicationId: 'app1',
+        customMetadata: '{"key": "value"}',
+        sort: '["-created_at"]',
+      });
 
       expect(consoleSpy.error).toHaveBeenCalledWith(
         '❌ Failed to list application runs:',

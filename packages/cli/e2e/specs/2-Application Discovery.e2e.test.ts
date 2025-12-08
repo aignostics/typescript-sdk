@@ -63,7 +63,7 @@ describe('SWR Application Details', () => {
     // Assert test-app properties
     expect(testApp).toMatchObject({
       application_id: 'test-app',
-      name: 'test-app',
+      name: 'Test Application',
       regulatory_classes: expect.arrayContaining([expect.any(String)]),
       description: expect.any(String),
     });

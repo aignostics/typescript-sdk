@@ -98,15 +98,33 @@ export async function listApplicationVersions(
 export async function listApplicationRuns(
   environment: EnvironmentKey,
   authService: AuthService,
-  options?: { applicationId?: string; applicationVersion?: string }
+  options?: {
+    applicationId?: string;
+    applicationVersion?: string;
+    customMetadata?: string;
+    sort?: string;
+  }
 ): Promise<void> {
+  let sortBy: string[] | undefined;
+
+  if (options?.sort) {
+    try {
+      const sortParsed = JSON.parse(options.sort) as string[];
+      sortBy = sortParsed;
+    } catch (parseError) {
+      console.error('❌ Invalid sort array:', parseError);
+      process.exit(1);
+      return; // Ensure we don't continue execution in tests
+    }
+  }
+
   const { endpoint } = environmentConfig[environment];
   const sdk = new PlatformSDKHttp({
     baseURL: endpoint,
     tokenProvider: () => authService.getValidAccessToken(environment),
   });
   try {
-    const response = await sdk.listApplicationRuns(options);
+    const response = await sdk.listApplicationRuns({ ...options, sort: sortBy });
     console.log('Application runs:', JSON.stringify(response, null, 2));
   } catch (error) {
     console.error('❌ Failed to list application runs:', error);
