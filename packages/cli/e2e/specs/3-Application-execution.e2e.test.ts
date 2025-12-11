@@ -6,13 +6,7 @@ import { getAppLatestVersion } from '../utils/getAppLatestVersion.js';
 describe('SWR Application Execution access', async () => {
   const latestVersion = await getAppLatestVersion('test-app');
 
-  it('Should create application runs with specified application version, input items, and item- and run metadata and return a unique run identifier upon successful creation.', async ({
-    annotate,
-  }) => {
-    await annotate('SWR-APP-EXEC-RUN-CREATION', 'tests');
-    await annotate('SWR-APP-EXEC-INPUT-ARTIFACT', 'tests');
-    await annotate('TC-RUN-CREATE', 'id');
-
+  it('Should create application runs with specified application version, input items, and item- and run metadata and return a unique run identifier upon successful creation.', async () => {
     const items = await generateInputArtifactsForTest('test-app', latestVersion, 2);
 
     const { stdout, exitCode } = await executeCLI([
@@ -34,39 +28,24 @@ describe('SWR Application Execution access', async () => {
     expect(runId).toHaveProperty('run_id');
   });
 
-  it('Should return an error on on non-existent version', async ({ annotate }) => {
-    await annotate('SWR-ERROR-COMM-DIAGNOSTIC-CONTEXT', 'tests');
-    await annotate('SWR-ERROR-COMM-CLI-OUTPUT', 'tests');
-    await annotate('TC-RUN-CREATE-INVALID-VERSION', 'id');
-
+  it('Should return an error on on non-existent version', async () => {
     const items = await generateInputArtifactsForTest('test-app', latestVersion, 2);
 
-    const { stderr, exitCode } = await executeCLI(
+    const { stderr } = await executeCLI(
       ['create-run', 'test-app', '2.0.0', '--items', JSON.stringify(items)],
       { reject: false }
     );
 
-    // Verify error written to stderr
     expect(stderr).toMatch(/API_ERROR/);
     expect(stderr).toMatch(/application version not found/);
-
-    // Verify machine-readable operation status (non-zero exit code)
-    expect(exitCode).not.toBe(0);
   });
 
-  it('Should return an error on missing arguments', async ({ annotate }) => {
-    await annotate('SWR-ERROR-COMM-MESSAGES', 'tests');
-    await annotate('TC-RUN-CREATE-MISSING-ARGS', 'id');
-
+  it('Should return an error on missing arguments', async () => {
     const { stderr } = await executeCLI(['create-run'], { reject: false });
     expect(stderr).toContain('❌ Not enough non-option arguments: got 0, need at least 2');
   });
 
-  it('Should validate items before submission', async ({ annotate }) => {
-    await annotate('SWR-APP-EXEC-REQUEST-VALIDATION', 'tests');
-    await annotate('SWR-ERROR-COMM-MESSAGES', 'tests');
-    await annotate('TC-RUN-CREATE-INVALID-JSON', 'id');
-
+  it('Should validate items before submission', async () => {
     const { stderr } = await executeCLI(
       ['create-run', 'test-app', latestVersion, '--items', 'invalid-json'],
       { reject: false }

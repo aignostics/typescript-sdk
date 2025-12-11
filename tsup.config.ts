@@ -5,7 +5,7 @@ export default defineConfig([
   {
     entry: ['src/index.ts'],
     format: ['cjs', 'esm'],
-    target: 'node18',
+    target: 'node22',
     dts: true,
     sourcemap: true,
     clean: true,
@@ -18,7 +18,7 @@ export default defineConfig([
   {
     entry: ['src/cli/index.ts'],
     format: ['cjs'],
-    target: 'node18',
+    target: 'node22',
     dts: false,
     sourcemap: true,
     clean: false, // Don't clean since main build already did

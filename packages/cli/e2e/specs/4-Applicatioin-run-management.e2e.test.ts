@@ -3,12 +3,7 @@ import { executeCLI } from '../utils/command.js';
 import { RunReadResponse } from '@aignostics/sdk';
 
 describe('SWR Application Run management', () => {
-  it('Should retrieve a list of application runs with optional filtering by application ID and application version.', async ({
-    annotate,
-  }) => {
-    await annotate('SWR-APP-RUN-MGMT-LIST', 'tests');
-    await annotate('TC-RUN-LIST', 'id');
-
+  it('Should retrieve a list of application runs with optional filtering by application ID and application version.', async () => {
     const { stdout, exitCode } = await executeCLI([
       'list-application-runs',
       '--applicationId',
@@ -28,12 +23,7 @@ describe('SWR Application Run management', () => {
 
     expect(runs[0].application_id).toBe('test-app');
   });
-  it('Should retrieve detailed information for a specific application run by run ID', async ({
-    annotate,
-  }) => {
-    await annotate('SWR-APP-RUN-MGMT-DETAILS', 'tests');
-    await annotate('TC-RUN-DETAILS', 'id');
-
+  it('Should retrieve detailed information for a specific application run by run ID', async () => {
     const { stdout, exitCode } = await executeCLI([
       'list-application-runs',
       '--applicationId',
@@ -65,10 +55,7 @@ describe('SWR Application Run management', () => {
     expect(runDetails.application_id).toBe('test-app');
   });
 
-  it('Should cancel a running or queued application run by run ID', async ({ annotate }) => {
-    await annotate('SWR-APP-RUN-MGMT-CANCEL', 'tests');
-    await annotate('TC-RUN-CANCEL', 'id');
-
+  it('Should cancel a running or queued application run by run ID', async () => {
     const { stdout, exitCode } = await executeCLI([
       'list-application-runs',
       '--applicationId',

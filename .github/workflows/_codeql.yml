@@ -30,7 +30,7 @@ jobs:
             build-mode: none
           - language: javascript-typescript
             build-mode: none
-            node-version: '20.x'
+            node-version: '22.x'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4 # v5.0.0

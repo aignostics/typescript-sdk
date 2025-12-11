@@ -79,7 +79,7 @@ aignostics info
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 22.14.0+
 - Docker (for OpenAPI code generation)
 
 ### Setup
