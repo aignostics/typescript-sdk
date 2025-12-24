@@ -1,5 +1,6 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
+import { z } from 'zod';
 import { AuthService } from './utils/auth.js';
 import { FileSystemTokenStorage } from './utils/token-storage.js';
 
@@ -25,6 +26,11 @@ import { AuthenticationError } from '@aignostics/sdk';
 // Create a shared auth service instance for the CLI
 const authService = new AuthService(new FileSystemTokenStorage());
 
+// Zod schema for environment validation
+const environmentSchema = z.enum(
+  Object.keys(environmentConfig) as [EnvironmentKey, ...EnvironmentKey[]]
+);
+
 /**
  * CLI for the Aignostics Platform SDK
  */
@@ -44,14 +50,19 @@ export async function main() {
       'test-api',
       'Test API connection',
       yargs => yargs,
-      // TODO: [TSSDK-20] eliminate the need for casting here
-      argv => testApi(argv.environment as EnvironmentKey, authService)
+      argv => {
+        const env = environmentSchema.parse(argv.environment);
+        return testApi(env, authService);
+      }
     )
     .command(
       'list-applications',
       'List applications',
       yargs => yargs,
-      argv => listApplications(argv.environment as EnvironmentKey, authService)
+      argv => {
+        const env = environmentSchema.parse(argv.environment);
+        return listApplications(env, authService);
+      }
     )
     .command(
       'list-application-versions <applicationId>',
@@ -62,8 +73,10 @@ export async function main() {
           type: 'string',
           demandOption: true,
         }),
-      argv =>
-        listApplicationVersions(argv.environment as EnvironmentKey, authService, argv.applicationId)
+      argv => {
+        const env = environmentSchema.parse(argv.environment);
+        return listApplicationVersions(env, authService, argv.applicationId);
+      }
     )
     .command(
       'get-application-version-details <applicationId> <versionNumber>',
@@ -80,13 +93,15 @@ export async function main() {
             type: 'string',
             demandOption: true,
           }),
-      argv =>
-        getApplicationVersionDetails(
-          argv.environment as EnvironmentKey,
+      argv => {
+        const env = environmentSchema.parse(argv.environment);
+        return getApplicationVersionDetails(
+          env,
           authService,
           argv.applicationId,
           argv.versionNumber
-        )
+        );
+      }
     )
     .command(
       'list-application-runs',
@@ -110,13 +125,15 @@ export async function main() {
               'Sort by field (e.g., "run_id", "-status", "submitted_at"). Fields: run_id, application_version_id, organization_id, status, submitted_at, submitted_by.',
             type: 'string',
           }),
-      argv =>
-        listApplicationRuns(argv.environment as EnvironmentKey, authService, {
+      argv => {
+        const env = environmentSchema.parse(argv.environment);
+        return listApplicationRuns(env, authService, {
           applicationId: argv.applicationId,
           applicationVersion: argv.applicationVersion,
           customMetadata: argv.customMetadata,
           sort: argv.sort,
-        })
+        });
+      }
     )
     .command(
       'get-run <applicationRunId>',
@@ -127,7 +144,10 @@ export async function main() {
           type: 'string',
           demandOption: true,
         }),
-      argv => getRun(argv.environment as EnvironmentKey, authService, argv.applicationRunId)
+      argv => {
+        const env = environmentSchema.parse(argv.environment);
+        return getRun(env, authService, argv.applicationRunId);
+      }
     )
     .command(
       'cancel-run <applicationRunId>',
@@ -138,8 +158,10 @@ export async function main() {
           type: 'string',
           demandOption: true,
         }),
-      argv =>
-        cancelApplicationRun(argv.environment as EnvironmentKey, authService, argv.applicationRunId)
+      argv => {
+        const env = environmentSchema.parse(argv.environment);
+        return cancelApplicationRun(env, authService, argv.applicationRunId);
+      }
     )
     .command(
       'list-run-results <applicationRunId>',
@@ -150,7 +172,10 @@ export async function main() {
           type: 'string',
           demandOption: true,
         }),
-      argv => listRunResults(argv.environment as EnvironmentKey, authService, argv.applicationRunId)
+      argv => {
+        const env = environmentSchema.parse(argv.environment);
+        return listRunResults(env, authService, argv.applicationRunId);
+      }
     )
     .command(
       'create-run <applicationId> <versionNumber>',
@@ -172,14 +197,16 @@ export async function main() {
             type: 'string',
             default: '[]',
           }),
-      argv =>
-        createApplicationRun(
-          argv.environment as EnvironmentKey,
+      argv => {
+        const env = environmentSchema.parse(argv.environment);
+        return createApplicationRun(
+          env,
           authService,
           argv.applicationId,
           argv.versionNumber,
           argv.items
-        )
+        );
+      }
     )
     .command(
       'login',
@@ -191,22 +218,21 @@ export async function main() {
           demandOption: false,
         }),
       async argv => {
+        const env = environmentSchema.parse(argv.environment);
         if (argv.refreshToken) {
-          await handleLoginWithRefreshToken(
-            argv.environment as EnvironmentKey,
-            argv.refreshToken,
-            authService
-          );
+          await handleLoginWithRefreshToken(env, argv.refreshToken, authService);
           return;
         }
-        await handleLogin(argv.environment as EnvironmentKey, authService);
+        await handleLogin(env, authService);
       }
     )
     .command('logout', 'Logout and remove stored token', {}, async argv => {
-      await handleLogout(argv.environment as EnvironmentKey, authService);
+      const env = environmentSchema.parse(argv.environment);
+      await handleLogout(env, authService);
     })
     .command('status', 'Check authentication status', {}, async argv => {
-      await handleStatus(argv.environment as EnvironmentKey, authService);
+      const env = environmentSchema.parse(argv.environment);
+      await handleStatus(env, authService);
     })
     .help()
     .alias('help', 'h')
