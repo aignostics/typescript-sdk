@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { main } from './cli.js';
 import { factories, handlers, server } from '@aignostics/sdk/test';
 import { http, HttpResponse } from 'msw';
+import { ZodError } from 'zod';
 
 // Mock process.exit to prevent test runner from exiting
 const mockExit = vi.fn();
@@ -519,6 +520,312 @@ describe('CLI Integration Tests', () => {
       // Since we're mocking the entire AuthService, we need to verify the command executed without errors
       expect(consoleSpy.error).not.toHaveBeenCalled();
       expect(mockExit).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('environment validation', () => {
+    it('should accept valid production environment', async () => {
+      process.argv = ['node', 'cli.js', 'info', '--environment', 'production'];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith('Aignostics Platform SDK');
+      expect(consoleSpy.error).not.toHaveBeenCalled();
+    });
+
+    it('should accept valid staging environment', async () => {
+      process.argv = ['node', 'cli.js', 'info', '--environment', 'staging'];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith('Aignostics Platform SDK');
+      expect(consoleSpy.error).not.toHaveBeenCalled();
+    });
+
+    it('should reject invalid environment', async () => {
+      process.argv = ['node', 'cli.js', 'test-api', '--environment', 'invalid-env'];
+
+      try {
+        await main();
+      } catch (error) {
+        // Error is expected when validation fails
+        expect((error as ZodError).message).toMatch(
+          /Invalid option: expected one of "production"|"staging"|"develop"/
+        );
+      }
+
+      // Verify that an error was logged and process exited
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+
+    it('should use production as default environment', async () => {
+      process.argv = ['node', 'cli.js', 'info'];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith('Aignostics Platform SDK');
+      expect(consoleSpy.error).not.toHaveBeenCalled();
+    });
+
+    it('should accept develop environment', async () => {
+      process.argv = ['node', 'cli.js', 'info', '--environment', 'develop'];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith('Aignostics Platform SDK');
+      expect(consoleSpy.error).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('logout command', () => {
+    it('should logout successfully', async () => {
+      process.argv = ['node', 'cli.js', 'logout', '--environment', 'production'];
+
+      await main();
+
+      expect(consoleSpy.error).not.toHaveBeenCalled();
+      expect(mockExit).not.toHaveBeenCalled();
+    });
+
+    it('should logout from staging environment', async () => {
+      process.argv = ['node', 'cli.js', 'logout', '--environment', 'staging'];
+
+      await main();
+
+      expect(consoleSpy.error).not.toHaveBeenCalled();
+      expect(mockExit).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('status command', () => {
+    it('should check authentication status successfully', async () => {
+      process.argv = ['node', 'cli.js', 'status', '--environment', 'production'];
+
+      await main();
+
+      expect(consoleSpy.error).not.toHaveBeenCalled();
+      expect(mockExit).not.toHaveBeenCalled();
+    });
+
+    it('should check status for staging environment', async () => {
+      process.argv = ['node', 'cli.js', 'status', '--environment', 'staging'];
+
+      await main();
+
+      expect(consoleSpy.error).not.toHaveBeenCalled();
+      expect(mockExit).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('login command without refresh token', () => {
+    it('should initiate login flow without refresh token', async () => {
+      process.argv = ['node', 'cli.js', 'login', '--environment', 'production'];
+
+      await main();
+
+      // Login should complete without errors (mocked)
+      expect(mockExit).not.toHaveBeenCalled();
+    });
+
+    it('should login with staging environment', async () => {
+      process.argv = ['node', 'cli.js', 'login', '--environment', 'staging'];
+
+      await main();
+
+      expect(mockExit).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('list-application-runs with options', () => {
+    it('should support filtering by customMetadata', async () => {
+      process.argv = ['node', 'cli.js', 'list-application-runs', '--customMetadata', '$.key=value'];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Application runs:',
+        expect.stringContaining('run_id')
+      );
+    });
+
+    it('should support sort option', async () => {
+      process.argv = ['node', 'cli.js', 'list-application-runs', '--sort', '["run_id"]'];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Application runs:',
+        expect.stringContaining('run_id')
+      );
+    });
+
+    it('should support multiple filters combined', async () => {
+      process.argv = [
+        'node',
+        'cli.js',
+        'list-application-runs',
+        '--applicationId',
+        'app1',
+        '--applicationVersion',
+        'v1.0.0',
+        '--sort',
+        '["-submitted_at"]',
+      ];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Application runs:',
+        expect.stringContaining('run_id')
+      );
+    });
+  });
+
+  describe('create-run with items', () => {
+    it('should create application run with items', async () => {
+      process.argv = [
+        'node',
+        'cli.js',
+        'create-run',
+        'test-app',
+        'v1.0.0',
+        '--items',
+        '[{"wsi_id": "wsi-123"}]',
+      ];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        '✅ Application run created successfully:',
+        expect.stringContaining('run_id')
+      );
+    });
+
+    it('should handle invalid items JSON', async () => {
+      process.argv = [
+        'node',
+        'cli.js',
+        'create-run',
+        'test-app',
+        'v1.0.0',
+        '--items',
+        'not-valid-json',
+      ];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith('❌ Invalid items JSON:', expect.any(Error));
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+
+    it('should handle non-array items JSON', async () => {
+      process.argv = [
+        'node',
+        'cli.js',
+        'create-run',
+        'test-app',
+        'v1.0.0',
+        '--items',
+        '{"wsi_id": "wsi-123"}',
+      ];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith('❌ Invalid items JSON:', expect.any(Error));
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('error handling', () => {
+    it('should handle API errors gracefully for test-api', async () => {
+      server.use(http.get('*/v1/applications', () => HttpResponse.error()));
+
+      process.argv = ['node', 'cli.js', 'test-api'];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith('❌ API connection failed:', expect.any(Error));
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+
+    it('should handle API errors for get-run', async () => {
+      server.use(http.get('*/v1/runs/:runId', () => HttpResponse.error()));
+
+      process.argv = ['node', 'cli.js', 'get-run', 'run-1'];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith('❌ Failed to get run:', expect.any(Error));
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+
+    it('should handle API errors for cancel-run', async () => {
+      server.use(http.post('*/v1/runs/:runId/cancel', () => HttpResponse.error()));
+
+      process.argv = ['node', 'cli.js', 'cancel-run', 'run-1'];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to cancel application run:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+
+    it('should handle API errors for list-run-results', async () => {
+      server.use(http.get('*/v1/runs/:runId/items', () => HttpResponse.error()));
+
+      process.argv = ['node', 'cli.js', 'list-run-results', 'run-1'];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to list run results:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+
+    it('should handle API errors for list-application-runs', async () => {
+      server.use(http.get('*/v1/runs', () => HttpResponse.error()));
+
+      process.argv = ['node', 'cli.js', 'list-application-runs'];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to list application runs:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+
+    it('should handle API errors for create-run', async () => {
+      server.use(http.post('*/v1/runs', () => HttpResponse.error()));
+
+      process.argv = ['node', 'cli.js', 'create-run', 'test-app', 'v1.0.0'];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to create application run:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('unknown command handling', () => {
+    it('should handle unknown command', async () => {
+      process.argv = ['node', 'cli.js', 'unknown-command'];
+
+      await main();
+
+      expect(mockExit).toHaveBeenCalledWith(1);
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        expect.stringContaining('Unknown argument: unknown-command')
+      );
     });
   });
 });
