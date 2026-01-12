@@ -1,42 +1,45 @@
 name: 'Ketryx report'
 
+permissions: {}
+
 on:
-    workflow_call:
-        inputs:
-            build-name:
-                description: 'The build name to report'
-                required: true
-                type: string
-        secrets:
-            KETRYX_PROJECT:
-                description: 'Ketryx project ID'
-                required: true
-            KETRYX_API_KEY:
-                description: 'Ketryx API key'
-                required: true
+  workflow_call:
+    inputs:
+      build-name:
+        description: 'The build name to report'
+        required: true
+        type: string
+    secrets:
+      KETRYX_PROJECT:
+        description: 'Ketryx project ID'
+        required: true
+      KETRYX_API_KEY:
+        description: 'Ketryx API key'
+        required: true
+  workflow_dispatch:
 
 jobs:
-    report-to-ketryx:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Download SDK test results
-              uses: actions/download-artifact@v4
-              continue-on-error: true
-              with:
-                name: test-results-sdk
-                path: test-results/sdk/
-            
-            - name: Download CLI test results
-              uses: actions/download-artifact@v4
-              continue-on-error: true
-              with:
-                name: test-results-cli
-                path: test-results/cli/
-            
-            - name: Report to Ketryx
-              uses: Ketryx/ketryx-github-action@v1.4.0
-              with:
-                project: ${{ secrets.KETRYX_PROJECT }}
-                api-key: ${{ secrets.KETRYX_API_KEY }}
-                build-name: ${{ inputs.build-name }}
-                test-junit-path: test-results/**/*.xml
+  report-to-ketryx:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download SDK test results
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: test-results-sdk
+          path: test-results/sdk/
+
+      - name: Download CLI test results
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: test-results-cli
+          path: test-results/cli/
+
+      - name: Report to Ketryx
+        uses: Ketryx/ketryx-github-action@v1.4.0
+        with:
+          project: ${{ secrets.KETRYX_PROJECT }}
+          api-key: ${{ secrets.KETRYX_API_KEY }}
+          build-name: ${{ inputs.build-name }}
+          test-junit-path: test-results/**/*.xml
