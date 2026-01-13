@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { PlatformSDKHttp } from './platform-sdk.js';
 import { AuthenticationError } from './errors.js';
 import { setMockScenario } from './test-utils/http-mocks.js';
+import { ItemState, ItemTerminationReason } from './generated/api.js';
 
 describe('PlatformSDK', () => {
   let sdk: PlatformSDKHttp;
@@ -293,6 +294,124 @@ describe('PlatformSDK', () => {
     setMockScenario('notFoundError');
 
     await expect(sdk.listRunResults('test-run-id')).rejects.toThrow('Resource not found: ');
+  });
+
+  it('should list run results with pagination options', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with successful response
+    setMockScenario('success');
+
+    const result = await sdk.listRunResults('test-run-id', {
+      page: 1,
+      pageSize: 10,
+    });
+    expect(Array.isArray(result)).toBe(true);
+  });
+
+  it('should list run results with sorting options', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with successful response
+    setMockScenario('success');
+
+    const result = await sdk.listRunResults('test-run-id', {
+      sort: ['external_id', '-state'],
+    });
+    expect(Array.isArray(result)).toBe(true);
+  });
+
+  it('should list run results with filtering options', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with successful response
+    setMockScenario('success');
+
+    const result = await sdk.listRunResults('test-run-id', {
+      externalIdIn: ['item-1', 'item-2'],
+      state: 'COMPLETED' as ItemState,
+      terminationReason: 'SUCCEEDED' as ItemTerminationReason,
+    });
+    expect(Array.isArray(result)).toBe(true);
+  });
+
+  it('should list run results with all options combined', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with successful response
+    setMockScenario('success');
+
+    const result = await sdk.listRunResults('test-run-id', {
+      page: 2,
+      pageSize: 25,
+      sort: ['external_id'],
+      externalIdIn: ['item-1', 'item-2', 'item-3'],
+      state: 'COMPLETED' as ItemState,
+      terminationReason: 'SUCCEEDED' as ItemTerminationReason,
+    });
+    expect(Array.isArray(result)).toBe(true);
+  });
+
+  it('should list application runs with pagination options', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with successful response
+    setMockScenario('success');
+
+    const result = await sdk.listApplicationRuns({
+      page: 1,
+      pageSize: 20,
+    });
+    expect(Array.isArray(result)).toBe(true);
+  });
+
+  it('should list application runs with sorting options', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with successful response
+    setMockScenario('success');
+
+    const result = await sdk.listApplicationRuns({
+      sort: ['created_at', '-run_id'],
+    });
+    expect(Array.isArray(result)).toBe(true);
+  });
+
+  it('should list application runs with custom metadata filter', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with successful response
+    setMockScenario('success');
+
+    const result = await sdk.listApplicationRuns({
+      customMetadata: '{"project":"test-project"}',
+    });
+    expect(Array.isArray(result)).toBe(true);
+  });
+
+  it('should list application runs with all options combined', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with successful response
+    setMockScenario('success');
+
+    const result = await sdk.listApplicationRuns({
+      applicationId: 'test-app-id',
+      applicationVersion: 'v1.0.0',
+      page: 1,
+      pageSize: 50,
+      customMetadata: '{"key":"value"}',
+      sort: ['created_at', '-run_id'],
+    });
+    expect(Array.isArray(result)).toBe(true);
   });
 
   it('should create application run successfully', async () => {
