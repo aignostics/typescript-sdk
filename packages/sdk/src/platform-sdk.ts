@@ -8,6 +8,8 @@ import {
   ApplicationReadShortResponse,
   ApplicationReadResponse,
   VersionReadResponse,
+  ItemState,
+  ItemTerminationReason,
 } from './generated/index.js';
 import { APIError, AuthenticationError, UnexpectedError } from './errors.js';
 import { isAxiosError } from 'axios';
@@ -94,11 +96,25 @@ export interface PlatformSDK {
   listApplicationRuns(options?: {
     applicationId?: string;
     applicationVersion?: string;
+    page?: number;
+    pageSize?: number;
+    customMetadata?: string;
+    sort?: string[];
   }): Promise<RunReadResponse[]>;
   createApplicationRun(request: RunCreationRequest): Promise<RunCreationResponse>;
   getRun(applicationRunId: string): Promise<RunReadResponse>;
   cancelApplicationRun(applicationRunId: string): Promise<void>;
-  listRunResults(applicationRunId: string): Promise<ItemResultReadResponse[]>;
+  listRunResults(
+    applicationRunId: string,
+    options?: {
+      page?: number;
+      pageSize?: number;
+      sort?: string[];
+      externalIdIn?: string[];
+      state?: ItemState;
+      terminationReason?: ItemTerminationReason;
+    }
+  ): Promise<ItemResultReadResponse[]>;
   getApplicationVersionDetails(
     applicationId: string,
     version: string
@@ -339,6 +355,8 @@ export class PlatformSDKHttp implements PlatformSDK {
     applicationVersion?: string;
     customMetadata?: string;
     sort?: string[];
+    page?: number;
+    pageSize?: number;
   }): Promise<RunReadResponse[]> {
     const client = await this.#getClient();
     try {
@@ -347,6 +365,8 @@ export class PlatformSDKHttp implements PlatformSDK {
         applicationVersion: options?.applicationVersion,
         customMetadata: options?.customMetadata,
         sort: options?.sort,
+        page: options?.page,
+        pageSize: options?.pageSize,
       });
 
       return response.data;
@@ -511,11 +531,34 @@ export class PlatformSDKHttp implements PlatformSDK {
    * }
    * ```
    */
-  async listRunResults(applicationRunId: string): Promise<ItemResultReadResponse[]> {
+  async listRunResults(
+    applicationRunId: string,
+    {
+      page,
+      pageSize,
+      sort,
+      externalIdIn,
+      state,
+      terminationReason,
+    }: {
+      page?: number;
+      pageSize?: number;
+      sort?: string[];
+      externalIdIn?: string[];
+      state?: ItemState;
+      terminationReason?: ItemTerminationReason;
+    } = {}
+  ): Promise<ItemResultReadResponse[]> {
     const client = await this.#getClient();
     try {
       const response = await client.listRunItemsV1RunsRunIdItemsGet({
         runId: applicationRunId,
+        page,
+        pageSize,
+        sort,
+        externalIdIn,
+        state,
+        terminationReason,
       });
 
       return response.data;
