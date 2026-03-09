@@ -24468,7 +24468,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## lodash-es
 
-**Version:** 4.17.21  
+**Version:** 4.17.23  
 **License:** MIT
 
 ```
