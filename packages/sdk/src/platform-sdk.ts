@@ -1,7 +1,5 @@
 import packageJson from '../package.json' with { type: 'json' };
 import {
-  RunReadResponse,
-  ItemResultReadResponse,
   RunCreationRequest,
   RunCreationResponse,
   PublicApi,
@@ -14,6 +12,10 @@ import {
 import { APIError, AuthenticationError, UnexpectedError } from './errors.js';
 import { isAxiosError } from 'axios';
 import z from 'zod';
+import { processApplicationRun } from './entities/application-run/process-application-run.js';
+import { ApplicationRun } from './entities/application-run/types.js';
+import { processRunItem } from './entities/run-item/process-run-item.js';
+import { ApplicationRunItem } from './entities/run-item/types.js';
 
 const validationErrorSchema = z.object({
   detail: z.array(
@@ -100,9 +102,9 @@ export interface PlatformSDK {
     pageSize?: number;
     customMetadata?: string;
     sort?: string[];
-  }): Promise<RunReadResponse[]>;
+  }): Promise<ApplicationRun[]>;
   createApplicationRun(request: RunCreationRequest): Promise<RunCreationResponse>;
-  getRun(applicationRunId: string): Promise<RunReadResponse>;
+  getRun(applicationRunId: string): Promise<ApplicationRun>;
   cancelApplicationRun(applicationRunId: string): Promise<void>;
   listRunResults(
     applicationRunId: string,
@@ -114,7 +116,7 @@ export interface PlatformSDK {
       state?: ItemState;
       terminationReason?: ItemTerminationReason;
     }
-  ): Promise<ItemResultReadResponse[]>;
+  ): Promise<ApplicationRunItem[]>;
   getApplicationVersionDetails(
     applicationId: string,
     version: string
@@ -357,7 +359,7 @@ export class PlatformSDKHttp implements PlatformSDK {
     sort?: string[];
     page?: number;
     pageSize?: number;
-  }): Promise<RunReadResponse[]> {
+  }): Promise<ApplicationRun[]> {
     const client = await this.#getClient();
     try {
       const response = await client.listRunsV1RunsGet({
@@ -369,7 +371,8 @@ export class PlatformSDKHttp implements PlatformSDK {
         pageSize: options?.pageSize,
       });
 
-      return response.data;
+      // Enrich each raw RunReadResponse with computed properties
+      return response.data.map(processApplicationRun);
     } catch (error) {
       handleRequestError(error);
     }
@@ -450,14 +453,15 @@ export class PlatformSDKHttp implements PlatformSDK {
    * }
    * ```
    */
-  async getRun(applicationRunId: string): Promise<RunReadResponse> {
+  async getRun(applicationRunId: string): Promise<ApplicationRun> {
     const client = await this.#getClient();
     try {
       const response = await client.getRunV1RunsRunIdGet({
         runId: applicationRunId,
       });
 
-      return response.data;
+      // Enrich raw RunReadResponse with computed properties
+      return processApplicationRun(response.data);
     } catch (error) {
       handleRequestError(error);
     }
@@ -548,7 +552,7 @@ export class PlatformSDKHttp implements PlatformSDK {
       state?: ItemState;
       terminationReason?: ItemTerminationReason;
     } = {}
-  ): Promise<ItemResultReadResponse[]> {
+  ): Promise<ApplicationRunItem[]> {
     const client = await this.#getClient();
     try {
       const response = await client.listRunItemsV1RunsRunIdItemsGet({
@@ -561,7 +565,8 @@ export class PlatformSDKHttp implements PlatformSDK {
         terminationReason,
       });
 
-      return response.data;
+      // Enrich each raw ItemResultReadResponse with computed properties
+      return response.data.map(processRunItem);
     } catch (error) {
       handleRequestError(error);
     }
