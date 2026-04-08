@@ -16,6 +16,7 @@ import { processApplicationRun } from './entities/application-run/process-applic
 import { ApplicationRun } from './entities/application-run/types.js';
 import { processRunItem } from './entities/run-item/process-run-item.js';
 import { ApplicationRunItem } from './entities/run-item/types.js';
+import { downloadWithRetry } from './utils/dwonloadWithRetry.js';
 
 const validationErrorSchema = z.object({
   detail: z.array(
@@ -48,6 +49,24 @@ function handleRequestError(error: unknown): never {
           },
           originalError: error,
           statusCode: 404,
+        });
+      }
+      case 403: {
+        throw new APIError(`Access forbidden: ${error.message}`, {
+          context: {
+            responseBody: errorResponseSchema.parse(error.response?.data),
+          },
+          originalError: error,
+          statusCode: 403,
+        });
+      }
+      case 410: {
+        throw new APIError(`Resource gone: ${error.message}`, {
+          context: {
+            responseBody: errorResponseSchema.parse(error.response?.data),
+          },
+          originalError: error,
+          statusCode: 410,
         });
       }
       default: {
@@ -121,6 +140,7 @@ export interface PlatformSDK {
     applicationId: string,
     version: string
   ): Promise<VersionReadResponse>;
+  downloadArtifact(runId: string, artifactId: string): Promise<ArrayBuffer>;
 }
 /**
  * Main SDK class for interacting with the Aignostics Platform
@@ -614,5 +634,59 @@ export class PlatformSDKHttp implements PlatformSDK {
    */
   getConfig(): PlatformSDKConfig {
     return { ...this.#config };
+  }
+
+  /**
+   * Download an artifact file from a completed application run
+   *
+   * This method retrieves the binary content of a specific artifact produced
+   * during an application run. Artifacts can include generated reports, processed
+   * images, or other output files from the AI model execution.
+   *
+   * The download is performed with automatic retries for transient failures.
+   * Non-retryable HTTP status codes (403, 404, 410, 422) will abort immediately.
+   *
+   * @param runId - The unique identifier of the application run
+   * @param artifactId - The unique identifier of the artifact to download
+   * @returns A promise that resolves to an ArrayBuffer containing the artifact's binary content
+   * @throws {AuthenticationError} If no valid authentication token is available
+   * @throws {APIError} If the API request fails (e.g., 403, 404, 410, 422, or other HTTP errors)
+   * @throws {UnexpectedError} If a non-HTTP error occurs
+   *
+   * @example
+   * ```typescript
+   * const sdk = new PlatformSDKHttp({ tokenProvider: () => 'your-token' });
+   *
+   * try {
+   *   const buffer = await sdk.downloadArtifact('run-123', 'artifact-456');
+   *   console.log(`Downloaded ${buffer.byteLength} bytes`);
+   *
+   *   // Write to file (Node.js)
+   *   fs.writeFileSync('output.bin', Buffer.from(buffer));
+   * } catch (error) {
+   *   console.error('Failed to download artifact:', error.message);
+   * }
+   * ```
+   */
+  async downloadArtifact(runId: string, artifactId: string): Promise<ArrayBuffer> {
+    const client = await this.#getClient();
+    try {
+      const response = await downloadWithRetry(
+        () =>
+          client.getArtifactUrlV1RunsRunIdArtifactsArtifactIdFileGet(
+            {
+              runId,
+              artifactId,
+            },
+            {
+              responseType: 'arraybuffer',
+            }
+          ),
+        [403, 404, 410, 422]
+      );
+      return response.data as ArrayBuffer;
+    } catch (error) {
+      handleRequestError(error);
+    }
   }
 }

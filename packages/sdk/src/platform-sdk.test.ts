@@ -535,4 +535,30 @@ describe('PlatformSDK', () => {
     await expect(sdk.listRunResults('test-run-id')).rejects.toThrow(AuthenticationError);
     await expect(sdk.listRunResults('test-run-id')).rejects.toThrow(errorMessage);
   });
+
+  it('should download artifact successfully', async () => {
+    mockTokenProvider.mockResolvedValue('mocked-token');
+    setMockScenario('success');
+
+    const result = await sdk.downloadArtifact('test-run-id', 'test-artifact-id');
+    expect(result).toBeDefined();
+    expect(result.byteLength).toBe(8);
+  });
+
+  it('should handle download artifact failure', async () => {
+    mockTokenProvider.mockResolvedValue('mocked-token');
+    setMockScenario('notFoundError');
+
+    await expect(sdk.downloadArtifact('test-run-id', 'test-artifact-id')).rejects.toThrow(
+      'Resource not found: '
+    );
+  }, 30000);
+
+  it('should handle no token for download artifact', async () => {
+    mockTokenProvider.mockResolvedValue(null);
+
+    await expect(sdk.downloadArtifact('test-run-id', 'test-artifact-id')).rejects.toThrow(
+      AuthenticationError
+    );
+  });
 });
