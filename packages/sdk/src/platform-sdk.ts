@@ -16,7 +16,7 @@ import { processApplicationRun } from './entities/application-run/process-applic
 import { ApplicationRun } from './entities/application-run/types.js';
 import { processRunItem } from './entities/run-item/process-run-item.js';
 import { ApplicationRunItem } from './entities/run-item/types.js';
-import { downloadWithRetry } from './utils/dwonloadWithRetry.js';
+import { downloadWithRetry } from './utils/downloadWithRetry.js';
 
 const validationErrorSchema = z.object({
   detail: z.array(

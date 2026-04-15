@@ -1,7 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { http, HttpResponse } from 'msw';
 import { PlatformSDKHttp } from './platform-sdk.js';
 import { AuthenticationError } from './errors.js';
-import { setMockScenario } from './test-utils/http-mocks.js';
+import { setMockScenario, server } from './test-utils/http-mocks.js';
 import { ItemState, ItemTerminationReason } from './generated/api.js';
 
 describe('PlatformSDK', () => {
@@ -552,7 +553,7 @@ describe('PlatformSDK', () => {
     await expect(sdk.downloadArtifact('test-run-id', 'test-artifact-id')).rejects.toThrow(
       'Resource not found: '
     );
-  }, 30000);
+  });
 
   it('should handle no token for download artifact', async () => {
     mockTokenProvider.mockResolvedValue(null);
@@ -560,5 +561,44 @@ describe('PlatformSDK', () => {
     await expect(sdk.downloadArtifact('test-run-id', 'test-artifact-id')).rejects.toThrow(
       AuthenticationError
     );
+  });
+
+  it('should retry on transient 500 error and succeed on second attempt', async () => {
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    let callCount = 0;
+    server.use(
+      http.get('*/v1/runs/:runId/artifacts/:artifactId/file', () => {
+        callCount++;
+        if (callCount === 1) {
+          return HttpResponse.json({}, { status: 500 });
+        }
+        return new HttpResponse(new ArrayBuffer(8), {
+          status: 200,
+          headers: { 'Content-Type': 'application/octet-stream' },
+        });
+      })
+    );
+
+    const result = await sdk.downloadArtifact('test-run-id', 'test-artifact-id');
+    expect(result.byteLength).toBe(8);
+    expect(callCount).toBe(2);
+  }, 10_000);
+
+  it('should not retry on 404 and make exactly one request', async () => {
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    let callCount = 0;
+    server.use(
+      http.get('*/v1/runs/:runId/artifacts/:artifactId/file', () => {
+        callCount++;
+        return HttpResponse.json({}, { status: 404 });
+      })
+    );
+
+    await expect(sdk.downloadArtifact('test-run-id', 'test-artifact-id')).rejects.toThrow(
+      'Resource not found:'
+    );
+    expect(callCount).toBe(1);
   });
 });
