@@ -118,6 +118,7 @@ const itemResultFactory = Factory.define<ItemResultReadResponse>(() => ({
   terminated_at: faker.date.recent().toISOString(),
   output_artifacts: outputArtifactFactory.buildList(faker.number.int({ min: 0, max: 3 })),
   error_code: null,
+  input_artifacts: [],
 }));
 
 const runFactory = Factory.define<RunReadResponse>(() => ({
@@ -246,6 +247,12 @@ export const handlers = {
     http.get('*/v1/runs/:runId/items', () => {
       return HttpResponse.json(mockResponses.runResultsSuccess, { status: 200 });
     }),
+    http.get('*/v1/runs/:runId/artifacts/:artifactId/file', () => {
+      return new HttpResponse(new ArrayBuffer(8), {
+        status: 200,
+        headers: { 'Content-Type': 'application/octet-stream' },
+      });
+    }),
   ],
 
   // Empty responses
@@ -264,6 +271,12 @@ export const handlers = {
     }),
     http.get('*/v1/runs/:runId/items', () => {
       return HttpResponse.json([], { status: 200 });
+    }),
+    http.get('*/v1/runs/:runId/artifacts/:artifactId/file', () => {
+      return new HttpResponse(new ArrayBuffer(0), {
+        status: 200,
+        headers: { 'Content-Type': 'application/octet-stream' },
+      });
     }),
   ],
 
@@ -293,6 +306,9 @@ export const handlers = {
     http.get('*/v1/runs/:runId/items', () => {
       return HttpResponse.json(mockResponses.error, { status: 404 });
     }),
+    http.get('*/v1/runs/:runId/artifacts/:artifactId/file', () => {
+      return HttpResponse.json(mockResponses.error, { status: 404 });
+    }),
   ],
 
   validationError: [
@@ -318,6 +334,9 @@ export const handlers = {
       return HttpResponse.json(mockResponses.validationError, { status: 422 });
     }),
     http.get('*/v1/runs/:runId/items', () => {
+      return HttpResponse.json(mockResponses.validationError, { status: 422 });
+    }),
+    http.get('*/v1/runs/:runId/artifacts/:artifactId/file', () => {
       return HttpResponse.json(mockResponses.validationError, { status: 422 });
     }),
   ],
@@ -347,6 +366,9 @@ export const handlers = {
     http.get('*/v1/runs/:runId/items', () => {
       return HttpResponse.json(mockResponses.error, { status: 500 });
     }),
+    http.get('*/v1/runs/:runId/artifacts/:artifactId/file', () => {
+      return HttpResponse.json(mockResponses.error, { status: 500 });
+    }),
   ],
 
   // Network error (connection failure)
@@ -373,6 +395,9 @@ export const handlers = {
       return HttpResponse.error();
     }),
     http.get('*/v1/runs/:runId/items', () => {
+      return HttpResponse.error();
+    }),
+    http.get('*/v1/runs/:runId/artifacts/:artifactId/file', () => {
       return HttpResponse.error();
     }),
   ],

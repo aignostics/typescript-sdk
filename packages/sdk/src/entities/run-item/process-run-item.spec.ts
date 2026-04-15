@@ -14,6 +14,7 @@ function buildItem(
     termination_reason: overrides.termination_reason ?? undefined,
     error_code: null,
     error_message: null,
+    input_artifacts: [],
     output_artifacts: [],
   } as ItemResultReadResponse;
 }

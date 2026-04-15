@@ -1,7 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { http, HttpResponse } from 'msw';
 import { PlatformSDKHttp } from './platform-sdk.js';
-import { AuthenticationError } from './errors.js';
-import { setMockScenario } from './test-utils/http-mocks.js';
+import { APIError, AuthenticationError } from './errors.js';
+import { setMockScenario, server } from './test-utils/http-mocks.js';
 import { ItemState, ItemTerminationReason } from './generated/api.js';
 
 describe('PlatformSDK', () => {
@@ -525,7 +526,6 @@ describe('PlatformSDK', () => {
         items: [],
       })
     ).rejects.toThrow(errorMessage);
-
     await expect(sdk.getRun('test-run-id')).rejects.toThrow(AuthenticationError);
     await expect(sdk.getRun('test-run-id')).rejects.toThrow(errorMessage);
 
@@ -534,5 +534,104 @@ describe('PlatformSDK', () => {
 
     await expect(sdk.listRunResults('test-run-id')).rejects.toThrow(AuthenticationError);
     await expect(sdk.listRunResults('test-run-id')).rejects.toThrow(errorMessage);
+  });
+
+  it('should download artifact successfully', async () => {
+    mockTokenProvider.mockResolvedValue('mocked-token');
+    setMockScenario('success');
+
+    const result = await sdk.downloadArtifact('test-run-id', 'test-artifact-id');
+    expect(result).toBeDefined();
+    expect(result.byteLength).toBe(8);
+  });
+
+  it('should handle download artifact failure', async () => {
+    mockTokenProvider.mockResolvedValue('mocked-token');
+    setMockScenario('notFoundError');
+
+    await expect(sdk.downloadArtifact('test-run-id', 'test-artifact-id')).rejects.toThrow(
+      'Resource not found: '
+    );
+  });
+
+  it('should handle no token for download artifact', async () => {
+    mockTokenProvider.mockResolvedValue(null);
+
+    await expect(sdk.downloadArtifact('test-run-id', 'test-artifact-id')).rejects.toThrow(
+      AuthenticationError
+    );
+  });
+
+  it('should retry on transient 500 error and succeed on second attempt', async () => {
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    let callCount = 0;
+    server.use(
+      http.get('*/v1/runs/:runId/artifacts/:artifactId/file', () => {
+        callCount++;
+        if (callCount === 1) {
+          return HttpResponse.json({}, { status: 500 });
+        }
+        return new HttpResponse(new ArrayBuffer(8), {
+          status: 200,
+          headers: { 'Content-Type': 'application/octet-stream' },
+        });
+      })
+    );
+
+    const result = await sdk.downloadArtifact('test-run-id', 'test-artifact-id');
+    expect(result.byteLength).toBe(8);
+    expect(callCount).toBe(2);
+  }, 10_000);
+
+  it('should not retry on 404 and make exactly one request', async () => {
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    let callCount = 0;
+    server.use(
+      http.get('*/v1/runs/:runId/artifacts/:artifactId/file', () => {
+        callCount++;
+        return HttpResponse.json({}, { status: 404 });
+      })
+    );
+
+    await expect(sdk.downloadArtifact('test-run-id', 'test-artifact-id')).rejects.toThrow(
+      'Resource not found:'
+    );
+    expect(callCount).toBe(1);
+  });
+
+  it('should throw APIError with 422 status when validation error occurs', async () => {
+    mockTokenProvider.mockResolvedValue('mocked-token');
+    setMockScenario('validationError');
+
+    await expect(sdk.listApplications()).rejects.toThrow(APIError);
+    await expect(sdk.listApplications()).rejects.toThrow('Validation error:');
+  });
+
+  it('should throw APIError with 403 status when access is forbidden', async () => {
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    server.use(
+      http.get('*/v1/applications', () => {
+        return HttpResponse.json({ detail: 'Forbidden' }, { status: 403 });
+      })
+    );
+
+    await expect(sdk.listApplications()).rejects.toThrow(APIError);
+    await expect(sdk.listApplications()).rejects.toThrow('Access forbidden:');
+  });
+
+  it('should throw APIError with 410 status when resource is gone', async () => {
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    server.use(
+      http.get('*/v1/runs/:runId', () => {
+        return HttpResponse.json({ detail: 'Gone' }, { status: 410 });
+      })
+    );
+
+    await expect(sdk.getRun('test-run-id')).rejects.toThrow(APIError);
+    await expect(sdk.getRun('test-run-id')).rejects.toThrow('Resource gone:');
   });
 });

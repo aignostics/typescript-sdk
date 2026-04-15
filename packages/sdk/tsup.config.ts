@@ -11,4 +11,5 @@ export default defineConfig({
   treeshake: true,
   outDir: 'dist',
   external: ['axios'],
+  noExternal: ['p-retry'],
 });
