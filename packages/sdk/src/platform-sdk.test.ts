@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { http, HttpResponse } from 'msw';
 import { PlatformSDKHttp } from './platform-sdk.js';
-import { AuthenticationError } from './errors.js';
+import { APIError, AuthenticationError } from './errors.js';
 import { setMockScenario, server } from './test-utils/http-mocks.js';
 import { ItemState, ItemTerminationReason } from './generated/api.js';
 
@@ -526,7 +526,6 @@ describe('PlatformSDK', () => {
         items: [],
       })
     ).rejects.toThrow(errorMessage);
-
     await expect(sdk.getRun('test-run-id')).rejects.toThrow(AuthenticationError);
     await expect(sdk.getRun('test-run-id')).rejects.toThrow(errorMessage);
 
@@ -600,5 +599,39 @@ describe('PlatformSDK', () => {
       'Resource not found:'
     );
     expect(callCount).toBe(1);
+  });
+
+  it('should throw APIError with 422 status when validation error occurs', async () => {
+    mockTokenProvider.mockResolvedValue('mocked-token');
+    setMockScenario('validationError');
+
+    await expect(sdk.listApplications()).rejects.toThrow(APIError);
+    await expect(sdk.listApplications()).rejects.toThrow('Validation error:');
+  });
+
+  it('should throw APIError with 403 status when access is forbidden', async () => {
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    server.use(
+      http.get('*/v1/applications', () => {
+        return HttpResponse.json({ detail: 'Forbidden' }, { status: 403 });
+      })
+    );
+
+    await expect(sdk.listApplications()).rejects.toThrow(APIError);
+    await expect(sdk.listApplications()).rejects.toThrow('Access forbidden:');
+  });
+
+  it('should throw APIError with 410 status when resource is gone', async () => {
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    server.use(
+      http.get('*/v1/runs/:runId', () => {
+        return HttpResponse.json({ detail: 'Gone' }, { status: 410 });
+      })
+    );
+
+    await expect(sdk.getRun('test-run-id')).rejects.toThrow(APIError);
+    await expect(sdk.getRun('test-run-id')).rejects.toThrow('Resource gone:');
   });
 });
