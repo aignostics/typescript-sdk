@@ -135,7 +135,7 @@ jobs:
 
   run-ketryx-report:
     needs: test
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/_report-to-ketryx.yml
     with:
       build-name: 'pre-release'
