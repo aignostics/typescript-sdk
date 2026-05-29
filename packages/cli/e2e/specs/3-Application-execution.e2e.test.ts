@@ -18,7 +18,7 @@ describe('SWR Application Execution access', async () => {
     const { stdout, exitCode } = await executeCLI([
       'create-run',
       'test-app',
-      '0.99.0',
+      '1.0.0',
       '--items',
       JSON.stringify(items),
     ]);

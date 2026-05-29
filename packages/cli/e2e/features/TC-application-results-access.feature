@@ -5,12 +5,12 @@ Feature: Application Results Access
 
   Background:
     Given I am authenticated as an admin
-    And application "test-app" exists with version "0.99.0"
+    And application "test-app" exists with version "1.0.0"
 
   @id:TC-RESULTS-RETRIEVE
   @tests:SWR-APP-RESULTS-RETRIEVE-ITEMS
   Scenario: Retrieve items and output artifacts for a run
-    Given I have a list of runs for "test-app" version "0.99.0"
+    Given I have a list of runs for "test-app" version "1.0.0"
     And I select the latest run ID from the list
     When I run the CLI command "list-run-results <run_id>"
     Then the exit code should be 0
@@ -21,7 +21,7 @@ Feature: Application Results Access
   @tests:SWR-APP-RESULTS-ITEM-STATUS
   @tests:SWR-APP-RESULTS-ARTIFACT-STATUS
   Scenario: View execution state and status details for items
-    Given I have a list of runs for "test-app" version "0.99.0"
+    Given I have a list of runs for "test-app" version "1.0.0"
     And I select the latest run ID from the list
     When I run the CLI command "list-run-results <run_id>"
     Then the exit code should be 0

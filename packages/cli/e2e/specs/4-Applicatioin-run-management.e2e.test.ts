@@ -14,7 +14,7 @@ describe('SWR Application Run management', () => {
       '--applicationId',
       'test-app',
       '--applicationVersion',
-      '0.99.0',
+      '1.0.0',
     ]);
 
     expect(exitCode).toBe(0);
@@ -39,7 +39,7 @@ describe('SWR Application Run management', () => {
       '--applicationId',
       'test-app',
       '--applicationVersion',
-      '0.99.0',
+      '1.0.0',
     ]);
 
     expect(exitCode).toBe(0);
@@ -74,7 +74,7 @@ describe('SWR Application Run management', () => {
       '--applicationId',
       'test-app',
       '--applicationVersion',
-      '0.99.0',
+      '1.0.0',
     ]);
 
     expect(exitCode).toBe(0);

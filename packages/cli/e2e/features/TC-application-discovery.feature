@@ -49,10 +49,10 @@ Feature: Application Discovery
   @id:TC-VERSION-DETAILS
   @tests:SWR-APP-DISCOVERY-VERSION-DETAILS
   Scenario: View specific application version details
-    When I run the CLI command "get-application-version-details test-app 0.99.0"
+    When I run the CLI command "get-application-version-details test-app 1.0.0"
     Then the exit code should be 0
-    And I should see "Application version details for test-app v0.99.0:" in the output
-    And the output should contain a JSON object with "version_number" equal to "0.99.0"
+    And I should see "Application version details for test-app v1.0.0:" in the output
+    And the output should contain a JSON object with "version_number" equal to "1.0.0"
     And the output should contain property "changelog"
     And the output should contain property "input_artifacts" as an array
 
