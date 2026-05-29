@@ -20,21 +20,21 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Download SDK test results
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
               continue-on-error: true
               with:
                 name: test-results-sdk
                 path: test-results/sdk/
             
             - name: Download CLI test results
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
               continue-on-error: true
               with:
                 name: test-results-cli
                 path: test-results/cli/
             
             - name: Report to Ketryx
-              uses: Ketryx/ketryx-github-action@v1.4.0
+              uses: Ketryx/ketryx-github-action@40b13ef68c772e96e58ec01a81f5b216d7710186 # v1.4.0
               with:
                 project: ${{ secrets.KETRYX_PROJECT }}
                 api-key: ${{ secrets.KETRYX_API_KEY }}
