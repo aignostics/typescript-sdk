@@ -60,8 +60,8 @@ jobs:
         run: npm run test:cli:e2e
         env:
           E2E_REFRESH_TOKEN: ${{ secrets.E2E_REFRESH_TOKEN }}
-          E2E_TEST_ENVIRONMENT: ${{ secrets.E2E_TEST_ENVIRONMENT }}
-          E2E_ADMIN_USER_EMAIL: ${{ secrets.E2E_ADMIN_USER_EMAIL }}
+          E2E_TEST_ENVIRONMENT: ${{ vars.E2E_TEST_ENVIRONMENT }}
+          E2E_ADMIN_USER_EMAIL: ${{ vars.E2E_ADMIN_USER_EMAIL }}
           E2E_ADMIN_USER_PASSWORD: ${{ secrets.E2E_ADMIN_USER_PASSWORD }}
 
       - name: Upload SDK test results
@@ -140,7 +140,6 @@ jobs:
     with:
       build-name: 'pre-release'
     secrets:
-      KETRYX_PROJECT: KXPRJ7NZ5C47Q0Q84FTG9AZ2T17N8J2 # not a secret
       KETRYX_API_KEY: ${{ secrets.KETRYX_API_KEY }}
 
   release:
