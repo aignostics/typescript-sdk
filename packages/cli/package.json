@@ -35,7 +35,7 @@
   "dependencies": {
     "@aignostics/sdk": "*",
     "@napi-rs/keyring": "^1.1.8",
-    "express": "^5.1.0",
+    "express": "^5.2.0",
     "open": "^10.2.0",
     "openid-client": "^5",
     "yargs": "^17.7.2",
