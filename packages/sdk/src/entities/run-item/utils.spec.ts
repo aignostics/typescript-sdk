@@ -49,10 +49,47 @@ describe('getItemStatus', () => {
     ).toBe('FAILED');
   });
 
+  it('should return FAILED when terminated with CANCELED_BY_SYSTEM', () => {
+    expect(
+      getItemStatus(
+        buildItem({
+          state: 'TERMINATED',
+          termination_reason: 'CANCELED_BY_SYSTEM' as ItemResultReadResponse['termination_reason'],
+        })
+      )
+    ).toBe('FAILED');
+  });
+
+  it('should return FAILED when terminated with CANCELED_BY_USER', () => {
+    expect(
+      getItemStatus(
+        buildItem({
+          state: 'TERMINATED',
+          termination_reason: 'CANCELED_BY_USER' as ItemResultReadResponse['termination_reason'],
+        })
+      )
+    ).toBe('FAILED');
+  });
+
   it('should return SKIPPED when terminated with SKIPPED', () => {
     expect(getItemStatus(buildItem({ state: 'TERMINATED', termination_reason: 'SKIPPED' }))).toBe(
       'SKIPPED'
     );
+  });
+
+  it('should return UNKNOWN when terminated with no termination reason', () => {
+    expect(getItemStatus(buildItem({ state: 'TERMINATED' }))).toBe('UNKNOWN');
+  });
+
+  it('should return UNKNOWN for an unrecognized termination reason', () => {
+    expect(
+      getItemStatus(
+        buildItem({
+          state: 'TERMINATED',
+          termination_reason: 'SOMETHING_ELSE' as ItemResultReadResponse['termination_reason'],
+        })
+      )
+    ).toBe('UNKNOWN');
   });
 });
 
@@ -87,5 +124,9 @@ describe('canDownloadItem', () => {
     expect(canDownloadItem(buildItem({ state: 'TERMINATED', termination_reason: 'SKIPPED' }))).toBe(
       false
     );
+  });
+
+  it('should return false for UNKNOWN items', () => {
+    expect(canDownloadItem(buildItem({ state: 'TERMINATED' }))).toBe(false);
   });
 });

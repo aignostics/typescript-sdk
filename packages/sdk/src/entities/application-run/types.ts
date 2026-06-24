@@ -23,4 +23,5 @@ export type RunStatus =
   | 'COMPLETED'
   | 'COMPLETED_WITH_ERRORS'
   | 'CANCELED'
-  | 'FAILED';
+  | 'FAILED'
+  | 'UNKNOWN';

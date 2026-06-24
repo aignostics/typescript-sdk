@@ -3,7 +3,7 @@ import { processApplicationRun } from './process-application-run.js';
 import type { RunReadResponse } from '../../generated/index.js';
 
 function buildRun(
-  overrides: Partial<Pick<RunReadResponse, 'state' | 'termination_reason'>> & {
+  overrides: Partial<Pick<RunReadResponse, 'state' | 'termination_reason' | 'output'>> & {
     statistics?: Partial<RunReadResponse['statistics']>;
   } = {}
 ): RunReadResponse {
@@ -12,7 +12,7 @@ function buildRun(
     application_id: 'app-1',
     version_number: '1.0.0',
     state: overrides.state ?? 'PENDING',
-    output: 'NONE',
+    output: overrides.output ?? 'NONE',
     termination_reason: overrides.termination_reason ?? null,
     error_code: null,
     error_message: null,
@@ -62,6 +62,7 @@ describe('processApplicationRun', () => {
     const raw = buildRun({
       state: 'TERMINATED',
       termination_reason: 'ALL_ITEMS_PROCESSED',
+      output: 'FULL',
       statistics: { item_count: 10, item_succeeded_count: 10 },
     });
     const result = processApplicationRun(raw);
@@ -75,6 +76,7 @@ describe('processApplicationRun', () => {
     const raw = buildRun({
       state: 'TERMINATED',
       termination_reason: 'ALL_ITEMS_PROCESSED',
+      output: 'PARTIAL',
       statistics: {
         item_count: 10,
         item_succeeded_count: 7,

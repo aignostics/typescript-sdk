@@ -7,7 +7,7 @@ import type { RunReadResponse } from '../../generated/index.js';
  * Only the fields used by the utility functions need to be realistic.
  */
 function buildRun(
-  overrides: Partial<Pick<RunReadResponse, 'state' | 'termination_reason'>> & {
+  overrides: Partial<Pick<RunReadResponse, 'state' | 'termination_reason' | 'output'>> & {
     statistics?: Partial<RunReadResponse['statistics']>;
   } = {}
 ): RunReadResponse {
@@ -16,7 +16,7 @@ function buildRun(
     application_id: 'app-1',
     version_number: '1.0.0',
     state: overrides.state ?? 'PENDING',
-    output: 'NONE',
+    output: overrides.output ?? 'NONE',
     termination_reason: overrides.termination_reason ?? null,
     error_code: null,
     error_message: null,
@@ -118,43 +118,74 @@ describe('getRunStatus', () => {
     expect(getRunStatus(run)).toBe('CANCELED');
   });
 
-  it('should return FAILED when terminated by system', () => {
+  it('should return FAILED when all items processed but output is NONE', () => {
     const run = buildRun({
       state: 'TERMINATED',
-      termination_reason: 'CANCELED_BY_SYSTEM',
+      termination_reason: 'ALL_ITEMS_PROCESSED',
+      output: 'NONE',
     });
     expect(getRunStatus(run)).toBe('FAILED');
   });
 
-  it('should return COMPLETED when all items succeeded', () => {
+  it('should return FAILED when canceled by system with no output', () => {
+    const run = buildRun({
+      state: 'TERMINATED',
+      termination_reason: 'CANCELED_BY_SYSTEM',
+      output: 'NONE',
+    });
+    expect(getRunStatus(run)).toBe('FAILED');
+  });
+
+  it('should return COMPLETED when all items processed and output is FULL', () => {
     const run = buildRun({
       state: 'TERMINATED',
       termination_reason: 'ALL_ITEMS_PROCESSED',
-      statistics: { item_count: 10, item_succeeded_count: 10 },
+      output: 'FULL',
     });
     expect(getRunStatus(run)).toBe('COMPLETED');
   });
 
-  it('should return COMPLETED_WITH_ERRORS when not all items succeeded', () => {
+  it('should return COMPLETED when canceled by system but output is FULL', () => {
+    const run = buildRun({
+      state: 'TERMINATED',
+      termination_reason: 'CANCELED_BY_SYSTEM',
+      output: 'FULL',
+    });
+    expect(getRunStatus(run)).toBe('COMPLETED');
+  });
+
+  it('should return COMPLETED_WITH_ERRORS when all items processed and output is PARTIAL', () => {
     const run = buildRun({
       state: 'TERMINATED',
       termination_reason: 'ALL_ITEMS_PROCESSED',
-      statistics: { item_count: 10, item_succeeded_count: 7 },
+      output: 'PARTIAL',
     });
     expect(getRunStatus(run)).toBe('COMPLETED_WITH_ERRORS');
   });
 
-  it('should return COMPLETED_WITH_ERRORS when some items had errors', () => {
+  it('should return COMPLETED_WITH_ERRORS when canceled by system with output PARTIAL', () => {
     const run = buildRun({
       state: 'TERMINATED',
-      termination_reason: 'ALL_ITEMS_PROCESSED',
-      statistics: {
-        item_count: 10,
-        item_succeeded_count: 8,
-        item_user_error_count: 2,
-      },
+      termination_reason: 'CANCELED_BY_SYSTEM',
+      output: 'PARTIAL',
     });
     expect(getRunStatus(run)).toBe('COMPLETED_WITH_ERRORS');
+  });
+
+  it('should return UNKNOWN when terminated with no termination reason', () => {
+    const run = buildRun({
+      state: 'TERMINATED',
+      termination_reason: null,
+    });
+    expect(getRunStatus(run)).toBe('UNKNOWN');
+  });
+
+  it('should return UNKNOWN for an unrecognized termination reason', () => {
+    const run = buildRun({
+      state: 'TERMINATED',
+      termination_reason: 'SOMETHING_ELSE' as RunReadResponse['termination_reason'],
+    });
+    expect(getRunStatus(run)).toBe('UNKNOWN');
   });
 });
 
@@ -181,6 +212,7 @@ describe('canDownloadRunItems', () => {
     const run = buildRun({
       state: 'TERMINATED',
       termination_reason: 'CANCELED_BY_SYSTEM',
+      output: 'NONE',
     });
     expect(canDownloadRunItems(run)).toBe(false);
   });
@@ -189,7 +221,7 @@ describe('canDownloadRunItems', () => {
     const run = buildRun({
       state: 'TERMINATED',
       termination_reason: 'ALL_ITEMS_PROCESSED',
-      statistics: { item_count: 5, item_succeeded_count: 5 },
+      output: 'FULL',
     });
     expect(canDownloadRunItems(run)).toBe(true);
   });
@@ -198,7 +230,15 @@ describe('canDownloadRunItems', () => {
     const run = buildRun({
       state: 'TERMINATED',
       termination_reason: 'ALL_ITEMS_PROCESSED',
-      statistics: { item_count: 5, item_succeeded_count: 3 },
+      output: 'PARTIAL',
+    });
+    expect(canDownloadRunItems(run)).toBe(true);
+  });
+
+  it('should return true for UNKNOWN runs', () => {
+    const run = buildRun({
+      state: 'TERMINATED',
+      termination_reason: null,
     });
     expect(canDownloadRunItems(run)).toBe(true);
   });

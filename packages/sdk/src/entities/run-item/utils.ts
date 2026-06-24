@@ -12,14 +12,24 @@ export const canDownloadItem = (item: ItemResultReadResponse): boolean => {
   return getItemStatus(item) === 'COMPLETED';
 };
 
+/** Termination reasons that mark a terminated item as FAILED. */
+const ERROR_TERMINATION_REASONS = new Set([
+  'CANCELED_BY_SYSTEM',
+  'CANCELED_BY_USER',
+  'SYSTEM_ERROR',
+  'USER_ERROR',
+]);
+
 /**
  * Derive a human-readable {@link ItemStatus} from the raw API `state` and `termination_reason`.
  *
  * Mapping rules:
  * - PENDING / PROCESSING → passed through as-is
- * - TERMINATED + SYSTEM_ERROR or USER_ERROR → FAILED
+ * - TERMINATED + no termination_reason → UNKNOWN
+ * - TERMINATED + an error reason (SYSTEM_ERROR, USER_ERROR, CANCELED_BY_SYSTEM, CANCELED_BY_USER) → FAILED
  * - TERMINATED + SKIPPED → SKIPPED
- * - TERMINATED (otherwise) → COMPLETED
+ * - TERMINATED + SUCCEEDED → COMPLETED
+ * - TERMINATED + any unrecognized reason → UNKNOWN
  *
  * @param item - Raw item response from the API
  */
@@ -31,14 +41,23 @@ export function getItemStatus(item: ItemResultReadResponse): ItemStatus {
     case 'PROCESSING':
       return 'PROCESSING';
     case 'TERMINATED':
-      // Items terminated due to errors are marked as FAILED
-      if (termination_reason === 'SYSTEM_ERROR' || termination_reason === 'USER_ERROR') {
+      if (!termination_reason) {
+        // tip: report to the sentry in the consumer
+        return 'UNKNOWN';
+      }
+      if (ERROR_TERMINATION_REASONS.has(termination_reason)) {
         return 'FAILED';
       }
-      // Explicitly skipped items get their own status
+
       if (termination_reason === 'SKIPPED') {
         return 'SKIPPED';
       }
-      return 'COMPLETED';
+
+      if (termination_reason === 'SUCCEEDED') {
+        return 'COMPLETED';
+      }
+
+      // tip: report to the sentry in the consumer
+      return 'UNKNOWN';
   }
 }
