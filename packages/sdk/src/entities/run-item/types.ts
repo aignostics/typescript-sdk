@@ -15,4 +15,4 @@ export interface ApplicationRunItem extends ItemResultReadResponse {
 }
 
 /** Derived item status that simplifies the raw `state` + `termination_reason` combination. */
-export type ItemStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | 'SKIPPED';
+export type ItemStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | 'SKIPPED' | 'UNKNOWN';

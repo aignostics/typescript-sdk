@@ -28,36 +28,49 @@ export function getRunProgress(run: RunReadResponse): number {
 }
 
 /**
- * Derive a human-readable {@link RunStatus} from the raw API `state` and `termination_reason`.
+ * Derive a human-readable {@link RunStatus} from the raw API `state`,
+ * `termination_reason`, and `output`.
  *
  * Mapping rules:
  * - PENDING / PROCESSING → passed through as-is
  * - TERMINATED + CANCELED_BY_USER → CANCELED
- * - TERMINATED + CANCELED_BY_SYSTEM → FAILED
- * - TERMINATED + not all items succeeded → COMPLETED_WITH_ERRORS
- * - TERMINATED + all items succeeded → COMPLETED
+ * - TERMINATED + CANCELED_BY_SYSTEM or ALL_ITEMS_PROCESSED → derived from `output`:
+ *     - NONE → FAILED (no items succeeded)
+ *     - PARTIAL → COMPLETED_WITH_ERRORS (some items succeeded)
+ *     - FULL → COMPLETED (all items succeeded)
+ *     - otherwise → UNKNOWN
+ * - any other termination reason, or non-terminal state, → UNKNOWN
  *
  * @param run - Raw run response from the API
  */
 export function getRunStatus(run: RunReadResponse): RunStatus {
-  const { state, statistics, termination_reason } = run;
+  const { state, termination_reason, output } = run;
   switch (state) {
     case 'PENDING':
       return 'PENDING';
     case 'PROCESSING':
       return 'PROCESSING';
     case 'TERMINATED':
-      if (termination_reason === 'CANCELED_BY_USER') {
-        return 'CANCELED';
+      switch (termination_reason) {
+        case 'CANCELED_BY_USER':
+          return 'CANCELED';
+        case 'CANCELED_BY_SYSTEM':
+        case 'ALL_ITEMS_PROCESSED':
+          switch (output) {
+            case 'NONE':
+              return 'FAILED';
+            case 'PARTIAL':
+              return 'COMPLETED_WITH_ERRORS';
+            case 'FULL':
+              return 'COMPLETED';
+            default:
+              return 'UNKNOWN';
+          }
+        default:
+          return 'UNKNOWN';
       }
-      if (termination_reason === 'CANCELED_BY_SYSTEM') {
-        return 'FAILED';
-      }
-      // If any items did not succeed, the run completed with errors
-      if (statistics.item_count !== statistics.item_succeeded_count) {
-        return 'COMPLETED_WITH_ERRORS';
-      }
-      return 'COMPLETED';
+    default:
+      return 'UNKNOWN';
   }
 }
 
