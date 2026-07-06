@@ -64,6 +64,14 @@ jobs:
           E2E_ADMIN_USER_EMAIL: ${{ vars.E2E_ADMIN_USER_EMAIL }}
           E2E_ADMIN_USER_PASSWORD: ${{ secrets.E2E_ADMIN_USER_PASSWORD }}
 
+      - name: Upload E2E auth failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: e2e-auth-diagnostics-${{ matrix.node-version }}
+          path: packages/cli/test-results/pkce-login-failure.*
+          if-no-files-found: ignore
+
       - name: Upload SDK test results
         if: matrix.node-version == '20.x'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
