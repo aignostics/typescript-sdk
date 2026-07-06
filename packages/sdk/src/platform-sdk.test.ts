@@ -601,6 +601,75 @@ describe('PlatformSDK', () => {
     expect(callCount).toBe(1);
   });
 
+  it('should download artifact as a stream successfully', async () => {
+    mockTokenProvider.mockResolvedValue('mocked-token');
+    setMockScenario('success');
+
+    const stream = await sdk.downloadArtifactStream('test-run-id', 'test-artifact-id');
+    expect(stream).toBeDefined();
+    expect(typeof stream.pipe).toBe('function');
+    expect(typeof stream[Symbol.asyncIterator]).toBe('function');
+
+    const chunks: Buffer[] = [];
+    for await (const chunk of stream as AsyncIterable<Buffer>) {
+      chunks.push(Buffer.from(chunk));
+    }
+    const buffer = Buffer.concat(chunks);
+    expect(buffer.length).toBe(8);
+  });
+
+  it('should not retry on 404 and make exactly one request for stream download', async () => {
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    let callCount = 0;
+    server.use(
+      http.get('*/v1/runs/:runId/artifacts/:artifactId/file', () => {
+        callCount++;
+        return HttpResponse.json({}, { status: 404 });
+      })
+    );
+
+    await expect(sdk.downloadArtifactStream('test-run-id', 'test-artifact-id')).rejects.toThrow(
+      'Resource not found:'
+    );
+    expect(callCount).toBe(1);
+  });
+
+  it('should handle no token for stream download artifact', async () => {
+    mockTokenProvider.mockResolvedValue(null);
+
+    await expect(sdk.downloadArtifactStream('test-run-id', 'test-artifact-id')).rejects.toThrow(
+      AuthenticationError
+    );
+  });
+
+  it('should retry on transient 500 error and succeed on second attempt for stream download', async () => {
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    let callCount = 0;
+    server.use(
+      http.get('*/v1/runs/:runId/artifacts/:artifactId/file', () => {
+        callCount++;
+        if (callCount === 1) {
+          return HttpResponse.json({}, { status: 500 });
+        }
+        return new HttpResponse(new ArrayBuffer(8), {
+          status: 200,
+          headers: { 'Content-Type': 'application/octet-stream' },
+        });
+      })
+    );
+
+    const stream = await sdk.downloadArtifactStream('test-run-id', 'test-artifact-id');
+    const chunks: Buffer[] = [];
+    for await (const chunk of stream as AsyncIterable<Buffer>) {
+      chunks.push(Buffer.from(chunk));
+    }
+    const buffer = Buffer.concat(chunks);
+    expect(buffer.length).toBe(8);
+    expect(callCount).toBe(2);
+  }, 10_000);
+
   it('should throw APIError with 422 status when validation error occurs', async () => {
     mockTokenProvider.mockResolvedValue('mocked-token');
     setMockScenario('validationError');
