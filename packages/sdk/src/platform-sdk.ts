@@ -17,6 +17,7 @@ import { ApplicationRun } from './entities/application-run/types.js';
 import { processRunItem } from './entities/run-item/process-run-item.js';
 import { ApplicationRunItem } from './entities/run-item/types.js';
 import { downloadWithRetry } from './utils/downloadWithRetry.js';
+import type { Readable } from 'node:stream';
 
 const validationErrorSchema = z.object({
   detail: z.array(
@@ -141,6 +142,7 @@ export interface PlatformSDK {
     version: string
   ): Promise<VersionReadResponse>;
   downloadArtifact(runId: string, artifactId: string): Promise<ArrayBuffer>;
+  downloadArtifactStream(runId: string, artifactId: string): Promise<Readable>;
 }
 /**
  * Main SDK class for interacting with the Aignostics Platform
@@ -685,6 +687,61 @@ export class PlatformSDKHttp implements PlatformSDK {
         [403, 404, 410, 422]
       );
       return response.data as ArrayBuffer;
+    } catch (error) {
+      handleRequestError(error);
+    }
+  }
+
+  /**
+   * Download an artifact file from a completed application run as a stream
+   *
+   * Prefer this method over `downloadArtifact` when downloading large (e.g. multi-gigabyte)
+   * artifacts: instead of buffering the entire file into memory before returning it, this
+   * method streams the artifact's bytes as they arrive, keeping memory usage low regardless
+   * of the artifact's size.
+   *
+   * The download is performed with automatic retries for transient failures.
+   * Non-retryable HTTP status codes (403, 404, 410, 422) will abort immediately.
+   *
+   * @param runId - The unique identifier of the application run
+   * @param artifactId - The unique identifier of the artifact to download
+   * @returns A promise that resolves to a Node.js `Readable` stream yielding the artifact's binary content
+   * @throws {AuthenticationError} If no valid authentication token is available
+   * @throws {APIError} If the API request fails (e.g., 403, 404, 410, 422, or other HTTP errors)
+   * @throws {UnexpectedError} If a non-HTTP error occurs
+   *
+   * @example
+   * ```typescript
+   * import { pipeline } from 'node:stream/promises';
+   * import { createWriteStream } from 'node:fs';
+   *
+   * const stream = await sdk.downloadArtifactStream('run-123', 'artifact-456');
+   * await pipeline(stream, createWriteStream('output.bin'));
+   * ```
+   *
+   * @remarks
+   * Retries only cover failures at the initial-request stage (a non-2xx status surfaced from
+   * the response headers before the body begins streaming). Once the response body has started
+   * streaming, a mid-stream connection drop CANNOT be retried by this method — the consumer must
+   * listen for the stream's `error` event and re-download if needed.
+   */
+  async downloadArtifactStream(runId: string, artifactId: string): Promise<Readable> {
+    const client = await this.#getClient();
+    try {
+      const response = await downloadWithRetry(
+        () =>
+          client.getArtifactUrlV1RunsRunIdArtifactsArtifactIdFileGet(
+            {
+              runId,
+              artifactId,
+            },
+            {
+              responseType: 'stream',
+            }
+          ),
+        [403, 404, 410, 422]
+      );
+      return response.data as Readable;
     } catch (error) {
       handleRequestError(error);
     }
