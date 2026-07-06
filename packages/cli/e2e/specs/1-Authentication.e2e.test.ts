@@ -1,7 +1,10 @@
 import { describe, it, expect } from 'vitest';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { executeCLI } from '../utils/command.js';
 import { FileSystemTokenStorage } from '../../src/utils/token-storage.js';
-import { chromium } from 'playwright';
+import { chromium, type Page } from 'playwright';
 
 const refreshToken = process.env.E2E_REFRESH_TOKEN || '';
 const environment = process.env.E2E_TEST_ENVIRONMENT || 'staging';
@@ -17,8 +20,37 @@ if (!adminEmail || !adminPassword) {
 }
 
 const PLAYWRIGHT_TIMEOUT = 10000;
+// The post-login redirect makes a full round-trip through Auth0 before landing
+// back on the local callback, which can take noticeably longer than a single
+// page interaction — give it more headroom (still well within PKCE_TEST_TIMEOUT).
+const POST_LOGIN_NAVIGATION_TIMEOUT = 30000;
 const PKCE_TEST_TIMEOUT = 60000;
 const INTERVAL_CHECK_TIMEOUT = 500;
+
+const DIAGNOSTICS_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../../test-results');
+
+/**
+ * On failure the raw error is just a navigation timeout, which hides *why* the
+ * login did not complete (wrong/rotated credentials, an added Auth0 consent or
+ * bot-detection screen, or genuine latency). Dump the current URL, a screenshot
+ * and the page HTML so a failing CI run carries the evidence to tell these apart.
+ * Best-effort: never let diagnostics capture mask the original failure.
+ */
+async function capturePageDiagnostics(page: Page, label: string): Promise<void> {
+  try {
+    const currentUrl = page.url();
+    console.error(`[e2e-diagnostics] ${label}: page still at ${currentUrl}`);
+
+    await mkdir(DIAGNOSTICS_DIR, { recursive: true });
+    const base = resolve(DIAGNOSTICS_DIR, label);
+    await page.screenshot({ path: `${base}.png`, fullPage: true }).catch(() => undefined);
+    const html = await page.content().catch(() => '<unavailable>');
+    await writeFile(`${base}.html`, html);
+    await writeFile(`${base}.url.txt`, currentUrl);
+  } catch (diagnosticError) {
+    console.error('[e2e-diagnostics] failed to capture diagnostics:', diagnosticError);
+  }
+}
 
 describe('Authentication', () => {
   it(
@@ -29,6 +61,7 @@ describe('Authentication', () => {
       await annotate('TC-AUTH-PKCE', 'id');
 
       const browser = await chromium.launch({ headless: true });
+      let page: Page | undefined;
       try {
         let authUrl = '';
 
@@ -67,7 +100,7 @@ describe('Authentication', () => {
 
         console.log('Auth URL:', authUrl);
 
-        const page = await browser.newPage();
+        page = await browser.newPage();
         await page.goto(authUrl);
 
         await page.waitForSelector('input[name="username"], input[type="email"]', {
@@ -81,15 +114,21 @@ describe('Authentication', () => {
         await continueButton.click();
 
         await page.waitForURL(/success|authorized|complete|localhost/, {
-          timeout: PLAYWRIGHT_TIMEOUT,
+          timeout: POST_LOGIN_NAVIGATION_TIMEOUT,
         });
 
         await page.close();
+        page = undefined;
 
         const result = await cliPromise;
 
         expect(result.exitCode).toBe(0);
         expect(result.stdout).toMatch(/🔑 You are now authenticated and can use the SDK./i);
+      } catch (error) {
+        if (page) {
+          await capturePageDiagnostics(page, 'pkce-login-failure');
+        }
+        throw error;
       } finally {
         await browser.close();
       }
