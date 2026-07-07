@@ -113,9 +113,28 @@ describe('Authentication', () => {
         const continueButton = page.getByRole('button', { name: 'Continue', exact: true });
         await continueButton.click();
 
-        await page.waitForURL(/success|authorized|complete|localhost/, {
-          timeout: POST_LOGIN_NAVIGATION_TIMEOUT,
-        });
+        const callbackUrl = /success|authorized|complete|localhost/;
+
+        // A brand-new user is shown a one-time Auth0 Forms "Complete your profile"
+        // prompt asking for a full name before the flow redirects to the callback.
+        // Race the redirect against that prompt: fill and submit it if it appears,
+        // otherwise (profile already provisioned) the redirect happens directly.
+        const fullNameInput = page.locator('input[name="full_name"]');
+        const reachedCallback = await Promise.race([
+          page.waitForURL(callbackUrl, { timeout: POST_LOGIN_NAVIGATION_TIMEOUT }).then(() => true),
+          fullNameInput
+            .waitFor({ state: 'visible', timeout: POST_LOGIN_NAVIGATION_TIMEOUT })
+            .then(() => false),
+        ]);
+
+        if (!reachedCallback) {
+          await fullNameInput.fill('E2E Test Admin');
+          await page.locator('button.af-nextButton').click();
+
+          await page.waitForURL(callbackUrl, {
+            timeout: POST_LOGIN_NAVIGATION_TIMEOUT,
+          });
+        }
 
         await page.close();
         page = undefined;
