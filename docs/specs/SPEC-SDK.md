@@ -186,7 +186,7 @@ const errorResponseSchema = z.union([validationErrorSchema, z.any()]);
 - Source: `src/generated/` (auto-generated from OpenAPI spec)
 - Generator: OpenAPI Generator v7.14.0 (Docker-based)
 - Spec URL: https://platform-staging.aignostics.com/api/v1/openapi.json
-- Update command: `nx codegen sdk`
+- Update command: `npm run codegen`
 - Generated files: PublicApi, request builders, response types, models
 
 ### 3.3 Data Structures

@@ -43,12 +43,12 @@ jobs:
         run: npm ci
 
       - name: Regenerate SDK client from vendored spec
-        run: npx nx codegen sdk
+        run: npm run codegen
 
       - name: Fail if committed client drifted from vendored spec
         run: |
           if ! git diff --exit-code packages/sdk/src/generated; then
-            echo "::error::packages/sdk/src/generated is out of sync with packages/sdk/openapi.json. Run 'nx codegen sdk' and commit the result."
+            echo "::error::packages/sdk/src/generated is out of sync with packages/sdk/openapi.json. Run 'npm run codegen' and commit the result."
             exit 1
           fi
 
@@ -73,7 +73,7 @@ jobs:
         run: npm ci
 
       - name: Build SDK package
-        run: npx nx build sdk
+        run: npm run build:sdk
 
       - name: Generate documentation
         run: npm run docs

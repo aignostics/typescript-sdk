@@ -2,29 +2,29 @@
 
 ## Project Overview
 
-This is an Nx monorepo containing TypeScript packages for the Aignostics Platform:
+This is a Turborepo monorepo containing TypeScript packages for the Aignostics Platform:
 
 - **SDK Package** (`packages/sdk/`): Core TypeScript SDK with auto-generated API clients
 - **CLI Package** (`packages/cli/`): Command-line interface for platform interaction
-- **Monorepo Structure**: Nx workspace with shared tooling and independent package publishing
+- **Monorepo Structure**: Turborepo workspace with shared tooling and independent package publishing
 
-## Key Nx Commands
+## Key npm Commands
 
 ### Multi-package Operations
 
 ```bash
-nx run-many -t build    # Build all packages
-nx run-many -t test     # Test all packages
-nx run-many -t lint     # Lint all packages
+npm run build    # Build all packages
+npm run test     # Test all packages
+npm run lint      # Lint all packages
 ```
 
 ### Single Package Operations
 
 ```bash
-nx build sdk           # Build only SDK package
-nx test cli            # Test only CLI package
-nx codegen sdk         # Regenerate OpenAPI client from the vendored spec
-nx update-spec sdk     # Fetch latest spec from the Platform API, then codegen
+npm run build:sdk    # Build only SDK package
+npm run test:cli     # Test only CLI package
+npm run codegen      # Regenerate OpenAPI client from the vendored spec
+npm run update-spec  # Fetch latest spec from the Platform API, then codegen
 ```
 
 ## SDK Package Details
@@ -34,8 +34,8 @@ nx update-spec sdk     # Fetch latest spec from the Platform API, then codegen
 - **Generated files**: `packages/sdk/src/generated/` (committed to the repo, see
   [docs/adr/0002-commit-generated-openapi-client.md](../docs/adr/0002-commit-generated-openapi-client.md))
 - **Vendored spec**: `packages/sdk/openapi.json` — the source of truth `codegen` generates from (no network)
-- **`nx codegen sdk`**: Docker-based generation from the vendored spec; run and commit after editing `openapi.json`
-- **`nx update-spec sdk`**: fetches a fresh spec from the live Platform API, overwrites `openapi.json`, then runs `codegen` — never fetch without regenerating
+- **`npm run codegen`**: Docker-based generation from the vendored spec; run and commit after editing `openapi.json`
+- **`npm run update-spec`**: fetches a fresh spec from the live Platform API, overwrites `openapi.json`, then runs `codegen` — never fetch without regenerating
 - **CI drift check**: the `check-generated` job regenerates from the vendored spec and fails the build if `src/generated/` doesn't match — gates `release`
 - **Never edit**: Files in `src/generated/` are automatically overwritten; never hand-format them (excluded from Prettier/ESLint) or the drift check will fail
 

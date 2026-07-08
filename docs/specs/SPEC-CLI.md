@@ -417,7 +417,7 @@ packages/cli/src/
 
 ### 4.4 Dependencies Management
 **Production Dependencies**:
-- @aignostics/sdk: Internal monorepo dependency (linked via Nx)
+- @aignostics/sdk: Internal monorepo dependency (linked via Turborepo)
 - External dependencies managed via package.json with caret (^) versioning
 - Native modules (@napi-rs/keyring) include pre-built binaries for major platforms
 

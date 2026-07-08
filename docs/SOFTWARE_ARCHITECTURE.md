@@ -71,7 +71,7 @@ The Aignostics TypeScript SDK Repository provides TypeScript developers with too
 | **OpenAPI Specification** | External dependency from Platform API (staging endpoint) |
 | **Docker** | Required for OpenAPI code generation (v7.14.0) |
 | **npm Registry** | Packages published to public npm registry |
-| **Nx** | Workspace orchestration and build caching |
+| **Turborepo** | Workspace orchestration and build caching |
 
 ### 2.2 Organizational Constraints
 
@@ -156,7 +156,7 @@ graph TB
     subgraph "Build Pipeline"
         CODEGEN[OpenAPI Generator]
         TSUP[tsup Bundler]
-        NX[Nx Orchestrator]
+        TURBO[Turborepo Orchestrator]
     end
     
     CODEGEN -->|generates| SDK_GEN
@@ -166,7 +166,7 @@ graph TB
     CLI_CMDS -->|uses| CLI_AUTH
     CLI_BIN -->|invokes| CLI_CMDS
     
-    NX -->|coordinates| TSUP
+    TURBO -->|coordinates| TSUP
     TSUP -->|bundles| SDK_MAIN
     TSUP -->|bundles| CLI_BIN
 ```
@@ -179,7 +179,7 @@ graph TB
 
 | Decision | Rationale |
 |----------|-----------|
-| **Nx Workspace** | Enables independent package publishing with shared tooling |
+| **Turborepo Workspace** | Enables independent package publishing with shared tooling |
 | **OpenAPI Code Generation** | Maintains API contract alignment, reduces manual coding |
 | **Wrapper Pattern** | Abstracts generated code, provides simplified API |
 | **Token Provider Pattern** | Enables dynamic token refresh without SDK reinitialization |
@@ -218,7 +218,7 @@ graph TB
     end
     
     subgraph "Shared Infrastructure"
-        NX_CONFIG[nx.json]
+        TURBO_CONFIG[turbo.json]
         VITEST[vitest.setup.ts]
         TSCONFIG[tsconfig.base.json]
         ESLINT[eslint.config.mjs]
@@ -226,8 +226,8 @@ graph TB
     end
     
     CLI -->|depends on| SDK
-    SDK -.->|uses config| NX_CONFIG
-    CLI -.->|uses config| NX_CONFIG
+    SDK -.->|uses config| TURBO_CONFIG
+    CLI -.->|uses config| TURBO_CONFIG
     SDK -.->|uses| VITEST
     CLI -.->|uses| VITEST
     SDK -.->|extends| TSCONFIG
@@ -540,7 +540,7 @@ sequenceDiagram
 graph TB
     subgraph "Development Environment"
         CODE[Source Code]
-        NX[Nx Build]
+        TURBO[Turborepo Build]
         TSUP[tsup Bundler]
     end
     
@@ -559,8 +559,8 @@ graph TB
         TERMINAL[Command Line]
     end
     
-    CODE -->|nx build sdk| NX
-    NX -->|tsup| TSUP
+    CODE -->|npm run build:sdk| TURBO
+    TURBO -->|tsup| TSUP
     TSUP -->|generates| SDK_DIST
     TSUP -->|generates| CLI_DIST
     
@@ -625,13 +625,13 @@ graph LR
     end
     
     subgraph "Local Development"
-        CMD[nx codegen sdk]
+        CMD[npm run codegen]
         DOCKER[Docker Container<br/>openapi-generator-cli:v7.14.0]
         GEN[packages/sdk/src/generated/]
     end
     
     subgraph "Build Process"
-        BUILD[nx build sdk]
+        BUILD[npm run build:sdk]
         DIST[packages/sdk/dist/]
     end
     
@@ -807,7 +807,7 @@ graph LR
     BUILD --> PUBLISH
 ```
 
-**Nx Build Graph:**
+**Turborepo Build Graph:**
 - `sdk:codegen` → `sdk:build` → `cli:build`
 - Build cache enabled for faster rebuilds
 - Parallel test execution
@@ -912,7 +912,7 @@ graph LR
 
 **Context:** SDK and CLI are related but serve different users.
 
-**Decision:** Use Nx workspace for TypeScript SDK repository with independent package versions.
+**Decision:** Use Turborepo workspace for TypeScript SDK repository with independent package versions.
 
 **Rationale:**
 - Shared tooling (linting, testing, type checking)
@@ -970,7 +970,7 @@ Quality
 │   ├── Comprehensive documentation
 │   └── Conventional commits
 └── Performance (Lower Priority)
-    ├── Build caching (Nx)
+    ├── Build caching (Turborepo)
     ├── Per-request client creation
     └── Reasonable timeout defaults
 ```
@@ -1049,12 +1049,12 @@ Quality
 | **Token Provider** | Async function that returns current access token |
 | **PKCE** | Proof Key for Code Exchange (OAuth security extension) |
 | **MSW** | Mock Service Worker (HTTP mocking library) |
-| **Nx** | Build system and task orchestrator for typescript sdk monorepo |
+| **Turborepo** | Build system and task orchestrator for typescript sdk monorepo |
 | **Arc42** | Documentation template for software architecture |
 
 ## Appendix B: References
 
-- [Nx Documentation](https://nx.dev)
+- [Turborepo Documentation](https://turborepo.com/docs)
 - [OpenAPI Generator](https://openapi-generator.tech)
 - [Arc42 Template](https://arc42.org)
 - [OAuth 2.0 PKCE](https://oauth.net/2/pkce/)
