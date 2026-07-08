@@ -1,12 +1,12 @@
 # Commit the generated OpenAPI client, vendor the spec, verify with a drift check
 
 The SDK's generated API client (`packages/sdk/src/generated/`) was git-ignored
-and regenerated on every build via `nx codegen sdk` (Docker-based
+and regenerated on every build via `npm run codegen` (Docker-based
 `openapi-generator`, generating directly against a live staging URL). This made
 the built client invisible in PRs, unbuildable without Docker + network, and
 non-deterministic (the client depended on whatever staging served at build
 time). We now **commit the generated client** so it's reviewable in PRs and a
-fresh clone builds with `npm ci && nx build sdk` alone — no Docker, no network,
+fresh clone builds with `npm ci && npm run build:sdk` alone — no Docker, no network,
 no codegen on the build path (the `codegen → build` `dependsOn` edge is
 removed).
 
@@ -32,7 +32,7 @@ output is committed verbatim (including its own `.gitignore`, `.openapi-generato
 ## Consequences
 
 - Editing `openapi.json` (or the spec upstream) no longer affects a build until
-  someone runs `nx codegen sdk` / `update-spec` and commits the result;
+  someone runs `npm run codegen` / `update-spec` and commits the result;
   regeneration is now an explicit, deliberate act. The drift check catches
   anyone who forgets.
 - CI's normal build/test/release path no longer needs Docker or the generator;

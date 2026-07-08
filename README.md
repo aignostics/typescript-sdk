@@ -96,19 +96,19 @@ npm install
 npm run build
 ```
 
-### Nx Commands
+### npm Commands
 
 ```bash
 # Build all packages
-nx run-many -t build
+npm run build
 
 # Test all packages
-nx run-many -t test
+npm run test
 
 # Work with individual packages
-nx build sdk           # Build only SDK
-nx test cli           # Test only CLI
-nx codegen sdk        # Generate OpenAPI client
+npm run build:sdk # Build only SDK
+npm run test:cli  # Test only CLI
+npm run codegen   # Generate OpenAPI client
 ```
 
 ### Available Scripts

@@ -4,8 +4,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Nx
-.nx/
+# Turborepo
+.turbo/
 
 # Build outputs
 dist/
@@ -37,7 +37,7 @@ logs/
 # Generated code
 # NOTE: packages/sdk/src/generated/ is intentionally committed (see
 # docs/adr/0002-commit-generated-openapi-client.md). Regenerate with
-# `nx codegen sdk`; refresh the vendored spec with `nx update-spec sdk`.
+# `npm run codegen`; refresh the vendored spec with `npm run update-spec`.
 test-results/
 
 # Environment variables
