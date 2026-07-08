@@ -812,11 +812,11 @@ graph LR
 - Build cache enabled for faster rebuilds
 - Parallel test execution
 
-**Semantic Release:**
+**Release Please:**
 - Conventional commits analyzed
-- Version bumped automatically
-- Changelog generated
-- Git tags created
+- Release PR opened per package (`sdk`, `cli`), kept up to date as commits land
+- Version bumped, `CHANGELOG.md` generated, and `package.json` updated on PR merge
+- Git tags and GitHub Releases created (independent package versions)
 - npm publish (independent package versions)
 
 ---
