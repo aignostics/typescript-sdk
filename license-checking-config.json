@@ -21,6 +21,9 @@
     "(BSD-2-Clause OR MIT OR Apache-2.0)",
     "(MIT AND CC-BY-3.0)"
   ],
+  "allowedPackages": [
+    "@ltd/j-toml"
+  ],
   "prohibitedLicenses": [
     "AGPL-1.0",
     "AGPL-3.0",

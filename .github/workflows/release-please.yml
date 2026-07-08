@@ -1,0 +1,106 @@
+name: Release Please
+
+permissions: {}
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release-please:
+    permissions:
+      contents: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    outputs:
+      sdk-release-created: ${{ steps.release.outputs['packages/sdk--release_created'] }}
+      sdk-tag-name: ${{ steps.release.outputs['packages/sdk--tag_name'] }}
+      cli-release-created: ${{ steps.release.outputs['packages/cli--release_created'] }}
+      cli-tag-name: ${{ steps.release.outputs['packages/cli--tag_name'] }}
+
+    steps:
+      - name: Run release-please
+        id: release
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  gate:
+    permissions:
+      contents: write
+    needs: release-please
+    if: needs.release-please.outputs.sdk-release-created == 'true' || needs.release-please.outputs.cli-release-created == 'true'
+    uses: ./.github/workflows/ci-cd.yml
+    secrets: inherit
+
+  publish-sdk:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    needs: [release-please, gate]
+    if: needs.release-please.outputs.sdk-release-created == 'true'
+    environment:
+      name: production
+      url: https://github.com/aignostics/typescript-sdk/releases/tag/${{ needs.release-please.outputs.sdk-tag-name }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ needs.release-please.outputs.sdk-tag-name }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22.x'
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build SDK
+        run: npx nx build sdk
+
+      - name: Publish SDK to npm
+        working-directory: packages/sdk
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  publish-cli:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    needs: [release-please, gate]
+    if: needs.release-please.outputs.cli-release-created == 'true'
+    environment:
+      name: production
+      url: https://github.com/aignostics/typescript-sdk/releases/tag/${{ needs.release-please.outputs.cli-tag-name }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ needs.release-please.outputs.cli-tag-name }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22.x'
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build CLI
+        run: npx nx build cli
+
+      - name: Publish CLI to npm
+        working-directory: packages/cli
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

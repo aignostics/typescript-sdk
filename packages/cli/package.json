@@ -33,7 +33,7 @@
   "author": "Aignostics",
   "license": "MIT",
   "dependencies": {
-    "@aignostics/sdk": "*",
+    "@aignostics/sdk": "^3.6.1",
     "@napi-rs/keyring": "^1.1.8",
     "express": "^5.2.0",
     "open": "^10.2.0",
