@@ -23,17 +23,21 @@ nx run-many -t lint     # Lint all packages
 ```bash
 nx build sdk           # Build only SDK package
 nx test cli            # Test only CLI package
-nx codegen sdk         # Generate OpenAPI client for SDK
+nx codegen sdk         # Regenerate OpenAPI client from the vendored spec
+nx update-spec sdk     # Fetch latest spec from the Platform API, then codegen
 ```
 
 ## SDK Package Details
 
 ### OpenAPI Code Generation
 
-- **Generated files**: `packages/sdk/src/generated/` (auto-generated, git-ignored)
-- **Source spec**: External OpenAPI JSON from Python SDK repository
-- **Command**: `nx codegen sdk` - runs Docker-based generation
-- **Never edit**: Files in `src/generated/` are automatically overwritten
+- **Generated files**: `packages/sdk/src/generated/` (committed to the repo, see
+  [docs/adr/0002-commit-generated-openapi-client.md](../docs/adr/0002-commit-generated-openapi-client.md))
+- **Vendored spec**: `packages/sdk/openapi.json` — the source of truth `codegen` generates from (no network)
+- **`nx codegen sdk`**: Docker-based generation from the vendored spec; run and commit after editing `openapi.json`
+- **`nx update-spec sdk`**: fetches a fresh spec from the live Platform API, overwrites `openapi.json`, then runs `codegen` — never fetch without regenerating
+- **CI drift check**: the `check-generated` job regenerates from the vendored spec and fails the build if `src/generated/` doesn't match — gates `release`
+- **Never edit**: Files in `src/generated/` are automatically overwritten; never hand-format them (excluded from Prettier/ESLint) or the drift check will fail
 
 ### Core Architecture
 

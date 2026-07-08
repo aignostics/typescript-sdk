@@ -35,7 +35,9 @@ logs/
 *.log
 
 # Generated code
-packages/sdk/src/generated/
+# NOTE: packages/sdk/src/generated/ is intentionally committed (see
+# docs/adr/0002-commit-generated-openapi-client.md). Regenerate with
+# `nx codegen sdk`; refresh the vendored spec with `nx update-spec sdk`.
 test-results/
 
 # Environment variables
