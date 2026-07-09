@@ -4,7 +4,7 @@
   "description": "Monorepo for Aignostics Platform TypeScript SDK and CLI",
   "type": "module",
   "private": true,
-  "packageManager": "npm@10.8.2",
+  "packageManager": "npm@10.9.8",
   "workspaces": [
     "packages/*"
   ],
