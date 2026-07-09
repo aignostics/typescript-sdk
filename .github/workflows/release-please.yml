@@ -29,10 +29,10 @@ jobs:
 
   gate:
     permissions:
-      contents: write
+      contents: read
     needs: release-please
     if: needs.release-please.outputs.sdk-release-created == 'true' || needs.release-please.outputs.cli-release-created == 'true'
-    uses: ./.github/workflows/ci-cd.yml
+    uses: ./.github/workflows/_test.yml
     secrets: inherit
 
   publish-sdk:
