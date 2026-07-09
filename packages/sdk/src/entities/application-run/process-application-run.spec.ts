@@ -28,7 +28,7 @@ function buildRun(
       item_succeeded_count: 0,
       ...overrides.statistics,
     },
-  } as RunReadResponse;
+  };
 }
 
 describe('processApplicationRun', () => {

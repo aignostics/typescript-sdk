@@ -16,7 +16,7 @@ function buildItem(
     error_message: null,
     input_artifacts: [],
     output_artifacts: [],
-  } as ItemResultReadResponse;
+  };
 }
 
 describe('processRunItem', () => {
