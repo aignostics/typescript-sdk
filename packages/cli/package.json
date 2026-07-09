@@ -44,6 +44,7 @@
   "devDependencies": {
     "@types/express": "5.0.6",
     "@types/yargs": "17.0.35",
+    "dotenv": "17.4.2",
     "playwright": "1.61.1"
   },
   "engines": {
