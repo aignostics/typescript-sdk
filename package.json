@@ -53,7 +53,7 @@
   },
   "homepage": "https://github.com/aignostics/typescript-sdk#readme",
   "devDependencies": {
-    "@eslint/js": "9.31.0",
+    "@eslint/js": "9.39.4",
     "@faker-js/faker": "9.9.0",
     "@nx/eslint": "22.7.6",
     "@nx/js": "22.7.6",
@@ -63,7 +63,7 @@
     "@vitest/coverage-v8": "3.2.7",
     "@vitest/ui": "3.2.7",
     "chalk": "5.6.2",
-    "eslint": "9.31.0",
+    "eslint": "9.39.4",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.6",
     "execa": "9.6.1",
