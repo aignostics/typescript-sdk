@@ -183,7 +183,7 @@ jobs:
           fail_ci_if_error: false
 
       - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602 # v6.0.0
+        uses: SonarSource/sonarqube-scan-action@713881670b6b3676cda39549040e2d88c70d582e # v8.2.0
         with:
           args: >
             -Dsonar.javascript.lcov.reportPaths=packages/sdk/coverage/lcov.info,packages/cli/coverage/lcov.info
