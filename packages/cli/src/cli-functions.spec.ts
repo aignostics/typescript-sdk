@@ -1,16 +1,18 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from 'vitest';
 import {
   handleInfo,
   testApi,
   listApplications,
   getApplicationVersionDetails,
+  getApplicationDetails,
   listApplicationVersions,
   listApplicationRuns,
   getRun,
   cancelApplicationRun,
   listRunResults,
   createApplicationRun,
+  resolveItemsInput,
   handleLogin,
   handleLogout,
   handleStatus,
@@ -20,6 +22,10 @@ import { PlatformSDK, PlatformSDKHttp } from '@aignostics/sdk';
 import { AuthService, AuthState } from './utils/auth.js';
 import { startCallbackServer, waitForCallback } from './utils/oauth-callback-server.js';
 import crypto from 'crypto';
+import * as fs from 'fs';
+import { join } from 'path';
+import { tmpdir } from 'os';
+import { Readable } from 'stream';
 import { EnvironmentKey } from './utils/environment.js';
 
 // Mock external dependencies
@@ -212,6 +218,37 @@ describe('CLI Functions Unit Tests', () => {
 
       expect(consoleSpy.error).toHaveBeenCalledWith(
         '❌ Failed to get application version details:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('getApplicationDetails', () => {
+    it('should get application details successfully', async () => {
+      const applicationResponse = {
+        application_id: 'app1',
+        name: 'Test Application',
+        versions: [{ version_number: 'v1.0.0', created_at: '2023-01-01T00:00:00Z' }],
+      };
+      platformSDKMock.getApplication.mockResolvedValue(applicationResponse);
+
+      await getApplicationDetails('production', mockAuthService, 'app1');
+
+      expect(platformSDKMock.getApplication).toHaveBeenCalledWith('app1');
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Application details for app1:',
+        JSON.stringify(applicationResponse, null, 2)
+      );
+    });
+
+    it('should handle API error', async () => {
+      platformSDKMock.getApplication.mockRejectedValue(new Error('API error'));
+
+      await getApplicationDetails('production', mockAuthService, 'app1');
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to get application details:',
         expect.any(Error)
       );
       expect(mockExit).toHaveBeenCalledWith(1);
@@ -566,6 +603,72 @@ describe('CLI Functions Unit Tests', () => {
         expect.any(Error)
       );
       expect(mockExit).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('resolveItemsInput', () => {
+    let originalIsTTY: boolean | undefined;
+
+    beforeEach(() => {
+      originalIsTTY = process.stdin.isTTY;
+      process.stdin.isTTY = true;
+    });
+
+    afterEach(() => {
+      process.stdin.isTTY = originalIsTTY;
+    });
+
+    it('should prefer the inline items option', async () => {
+      const result = await resolveItemsInput({ items: '[{"a":1}]', itemsFile: '/tmp/items.json' });
+
+      expect(result).toBe('[{"a":1}]');
+    });
+
+    it('should read from the items file when no inline items are given', async () => {
+      const itemsFile = join(tmpdir(), `resolve-items-input-${Date.now()}.json`);
+      fs.writeFileSync(itemsFile, '[{"b":2}]');
+
+      try {
+        const result = await resolveItemsInput({ itemsFile });
+
+        expect(result).toBe('[{"b":2}]');
+      } finally {
+        fs.unlinkSync(itemsFile);
+      }
+    });
+
+    it('should default to an empty array when running interactively with no options', async () => {
+      const result = await resolveItemsInput({});
+
+      expect(result).toBe('[]');
+    });
+
+    it('should read items piped via stdin when no options are given', async () => {
+      const stdinStream = Readable.from([
+        Buffer.from('[{"c":3}]'),
+      ]) as unknown as typeof process.stdin;
+      stdinStream.isTTY = false;
+      const originalStdin = process.stdin;
+      process.stdin = stdinStream;
+
+      const result = await resolveItemsInput({});
+
+      expect(result).toBe('[{"c":3}]');
+
+      process.stdin = originalStdin;
+    });
+
+    it('should default to an empty array when stdin is piped but empty', async () => {
+      const stdinStream = Readable.from([]) as unknown as typeof process.stdin;
+      stdinStream.isTTY = false;
+      const originalStdin = process.stdin;
+      process.stdin = stdinStream;
+
+      const result = await resolveItemsInput({});
+
+      expect(result).toBe('[]');
+
+      process.stdin = originalStdin;
     });
   });
 

@@ -10,7 +10,8 @@ describe('SWR Application Run management', () => {
     await annotate('TC-RUN-LIST', 'id');
 
     const { stdout, exitCode } = await executeCLI([
-      'list-application-runs',
+      'runs',
+      'list',
       '--applicationId',
       'test-app',
       '--applicationVersion',
@@ -35,7 +36,8 @@ describe('SWR Application Run management', () => {
     await annotate('TC-RUN-DETAILS', 'id');
 
     const { stdout, exitCode } = await executeCLI([
-      'list-application-runs',
+      'runs',
+      'list',
       '--applicationId',
       'test-app',
       '--applicationVersion',
@@ -49,7 +51,8 @@ describe('SWR Application Run management', () => {
     const latestRunId = runs[0].run_id;
 
     const { stdout: runDetailsStdout, exitCode: runDetailsExitCode } = await executeCLI([
-      'get-run',
+      'runs',
+      'get',
       latestRunId,
     ]);
 
@@ -70,7 +73,8 @@ describe('SWR Application Run management', () => {
     await annotate('TC-RUN-CANCEL', 'id');
 
     const { stdout, exitCode } = await executeCLI([
-      'list-application-runs',
+      'runs',
+      'list',
       '--applicationId',
       'test-app',
       '--applicationVersion',
@@ -84,11 +88,12 @@ describe('SWR Application Run management', () => {
     const pendingRunId = runs.find(run => run.state === 'PENDING')?.run_id;
 
     if (!pendingRunId) {
-      console.warn('No PENDING runs found to cancel. Skipping cancel-run test.');
+      console.warn('No PENDING runs found to cancel. Skipping runs cancel test.');
       return;
     }
     const { stdout: cancelRunStdout, exitCode: cancelRunExitCode } = await executeCLI([
-      'cancel-run',
+      'runs',
+      'cancel',
       pendingRunId,
     ]);
 

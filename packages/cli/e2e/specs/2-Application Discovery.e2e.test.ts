@@ -23,7 +23,7 @@ describe('SWR Application List Retrieval', () => {
     await annotate('SWR-APP-DISCOVERY-LIST', 'tests');
     await annotate('TC-APP-LIST', 'id');
 
-    const { stdout, exitCode } = await executeCLI(['list-applications']);
+    const { stdout, exitCode } = await executeCLI(['applications', 'list']);
 
     expect(exitCode).toBe(0);
 
@@ -44,7 +44,7 @@ describe('SWR Application Details', () => {
     await annotate('SWR-APP-DISCOVERY-VERSION-DETAILS', 'tests');
     await annotate('TC-APP-DETAILS', 'id');
 
-    const { stdout, exitCode } = await executeCLI(['list-applications']);
+    const { stdout, exitCode } = await executeCLI(['applications', 'list']);
 
     expect(exitCode).toBe(0);
 
@@ -76,7 +76,7 @@ describe('SWR Version List Retrieval', () => {
     await annotate('SWR-APP-DISCOVERY-DETAILS', 'tests');
     await annotate('TC-VERSION-LIST', 'id');
 
-    const { stdout, exitCode } = await executeCLI(['list-application-versions', 'test-app']);
+    const { stdout, exitCode } = await executeCLI(['applications', 'versions', 'list', 'test-app']);
 
     expect(exitCode).toBe(0);
 
@@ -103,7 +103,7 @@ describe('SWR Version List Retrieval', () => {
   it('should return an error when the app does not exist', async ({ annotate }) => {
     await annotate('TC-VERSION-LIST-NOT-FOUND', 'id');
 
-    const { stderr } = await executeCLI(['list-application-versions', 'non-existent-app'], {
+    const { stderr } = await executeCLI(['applications', 'versions', 'list', 'non-existent-app'], {
       reject: false,
     });
 
@@ -118,7 +118,9 @@ describe('SWR Specific Version Details', () => {
     await annotate('TC-VERSION-DETAILS', 'id');
 
     const { stdout, exitCode } = await executeCLI([
-      'get-application-version-details',
+      'applications',
+      'versions',
+      'get',
       'test-app',
       '1.0.0',
     ]);
@@ -144,7 +146,7 @@ describe('SWR Specific Version Details', () => {
     await annotate('SWR-ERROR-COMM-CLASSIFICATION', 'tests');
     await annotate('TC-VERSION-DETAILS-NOT-FOUND', 'id');
 
-    const { stderr } = await executeCLI(['get-application-version-details', 'test-app', '2.0.0'], {
+    const { stderr } = await executeCLI(['applications', 'versions', 'get', 'test-app', '2.0.0'], {
       reject: false,
     });
     expect(stderr).toMatch(/API_ERROR/);

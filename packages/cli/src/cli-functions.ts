@@ -73,6 +73,25 @@ export async function getApplicationVersionDetails(
   }
 }
 
+export async function getApplicationDetails(
+  environment: EnvironmentKey,
+  authService: AuthService,
+  applicationId: string
+): Promise<void> {
+  const { endpoint } = environmentConfig[environment];
+  const sdk = new PlatformSDKHttp({
+    baseURL: endpoint,
+    tokenProvider: () => authService.getValidAccessToken(environment),
+  });
+  try {
+    const response = await sdk.getApplication(applicationId);
+    console.log(`Application details for ${applicationId}:`, JSON.stringify(response, null, 2));
+  } catch (error) {
+    console.error('❌ Failed to get application details:', error);
+    process.exit(1);
+  }
+}
+
 export async function listApplicationVersions(
   environment: EnvironmentKey,
   authService: AuthService,
@@ -187,6 +206,37 @@ export async function listRunResults(
     console.error('❌ Failed to list run results:', error);
     process.exit(1);
   }
+}
+
+/**
+ * Resolve the JSON string of items to submit for a run, from (in order of precedence):
+ * an inline `--items` value, an `--items-file` path, or piped stdin. Falls back to an
+ * empty array when none of these provide data.
+ */
+export async function resolveItemsInput(options: {
+  items?: string;
+  itemsFile?: string;
+}): Promise<string> {
+  if (options.items !== undefined) {
+    return options.items;
+  }
+
+  if (options.itemsFile !== undefined) {
+    return readFileSync(options.itemsFile, 'utf-8');
+  }
+
+  if (!process.stdin.isTTY) {
+    const chunks: Buffer[] = [];
+    for await (const chunk of process.stdin) {
+      chunks.push(chunk as Buffer);
+    }
+    const data = Buffer.concat(chunks).toString('utf-8').trim();
+    if (data) {
+      return data;
+    }
+  }
+
+  return '[]';
 }
 
 export async function createApplicationRun(

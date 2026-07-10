@@ -2,7 +2,7 @@ import { ApplicationVersion } from '@aignostics/sdk';
 import { executeCLI } from './command.js';
 
 export const getAppLatestVersion = async (applicationId: string) => {
-  const { stdout } = await executeCLI(['list-application-versions', applicationId]);
+  const { stdout } = await executeCLI(['applications', 'versions', 'list', applicationId]);
 
   // Parse the versions from the output
   const output = String(stdout);

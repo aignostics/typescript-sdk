@@ -3,6 +3,7 @@ import { main } from './cli.js';
 import { factories, handlers, server } from '@aignostics/sdk/test';
 import { http, HttpResponse } from 'msw';
 import { ZodError } from 'zod';
+import { Readable } from 'stream';
 
 // Mock process.exit to prevent test runner from exiting
 const mockExit = vi.fn();
@@ -54,10 +55,18 @@ describe('CLI Integration Tests', () => {
   };
 
   let originalArgv: string[];
+  let originalStdin: typeof process.stdin;
+  let originalStdinIsTTY: boolean | undefined;
 
   beforeEach(() => {
     // Store original argv
     originalArgv = process.argv;
+
+    // Simulate an interactive terminal by default so `runs create` doesn't
+    // try to read items from stdin (which would otherwise hang in tests).
+    originalStdin = process.stdin;
+    originalStdinIsTTY = process.stdin.isTTY;
+    process.stdin.isTTY = true;
 
     server.use(...handlers.success);
 
@@ -69,6 +78,10 @@ describe('CLI Integration Tests', () => {
   });
 
   afterEach(() => {
+    // Restore stdin
+    process.stdin = originalStdin;
+    process.stdin.isTTY = originalStdinIsTTY;
+
     // Restore original argv
     process.argv = originalArgv;
   });
@@ -96,13 +109,14 @@ describe('CLI Integration Tests', () => {
     });
   });
 
-  describe('list-applications command', () => {
+  describe('applications list command', () => {
     it('should list applications successfully', async () => {
       // Mock process.argv for yargs
       process.argv = [
         'node',
         'cli.js',
-        'list-applications',
+        'applications',
+        'list',
         '--endpoint',
         'https://api.example.com',
       ];
@@ -117,7 +131,55 @@ describe('CLI Integration Tests', () => {
     });
   });
 
-  describe('list-application-versions command', () => {
+  describe('applications get command', () => {
+    it('should get application details successfully', async () => {
+      const application = factories.application.build();
+      server.use(
+        http.get('*/v1/applications/:applicationId', () =>
+          HttpResponse.json(application, { status: 200 })
+        )
+      );
+      process.argv = [
+        'node',
+        'cli.js',
+        'applications',
+        'get',
+        application.application_id,
+        '--endpoint',
+        'https://api.example.com',
+      ];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        `Application details for ${application.application_id}:`,
+        expect.stringContaining(application.application_id)
+      );
+    });
+
+    it('should print error responses', async () => {
+      const application = factories.application.build();
+      server.use(http.get('*/v1/applications/:applicationId', () => HttpResponse.error()));
+      process.argv = [
+        'node',
+        'cli.js',
+        'applications',
+        'get',
+        application.application_id,
+        '--endpoint',
+        'https://api.example.com',
+      ];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        expect.stringContaining('❌ Failed to get application details:'),
+        expect.any(Error)
+      );
+    });
+  });
+
+  describe('applications versions list command', () => {
     it('should list application versions successfully', async () => {
       const application = factories.application.build();
       server.use(
@@ -129,7 +191,9 @@ describe('CLI Integration Tests', () => {
       process.argv = [
         'node',
         'cli.js',
-        'list-application-versions',
+        'applications',
+        'versions',
+        'list',
         application.application_id,
         '--endpoint',
         'https://api.example.com',
@@ -154,7 +218,9 @@ describe('CLI Integration Tests', () => {
       process.argv = [
         'node',
         'cli.js',
-        'list-application-versions',
+        'applications',
+        'versions',
+        'list',
         application.application_id,
         '--endpoint',
         'https://api.example.com',
@@ -169,7 +235,7 @@ describe('CLI Integration Tests', () => {
     });
   });
 
-  describe('get-application-version-details command', () => {
+  describe('applications versions get command', () => {
     it('should get application version details successfully', async () => {
       const application = factories.application.build();
       const version = application.versions[0];
@@ -183,7 +249,9 @@ describe('CLI Integration Tests', () => {
       process.argv = [
         'node',
         'cli.js',
-        'get-application-version-details',
+        'applications',
+        'versions',
+        'get',
         application.application_id,
         version.number,
         '--endpoint',
@@ -211,7 +279,9 @@ describe('CLI Integration Tests', () => {
       process.argv = [
         'node',
         'cli.js',
-        'get-application-version-details',
+        'applications',
+        'versions',
+        'get',
         application.application_id,
         version.number,
         '--endpoint',
@@ -227,7 +297,7 @@ describe('CLI Integration Tests', () => {
     });
 
     it('should require applicationId and versionNumber parameters', async () => {
-      process.argv = ['node', 'cli.js', 'get-application-version-details'];
+      process.argv = ['node', 'cli.js', 'applications', 'versions', 'get'];
 
       await main();
 
@@ -237,16 +307,10 @@ describe('CLI Integration Tests', () => {
     });
   });
 
-  describe('list-application-runs command', () => {
+  describe('runs list command', () => {
     it('should list application runs successfully', async () => {
       // Mock process.argv for yargs
-      process.argv = [
-        'node',
-        'cli.js',
-        'list-application-runs',
-        '--endpoint',
-        'https://api.example.com',
-      ];
+      process.argv = ['node', 'cli.js', 'runs', 'list', '--endpoint', 'https://api.example.com'];
 
       await main();
 
@@ -265,7 +329,8 @@ describe('CLI Integration Tests', () => {
       process.argv = [
         'node',
         'cli.js',
-        'list-application-runs',
+        'runs',
+        'list',
         '--applicationId',
         'app1',
         '--endpoint',
@@ -285,7 +350,8 @@ describe('CLI Integration Tests', () => {
       process.argv = [
         'node',
         'cli.js',
-        'list-application-runs',
+        'runs',
+        'list',
         '--applicationVersion',
         'v1.0.0',
         '--endpoint',
@@ -301,13 +367,14 @@ describe('CLI Integration Tests', () => {
     });
   });
 
-  describe('get-run command', () => {
+  describe('runs get command', () => {
     it('should get run details successfully', async () => {
       // Mock process.argv for yargs
       process.argv = [
         'node',
         'cli.js',
-        'get-run',
+        'runs',
+        'get',
         'run-1',
         '--endpoint',
         'https://api.example.com',
@@ -327,7 +394,7 @@ describe('CLI Integration Tests', () => {
 
     it('should require applicationRunId parameter', async () => {
       // Mock process.argv for yargs - missing applicationRunId
-      process.argv = ['node', 'cli.js', 'get-run'];
+      process.argv = ['node', 'cli.js', 'runs', 'get'];
 
       await main();
       expect(consoleSpy.error).toHaveBeenCalledWith(
@@ -336,13 +403,14 @@ describe('CLI Integration Tests', () => {
     });
   });
 
-  describe('cancel-run command', () => {
+  describe('runs cancel command', () => {
     it('should cancel run successfully', async () => {
       // Mock process.argv for yargs
       process.argv = [
         'node',
         'cli.js',
-        'cancel-run',
+        'runs',
+        'cancel',
         'run-1',
         '--endpoint',
         'https://api.example.com',
@@ -357,7 +425,7 @@ describe('CLI Integration Tests', () => {
 
     it('should require applicationRunId parameter', async () => {
       // Mock process.argv for yargs - missing applicationRunId
-      process.argv = ['node', 'cli.js', 'cancel-run'];
+      process.argv = ['node', 'cli.js', 'runs', 'cancel'];
 
       await main();
       expect(consoleSpy.error).toHaveBeenCalledWith(
@@ -366,13 +434,15 @@ describe('CLI Integration Tests', () => {
     });
   });
 
-  describe('list-run-results command', () => {
+  describe('runs results list command', () => {
     it('should list run results successfully', async () => {
       // Mock process.argv for yargs
       process.argv = [
         'node',
         'cli.js',
-        'list-run-results',
+        'runs',
+        'results',
+        'list',
         'run-1',
         '--endpoint',
         'https://api.example.com',
@@ -392,7 +462,7 @@ describe('CLI Integration Tests', () => {
 
     it('should require applicationRunId parameter', async () => {
       // Mock process.argv for yargs - missing applicationRunId
-      process.argv = ['node', 'cli.js', 'list-run-results'];
+      process.argv = ['node', 'cli.js', 'runs', 'results', 'list'];
 
       await main();
 
@@ -402,14 +472,16 @@ describe('CLI Integration Tests', () => {
     });
   });
 
-  describe('create-run command', () => {
+  describe('runs create command', () => {
     it('should create application run successfully with empty items', async () => {
       // Mock process.argv for yargs
       process.argv = [
         'node',
         'cli.js',
-        'create-run',
-        'test-app:v1.0.0',
+        'runs',
+        'create',
+        'test-app',
+        'v1.0.0',
         '--endpoint',
         'https://api.example.com',
         '--items',
@@ -429,8 +501,10 @@ describe('CLI Integration Tests', () => {
       process.argv = [
         'node',
         'cli.js',
-        'create-run',
-        'test-app:v1.0.0',
+        'runs',
+        'create',
+        'test-app',
+        'v1.0.0',
         '--endpoint',
         'https://api.example.com',
       ];
@@ -443,9 +517,9 @@ describe('CLI Integration Tests', () => {
       );
     });
 
-    it('should require applicationVersionId parameter', async () => {
-      // Mock process.argv for yargs - missing applicationVersionId
-      process.argv = ['node', 'cli.js', 'create-run'];
+    it('should require applicationId and versionNumber parameters', async () => {
+      // Mock process.argv for yargs - missing applicationId and versionNumber
+      process.argv = ['node', 'cli.js', 'runs', 'create'];
 
       await main();
       expect(consoleSpy.error).toHaveBeenCalledWith(
@@ -500,13 +574,14 @@ describe('CLI Integration Tests', () => {
     });
   });
 
-  describe('login command', () => {
+  describe('auth login command', () => {
     it('should login with refresh token when --refreshToken is provided', async () => {
       const refreshToken = 'test-refresh-token-12345';
 
       process.argv = [
         'node',
         'cli.js',
+        'auth',
         'login',
         '--refreshToken',
         refreshToken,
@@ -577,9 +652,9 @@ describe('CLI Integration Tests', () => {
     });
   });
 
-  describe('logout command', () => {
+  describe('auth logout command', () => {
     it('should logout successfully', async () => {
-      process.argv = ['node', 'cli.js', 'logout', '--environment', 'production'];
+      process.argv = ['node', 'cli.js', 'auth', 'logout', '--environment', 'production'];
 
       await main();
 
@@ -588,7 +663,7 @@ describe('CLI Integration Tests', () => {
     });
 
     it('should logout from staging environment', async () => {
-      process.argv = ['node', 'cli.js', 'logout', '--environment', 'staging'];
+      process.argv = ['node', 'cli.js', 'auth', 'logout', '--environment', 'staging'];
 
       await main();
 
@@ -597,9 +672,9 @@ describe('CLI Integration Tests', () => {
     });
   });
 
-  describe('status command', () => {
+  describe('auth status command', () => {
     it('should check authentication status successfully', async () => {
-      process.argv = ['node', 'cli.js', 'status', '--environment', 'production'];
+      process.argv = ['node', 'cli.js', 'auth', 'status', '--environment', 'production'];
 
       await main();
 
@@ -608,7 +683,7 @@ describe('CLI Integration Tests', () => {
     });
 
     it('should check status for staging environment', async () => {
-      process.argv = ['node', 'cli.js', 'status', '--environment', 'staging'];
+      process.argv = ['node', 'cli.js', 'auth', 'status', '--environment', 'staging'];
 
       await main();
 
@@ -617,9 +692,9 @@ describe('CLI Integration Tests', () => {
     });
   });
 
-  describe('login command without refresh token', () => {
+  describe('auth login command without refresh token', () => {
     it('should initiate login flow without refresh token', async () => {
-      process.argv = ['node', 'cli.js', 'login', '--environment', 'production'];
+      process.argv = ['node', 'cli.js', 'auth', 'login', '--environment', 'production'];
 
       await main();
 
@@ -628,7 +703,7 @@ describe('CLI Integration Tests', () => {
     });
 
     it('should login with staging environment', async () => {
-      process.argv = ['node', 'cli.js', 'login', '--environment', 'staging'];
+      process.argv = ['node', 'cli.js', 'auth', 'login', '--environment', 'staging'];
 
       await main();
 
@@ -636,9 +711,9 @@ describe('CLI Integration Tests', () => {
     });
   });
 
-  describe('list-application-runs with options', () => {
+  describe('runs list with options', () => {
     it('should support filtering by customMetadata', async () => {
-      process.argv = ['node', 'cli.js', 'list-application-runs', '--customMetadata', '$.key=value'];
+      process.argv = ['node', 'cli.js', 'runs', 'list', '--customMetadata', '$.key=value'];
 
       await main();
 
@@ -649,7 +724,7 @@ describe('CLI Integration Tests', () => {
     });
 
     it('should support sort option', async () => {
-      process.argv = ['node', 'cli.js', 'list-application-runs', '--sort', '["run_id"]'];
+      process.argv = ['node', 'cli.js', 'runs', 'list', '--sort', '["run_id"]'];
 
       await main();
 
@@ -663,7 +738,8 @@ describe('CLI Integration Tests', () => {
       process.argv = [
         'node',
         'cli.js',
-        'list-application-runs',
+        'runs',
+        'list',
         '--applicationId',
         'app1',
         '--applicationVersion',
@@ -681,12 +757,13 @@ describe('CLI Integration Tests', () => {
     });
   });
 
-  describe('create-run with items', () => {
+  describe('runs create with items', () => {
     it('should create application run with items', async () => {
       process.argv = [
         'node',
         'cli.js',
-        'create-run',
+        'runs',
+        'create',
         'test-app',
         'v1.0.0',
         '--items',
@@ -705,7 +782,8 @@ describe('CLI Integration Tests', () => {
       process.argv = [
         'node',
         'cli.js',
-        'create-run',
+        'runs',
+        'create',
         'test-app',
         'v1.0.0',
         '--items',
@@ -722,7 +800,8 @@ describe('CLI Integration Tests', () => {
       process.argv = [
         'node',
         'cli.js',
-        'create-run',
+        'runs',
+        'create',
         'test-app',
         'v1.0.0',
         '--items',
@@ -733,6 +812,42 @@ describe('CLI Integration Tests', () => {
 
       expect(consoleSpy.error).toHaveBeenCalledWith('❌ Invalid items JSON:', expect.any(Error));
       expect(mockExit).toHaveBeenCalledWith(1);
+    });
+
+    it('should reject combining --items and --items-file', async () => {
+      process.argv = [
+        'node',
+        'cli.js',
+        'runs',
+        'create',
+        'test-app',
+        'v1.0.0',
+        '--items',
+        '[]',
+        '--itemsFile',
+        './items.json',
+      ];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(expect.stringContaining('mutually exclusive'));
+    });
+
+    it('should create application run with items piped via stdin', async () => {
+      const stdinStream = Readable.from([
+        Buffer.from('[{"wsi_id": "wsi-456"}]'),
+      ]) as unknown as typeof process.stdin;
+      stdinStream.isTTY = false;
+      process.stdin = stdinStream;
+
+      process.argv = ['node', 'cli.js', 'runs', 'create', 'test-app', 'v1.0.0'];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        '✅ Application run created successfully:',
+        expect.stringContaining('run_id')
+      );
     });
   });
 
@@ -748,10 +863,10 @@ describe('CLI Integration Tests', () => {
       expect(mockExit).toHaveBeenCalledWith(1);
     });
 
-    it('should handle API errors for get-run', async () => {
+    it('should handle API errors for runs get', async () => {
       server.use(http.get('*/v1/runs/:runId', () => HttpResponse.error()));
 
-      process.argv = ['node', 'cli.js', 'get-run', 'run-1'];
+      process.argv = ['node', 'cli.js', 'runs', 'get', 'run-1'];
 
       await main();
 
@@ -759,10 +874,10 @@ describe('CLI Integration Tests', () => {
       expect(mockExit).toHaveBeenCalledWith(1);
     });
 
-    it('should handle API errors for cancel-run', async () => {
+    it('should handle API errors for runs cancel', async () => {
       server.use(http.post('*/v1/runs/:runId/cancel', () => HttpResponse.error()));
 
-      process.argv = ['node', 'cli.js', 'cancel-run', 'run-1'];
+      process.argv = ['node', 'cli.js', 'runs', 'cancel', 'run-1'];
 
       await main();
 
@@ -773,10 +888,10 @@ describe('CLI Integration Tests', () => {
       expect(mockExit).toHaveBeenCalledWith(1);
     });
 
-    it('should handle API errors for list-run-results', async () => {
+    it('should handle API errors for runs results list', async () => {
       server.use(http.get('*/v1/runs/:runId/items', () => HttpResponse.error()));
 
-      process.argv = ['node', 'cli.js', 'list-run-results', 'run-1'];
+      process.argv = ['node', 'cli.js', 'runs', 'results', 'list', 'run-1'];
 
       await main();
 
@@ -787,10 +902,10 @@ describe('CLI Integration Tests', () => {
       expect(mockExit).toHaveBeenCalledWith(1);
     });
 
-    it('should handle API errors for list-application-runs', async () => {
+    it('should handle API errors for runs list', async () => {
       server.use(http.get('*/v1/runs', () => HttpResponse.error()));
 
-      process.argv = ['node', 'cli.js', 'list-application-runs'];
+      process.argv = ['node', 'cli.js', 'runs', 'list'];
 
       await main();
 
@@ -801,10 +916,10 @@ describe('CLI Integration Tests', () => {
       expect(mockExit).toHaveBeenCalledWith(1);
     });
 
-    it('should handle API errors for create-run', async () => {
+    it('should handle API errors for runs create', async () => {
       server.use(http.post('*/v1/runs', () => HttpResponse.error()));
 
-      process.argv = ['node', 'cli.js', 'create-run', 'test-app', 'v1.0.0'];
+      process.argv = ['node', 'cli.js', 'runs', 'create', 'test-app', 'v1.0.0'];
 
       await main();
 

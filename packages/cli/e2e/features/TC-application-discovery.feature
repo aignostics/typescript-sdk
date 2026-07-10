@@ -9,7 +9,7 @@ Feature: Application Discovery
   @id:TC-APP-LIST
   @tests:SWR-APP-DISCOVERY-LIST
   Scenario: Retrieve all available applications
-    When I run the CLI command "list-applications"
+    When I run the CLI command "applications list"
     Then the exit code should be 0
     And I should see "Applications:" in the output
     And the output should contain a valid JSON array of applications
@@ -19,7 +19,7 @@ Feature: Application Discovery
   @id:TC-APP-DETAILS
   @tests:SWR-APP-DISCOVERY-VERSION-DETAILS
   Scenario: View application details including regulatory information
-    When I run the CLI command "list-applications"
+    When I run the CLI command "applications list"
     Then the exit code should be 0
     And the output should contain application "test-app"
     And application "test-app" should have property "application_id" with value "test-app"
@@ -31,7 +31,7 @@ Feature: Application Discovery
   @tests:SWR-APP-DISCOVERY-VERSION-LIST
   @tests:SWR-APP-DISCOVERY-DETAILS
   Scenario: Retrieve all versions for a specific application
-    When I run the CLI command "list-application-versions test-app"
+    When I run the CLI command "applications versions list test-app"
     Then the exit code should be 0
     And I should see "Application versions for test-app:" in the output
     And the output should contain a valid JSON array of versions
@@ -41,7 +41,7 @@ Feature: Application Discovery
   @id:TC-VERSION-LIST-NOT-FOUND
   @tests:SWR-APP-DISCOVERY-VERSION-LIST
   Scenario: Handle error when listing versions for non-existent application
-    When I run the CLI command "list-application-versions non-existent-app"
+    When I run the CLI command "applications versions list non-existent-app"
     Then I should see "API_ERROR" in stderr
     And I should see "application not found" in stderr
     And the exit code should not be 0
@@ -49,7 +49,7 @@ Feature: Application Discovery
   @id:TC-VERSION-DETAILS
   @tests:SWR-APP-DISCOVERY-VERSION-DETAILS
   Scenario: View specific application version details
-    When I run the CLI command "get-application-version-details test-app 1.0.0"
+    When I run the CLI command "applications versions get test-app 1.0.0"
     Then the exit code should be 0
     And I should see "Application version details for test-app v1.0.0:" in the output
     And the output should contain a JSON object with "version_number" equal to "1.0.0"
@@ -60,7 +60,7 @@ Feature: Application Discovery
   @tests:SWR-ERROR-COMM-DIAGNOSTIC-CONTEXT
   @tests:SWR-ERROR-COMM-CLASSIFICATION
   Scenario: Handle error when requesting non-existent version details
-    When I run the CLI command "get-application-version-details test-app 2.0.0"
+    When I run the CLI command "applications versions get test-app 2.0.0"
     Then I should see "API_ERROR" in stderr
     And I should see "Application version not found" in stderr
     And the exit code should not be 0

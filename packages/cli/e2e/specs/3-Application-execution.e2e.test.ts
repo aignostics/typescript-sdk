@@ -16,7 +16,8 @@ describe('SWR Application Execution access', async () => {
     const items = await generateInputArtifactsForTest('test-app', latestVersion, 2);
 
     const { stdout, exitCode } = await executeCLI([
-      'create-run',
+      'runs',
+      'create',
       'test-app',
       '1.0.0',
       '--items',
@@ -42,7 +43,7 @@ describe('SWR Application Execution access', async () => {
     const items = await generateInputArtifactsForTest('test-app', latestVersion, 2);
 
     const { stderr, exitCode } = await executeCLI(
-      ['create-run', 'test-app', '2.0.0', '--items', JSON.stringify(items)],
+      ['runs', 'create', 'test-app', '2.0.0', '--items', JSON.stringify(items)],
       { reject: false }
     );
 
@@ -58,7 +59,7 @@ describe('SWR Application Execution access', async () => {
     await annotate('SWR-ERROR-COMM-MESSAGES', 'tests');
     await annotate('TC-RUN-CREATE-MISSING-ARGS', 'id');
 
-    const { stderr } = await executeCLI(['create-run'], { reject: false });
+    const { stderr } = await executeCLI(['runs', 'create'], { reject: false });
     expect(stderr).toContain('❌ Not enough non-option arguments: got 0, need at least 2');
   });
 
@@ -68,7 +69,7 @@ describe('SWR Application Execution access', async () => {
     await annotate('TC-RUN-CREATE-INVALID-JSON', 'id');
 
     const { stderr } = await executeCLI(
-      ['create-run', 'test-app', latestVersion, '--items', 'invalid-json'],
+      ['runs', 'create', 'test-app', latestVersion, '--items', 'invalid-json'],
       { reject: false }
     );
     expect(stderr).toContain('❌ Invalid items JSON:');
