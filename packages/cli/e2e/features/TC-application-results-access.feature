@@ -12,7 +12,7 @@ Feature: Application Results Access
   Scenario: Retrieve items and output artifacts for a run
     Given I have a list of runs for "test-app" version "1.0.0"
     And I select the latest run ID from the list
-    When I run the CLI command "list-run-results <run_id>"
+    When I run the CLI command "runs results list <run_id>"
     Then the exit code should be 0
     And I should see "Run results for <run_id>:" in the output
     And the output should contain a valid JSON array of run results
@@ -23,7 +23,7 @@ Feature: Application Results Access
   Scenario: View execution state and status details for items
     Given I have a list of runs for "test-app" version "1.0.0"
     And I select the latest run ID from the list
-    When I run the CLI command "list-run-results <run_id>"
+    When I run the CLI command "runs results list <run_id>"
     Then the exit code should be 0
     And each result should have property "state"
     And each result should have property "termination_reason"
@@ -37,7 +37,7 @@ Feature: Application Results Access
   @tests:SWR-ERROR-COMM-MESSAGES
   @tests:SWR-ERROR-COMM-CLI-OUTPUT
   Scenario: Handle error when requesting results with invalid run ID
-    When I run the CLI command "list-run-results non-existent-run-id"
+    When I run the CLI command "runs results list non-existent-run-id"
     Then I should see "API_ERROR" in stderr
     And I should see "Validation error" in stderr
     And the exit code should not be 0

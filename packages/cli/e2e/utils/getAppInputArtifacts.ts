@@ -188,7 +188,7 @@ const generateMetadataFromSchema = (
 };
 
 export const getAppInputArtifacts = async (applicationId: string, version: string) => {
-  const { stdout } = await executeCLI(['get-application-version-details', applicationId, version]);
+  const { stdout } = await executeCLI(['applications', 'versions', 'get', applicationId, version]);
 
   // Match the JSON object after the prefix
   const detailsMatch = String(stdout).match(

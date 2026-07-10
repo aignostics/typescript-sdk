@@ -8,12 +8,12 @@ export async function setup() {
   }
 
   console.log('🔐 Logging in...');
-  await executeCLI(['login', '--refreshToken', refreshToken]);
+  await executeCLI(['auth', 'login', '--refreshToken', refreshToken]);
   console.log('✅ Logged in.');
 
   return async () => {
     console.log('🔓 Logging out...');
-    await executeCLI(['logout']);
+    await executeCLI(['auth', 'logout']);
     console.log('✅ Logged out.');
   };
 }

@@ -10,7 +10,8 @@ describe('Application Results Access', () => {
     await annotate('TC-RESULTS-RETRIEVE', 'id');
 
     const { stdout, exitCode } = await executeCLI([
-      'list-application-runs',
+      'runs',
+      'list',
       '--applicationId',
       'test-app',
       '--applicationVersion',
@@ -24,7 +25,9 @@ describe('Application Results Access', () => {
     const latestRunId = runs[0].run_id;
 
     const { stdout: runResultsStdout, exitCode: runResultsExitCode } = await executeCLI([
-      'list-run-results',
+      'runs',
+      'results',
+      'list',
       latestRunId,
     ]);
 
@@ -47,7 +50,8 @@ describe('Application Results Access', () => {
     await annotate('TC-RESULTS-STATUS', 'id');
 
     const { stdout, exitCode } = await executeCLI([
-      'list-application-runs',
+      'runs',
+      'list',
       '--applicationId',
       'test-app',
       '--applicationVersion',
@@ -61,7 +65,9 @@ describe('Application Results Access', () => {
     const latestRunId = runs[0].run_id;
 
     const { stdout: runResultsStdout, exitCode: runResultsExitCode } = await executeCLI([
-      'list-run-results',
+      'runs',
+      'results',
+      'list',
       latestRunId,
     ]);
 
@@ -95,9 +101,12 @@ describe('Application Results Access', () => {
     await annotate('SWR-ERROR-COMM-CLI-OUTPUT', 'tests');
     await annotate('TC-RESULTS-INVALID-UUID', 'id');
 
-    const { stderr, exitCode } = await executeCLI(['list-run-results', 'non-existent-run-id'], {
-      reject: false,
-    });
+    const { stderr, exitCode } = await executeCLI(
+      ['runs', 'results', 'list', 'non-existent-run-id'],
+      {
+        reject: false,
+      }
+    );
 
     // Verify error written to stderr
     expect(stderr).toMatch(/API_ERROR/);

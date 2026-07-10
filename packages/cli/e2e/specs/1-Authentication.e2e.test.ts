@@ -65,7 +65,7 @@ describe('Authentication', () => {
       try {
         let authUrl = '';
 
-        const cliPromise = executeCLI(['login']);
+        const cliPromise = executeCLI(['auth', 'login']);
 
         const dataHandler = (data: Buffer) => {
           const output = String(data);
@@ -160,7 +160,12 @@ describe('Authentication', () => {
     await annotate('SWR-AUTH-SECURE-STORAGE', 'tests');
     await annotate('TC-AUTH-TOKEN', 'id');
 
-    const { stdout: loginStdout } = await executeCLI(['login', '--refreshToken', refreshToken]);
+    const { stdout: loginStdout } = await executeCLI([
+      'auth',
+      'login',
+      '--refreshToken',
+      refreshToken,
+    ]);
     expect(loginStdout).toContain('🎉 Login with refresh token successful! Token saved securely.');
 
     const { stdout: testApiStdout } = await executeCLI(['test-api']);
@@ -208,7 +213,7 @@ describe('Authentication', () => {
 
     const data = await tokenStorage.load(environment);
 
-    await executeCLI(['logout'], { reject: false });
+    await executeCLI(['auth', 'logout'], { reject: false });
 
     const { stderr: testApiStderr } = await executeCLI(['test-api'], { reject: false });
 

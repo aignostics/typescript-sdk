@@ -8,12 +8,14 @@ import {
   handleInfo,
   testApi,
   listApplications,
+  getApplicationDetails,
   listApplicationVersions,
   listApplicationRuns,
   getRun,
   cancelApplicationRun,
   listRunResults,
   createApplicationRun,
+  resolveItemsInput,
   handleLogin,
   handleLogout,
   handleStatus,
@@ -56,184 +58,246 @@ export async function main() {
       }
     )
     .command(
-      'list-applications',
-      'List applications',
-      yargs => yargs,
-      argv => {
-        const env = environmentSchema.parse(argv.environment);
-        return listApplications(env, authService);
-      }
+      'applications',
+      'Manage applications',
+      appYargs =>
+        appYargs
+          .command(
+            'list',
+            'List applications',
+            yargs => yargs,
+            argv => {
+              const env = environmentSchema.parse(argv.environment);
+              return listApplications(env, authService);
+            }
+          )
+          .command(
+            'get <applicationId>',
+            'Get application details',
+            yargs =>
+              yargs.positional('applicationId', {
+                describe: 'Application ID to get details for',
+                type: 'string',
+                demandOption: true,
+              }),
+            argv => {
+              const env = environmentSchema.parse(argv.environment);
+              return getApplicationDetails(env, authService, argv.applicationId);
+            }
+          )
+          .command(
+            'versions',
+            'Manage application versions',
+            versionsYargs =>
+              versionsYargs
+                .command(
+                  'list <applicationId>',
+                  'List application versions',
+                  yargs =>
+                    yargs.positional('applicationId', {
+                      describe: 'Application ID',
+                      type: 'string',
+                      demandOption: true,
+                    }),
+                  argv => {
+                    const env = environmentSchema.parse(argv.environment);
+                    return listApplicationVersions(env, authService, argv.applicationId);
+                  }
+                )
+                .command(
+                  'get <applicationId> <versionNumber>',
+                  'Get application version details',
+                  yargs =>
+                    yargs
+                      .positional('applicationId', {
+                        describe: 'Application ID to get version details for',
+                        type: 'string',
+                        demandOption: true,
+                      })
+                      .positional('versionNumber', {
+                        describe: 'Version number of the application to get details for',
+                        type: 'string',
+                        demandOption: true,
+                      }),
+                  argv => {
+                    const env = environmentSchema.parse(argv.environment);
+                    return getApplicationVersionDetails(
+                      env,
+                      authService,
+                      argv.applicationId,
+                      argv.versionNumber
+                    );
+                  }
+                )
+                .demandCommand(1, 'You need at least one versions subcommand'),
+            () => undefined
+          )
+          .demandCommand(1, 'You need at least one applications subcommand'),
+      () => undefined
     )
     .command(
-      'list-application-versions <applicationId>',
-      'List application versions',
-      yargs =>
-        yargs.positional('applicationId', {
-          describe: 'Application ID',
-          type: 'string',
-          demandOption: true,
-        }),
-      argv => {
-        const env = environmentSchema.parse(argv.environment);
-        return listApplicationVersions(env, authService, argv.applicationId);
-      }
+      'runs',
+      'Manage application runs',
+      runsYargs =>
+        runsYargs
+          .command(
+            'create <applicationId> <versionNumber>',
+            'Create a new application run',
+            yargs =>
+              yargs
+                .positional('applicationId', {
+                  describe: 'Application ID to run',
+                  type: 'string',
+                  demandOption: true,
+                })
+                .positional('versionNumber', {
+                  describe: 'Version number of the application to run',
+                  type: 'string',
+                  demandOption: true,
+                })
+                .option('items', {
+                  describe: 'JSON string of items to process (array of objects)',
+                  type: 'string',
+                })
+                .option('itemsFile', {
+                  describe: 'Path to a JSON file containing the items to process',
+                  type: 'string',
+                })
+                .conflicts('items', 'itemsFile'),
+            async argv => {
+              const env = environmentSchema.parse(argv.environment);
+              const itemsJson = await resolveItemsInput({
+                items: argv.items,
+                itemsFile: argv.itemsFile,
+              });
+              return createApplicationRun(
+                env,
+                authService,
+                argv.applicationId,
+                argv.versionNumber,
+                itemsJson
+              );
+            }
+          )
+          .command(
+            'list',
+            'List application runs',
+            yargs =>
+              yargs
+                .option('applicationId', {
+                  describe: 'Filter by application ID',
+                  type: 'string',
+                })
+                .option('applicationVersion', {
+                  describe: 'Filter by application version',
+                  type: 'string',
+                })
+                .option('customMetadata', {
+                  describe: 'Filter by metadata key-value pairs (JSONPath string)',
+                  type: 'string',
+                })
+                .option('sort', {
+                  describe:
+                    'Sort by field (e.g., "run_id", "-status", "submitted_at"). Fields: run_id, application_version_id, organization_id, status, submitted_at, submitted_by.',
+                  type: 'string',
+                }),
+            argv => {
+              const env = environmentSchema.parse(argv.environment);
+              return listApplicationRuns(env, authService, {
+                applicationId: argv.applicationId,
+                applicationVersion: argv.applicationVersion,
+                customMetadata: argv.customMetadata,
+                sort: argv.sort,
+              });
+            }
+          )
+          .command(
+            'get <applicationRunId>',
+            'Get details of a specific application run',
+            yargs =>
+              yargs.positional('applicationRunId', {
+                describe: 'Application run ID to get details for',
+                type: 'string',
+                demandOption: true,
+              }),
+            argv => {
+              const env = environmentSchema.parse(argv.environment);
+              return getRun(env, authService, argv.applicationRunId);
+            }
+          )
+          .command(
+            'cancel <applicationRunId>',
+            'Cancel a specific application run',
+            yargs =>
+              yargs.positional('applicationRunId', {
+                describe: 'Application run ID to cancel',
+                type: 'string',
+                demandOption: true,
+              }),
+            argv => {
+              const env = environmentSchema.parse(argv.environment);
+              return cancelApplicationRun(env, authService, argv.applicationRunId);
+            }
+          )
+          .command(
+            'results',
+            'Manage application run results',
+            resultsYargs =>
+              resultsYargs
+                .command(
+                  'list <applicationRunId>',
+                  'List results for a specific application run',
+                  yargs =>
+                    yargs.positional('applicationRunId', {
+                      describe: 'Application run ID to get results for',
+                      type: 'string',
+                      demandOption: true,
+                    }),
+                  argv => {
+                    const env = environmentSchema.parse(argv.environment);
+                    return listRunResults(env, authService, argv.applicationRunId);
+                  }
+                )
+                .demandCommand(1, 'You need at least one results subcommand'),
+            () => undefined
+          )
+          .demandCommand(1, 'You need at least one runs subcommand'),
+      () => undefined
     )
     .command(
-      'get-application-version-details <applicationId> <versionNumber>',
-      'Get application version details',
-      yargs =>
-        yargs
-          .positional('applicationId', {
-            describe: 'Application ID to get version details for',
-            type: 'string',
-            demandOption: true,
+      'auth',
+      'Manage authentication',
+      authYargs =>
+        authYargs
+          .command(
+            'login',
+            'Login to the Aignostics Platform',
+            yargs =>
+              yargs.option('refreshToken', {
+                describe: 'Refresh token to use for login',
+                type: 'string',
+                demandOption: false,
+              }),
+            async argv => {
+              const env = environmentSchema.parse(argv.environment);
+              if (argv.refreshToken) {
+                await handleLoginWithRefreshToken(env, argv.refreshToken, authService);
+                return;
+              }
+              await handleLogin(env, authService);
+            }
+          )
+          .command('logout', 'Logout and remove stored token', {}, async argv => {
+            const env = environmentSchema.parse(argv.environment);
+            await handleLogout(env, authService);
           })
-          .positional('versionNumber', {
-            describe: 'Version number of the application to get details for',
-            type: 'string',
-            demandOption: true,
-          }),
-      argv => {
-        const env = environmentSchema.parse(argv.environment);
-        return getApplicationVersionDetails(
-          env,
-          authService,
-          argv.applicationId,
-          argv.versionNumber
-        );
-      }
-    )
-    .command(
-      'list-application-runs',
-      'List application runs',
-      yargs =>
-        yargs
-          .option('applicationId', {
-            describe: 'Filter by application ID',
-            type: 'string',
+          .command('status', 'Check authentication status', {}, async argv => {
+            const env = environmentSchema.parse(argv.environment);
+            await handleStatus(env, authService);
           })
-          .option('applicationVersion', {
-            describe: 'Filter by application version',
-            type: 'string',
-          })
-          .option('customMetadata', {
-            describe: 'Filter by metadata key-value pairs (JSONPath string)',
-            type: 'string',
-          })
-          .option('sort', {
-            describe:
-              'Sort by field (e.g., "run_id", "-status", "submitted_at"). Fields: run_id, application_version_id, organization_id, status, submitted_at, submitted_by.',
-            type: 'string',
-          }),
-      argv => {
-        const env = environmentSchema.parse(argv.environment);
-        return listApplicationRuns(env, authService, {
-          applicationId: argv.applicationId,
-          applicationVersion: argv.applicationVersion,
-          customMetadata: argv.customMetadata,
-          sort: argv.sort,
-        });
-      }
+          .demandCommand(1, 'You need at least one auth subcommand'),
+      () => undefined
     )
-    .command(
-      'get-run <applicationRunId>',
-      'Get details of a specific application run',
-      yargs =>
-        yargs.positional('applicationRunId', {
-          describe: 'Application run ID to get details for',
-          type: 'string',
-          demandOption: true,
-        }),
-      argv => {
-        const env = environmentSchema.parse(argv.environment);
-        return getRun(env, authService, argv.applicationRunId);
-      }
-    )
-    .command(
-      'cancel-run <applicationRunId>',
-      'Cancel a specific application run',
-      yargs =>
-        yargs.positional('applicationRunId', {
-          describe: 'Application run ID to cancel',
-          type: 'string',
-          demandOption: true,
-        }),
-      argv => {
-        const env = environmentSchema.parse(argv.environment);
-        return cancelApplicationRun(env, authService, argv.applicationRunId);
-      }
-    )
-    .command(
-      'list-run-results <applicationRunId>',
-      'List results for a specific application run',
-      yargs =>
-        yargs.positional('applicationRunId', {
-          describe: 'Application run ID to get results for',
-          type: 'string',
-          demandOption: true,
-        }),
-      argv => {
-        const env = environmentSchema.parse(argv.environment);
-        return listRunResults(env, authService, argv.applicationRunId);
-      }
-    )
-    .command(
-      'create-run <applicationId> <versionNumber>',
-      'Create a new application run',
-      yargs =>
-        yargs
-          .positional('applicationId', {
-            describe: 'Application ID to run',
-            type: 'string',
-            demandOption: true,
-          })
-          .positional('versionNumber', {
-            describe: 'Version number of the application to run',
-            type: 'string',
-            demandOption: true,
-          })
-          .option('items', {
-            describe: 'JSON string of items to process (array of objects)',
-            type: 'string',
-            default: '[]',
-          }),
-      argv => {
-        const env = environmentSchema.parse(argv.environment);
-        return createApplicationRun(
-          env,
-          authService,
-          argv.applicationId,
-          argv.versionNumber,
-          argv.items
-        );
-      }
-    )
-    .command(
-      'login',
-      'Login to the Aignostics Platform',
-      yargs =>
-        yargs.option('refreshToken', {
-          describe: 'Refresh token to use for login',
-          type: 'string',
-          demandOption: false,
-        }),
-      async argv => {
-        const env = environmentSchema.parse(argv.environment);
-        if (argv.refreshToken) {
-          await handleLoginWithRefreshToken(env, argv.refreshToken, authService);
-          return;
-        }
-        await handleLogin(env, authService);
-      }
-    )
-    .command('logout', 'Logout and remove stored token', {}, async argv => {
-      const env = environmentSchema.parse(argv.environment);
-      await handleLogout(env, authService);
-    })
-    .command('status', 'Check authentication status', {}, async argv => {
-      const env = environmentSchema.parse(argv.environment);
-      await handleStatus(env, authService);
-    })
     .help()
     .alias('help', 'h')
     .version()
