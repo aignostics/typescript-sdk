@@ -13,7 +13,7 @@ export const canDownloadItem = (item: ItemResultReadResponse): boolean => {
 };
 
 /** Termination reasons that mark a terminated item as FAILED. */
-const ERROR_TERMINATION_REASONS = new Set([
+export const ERROR_TERMINATION_REASONS = new Set([
   'CANCELED_BY_SYSTEM',
   'CANCELED_BY_USER',
   'SYSTEM_ERROR',
