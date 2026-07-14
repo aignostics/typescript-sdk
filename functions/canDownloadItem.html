@@ -16,7 +16,8 @@
 <div class="tsd-signature tsd-anchor-link" id="candownloaditem"><span class="tsd-kind-call-signature">canDownloadItem</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">item</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ItemResultReadResponse</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#candownloaditem" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Determine whether a single run item's output artifact is available for download.
-Only items in the COMPLETED state have downloadable artifacts.</p>
+Disabled for PENDING, PROCESSING, FAILED, and SKIPPED items; available otherwise
+(including COMPLETED and UNKNOWN).</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -24,10 +25,10 @@ Only items in the COMPLETED state have downloadable artifacts.</p>
 <li><span><span class="tsd-kind-parameter">item</span>: <span class="tsd-signature-type">ItemResultReadResponse</span></span>
 <div class="tsd-comment tsd-typography"><p>Raw item response from the API</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p><code>true</code> if the item is in a COMPLETED state</p>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p><code>true</code> if the item's output artifact is available for download</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/entities/run-item/utils.ts#L11">entities/run-item/utils.ts:11</a></li></ul></aside></div></li></ul></section></div>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/entities/run-item/utils.ts#L12">entities/run-item/utils.ts:12</a></li></ul></aside></div></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
