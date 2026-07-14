@@ -7,7 +7,7 @@ import { RunStatus } from './types.js';
  * to the total item count.
  *
  * @param run - Raw run response from the API
- * @returns Integer percentage rounded to the nearest whole number
+ * @returns Percentage, not rounded
  */
 export function getRunProgress(run: RunReadResponse): number {
   const {
@@ -24,7 +24,7 @@ export function getRunProgress(run: RunReadResponse): number {
   // Sum all items that have reached a terminal state
   const processed =
     item_succeeded_count + item_user_error_count + item_system_error_count + item_skipped_count;
-  return Math.round((processed / item_count) * 100);
+  return (processed / item_count) * 100;
 }
 
 /**
@@ -83,5 +83,5 @@ export function getRunStatus(run: RunReadResponse): RunStatus {
  */
 export const canDownloadRunItems = (run: RunReadResponse): boolean => {
   const status = getRunStatus(run);
-  return !['FAILED', 'CANCELED', 'PENDING', 'PROCESSING'].includes(status);
+  return !['FAILED', 'CANCELED', 'PENDING', 'PROCESSING', 'UNKNOWN'].includes(status);
 };

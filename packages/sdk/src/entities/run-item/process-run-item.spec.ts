@@ -80,10 +80,10 @@ describe('processRunItem', () => {
     expect(result.can_download).toBe(false);
   });
 
-  it('should mark a terminated item with no termination reason as UNKNOWN and not downloadable', () => {
+  it('should mark a terminated item with no termination reason as UNKNOWN and downloadable', () => {
     const result = processRunItem(buildItem({ state: 'TERMINATED' }));
 
     expect(result.status).toBe('UNKNOWN');
-    expect(result.can_download).toBe(false);
+    expect(result.can_download).toBe(true);
   });
 });

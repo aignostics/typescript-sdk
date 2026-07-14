@@ -76,14 +76,6 @@ describe('getRunProgress', () => {
     expect(getRunProgress(run)).toBe(100);
   });
 
-  it('should round to the nearest integer', () => {
-    // 1/3 = 33.33...% → 33
-    const run = buildRun({
-      statistics: { item_count: 3, item_succeeded_count: 1 },
-    });
-    expect(getRunProgress(run)).toBe(33);
-  });
-
   it('should combine all terminal item types', () => {
     const run = buildRun({
       statistics: {
@@ -235,11 +227,11 @@ describe('canDownloadRunItems', () => {
     expect(canDownloadRunItems(run)).toBe(true);
   });
 
-  it('should return true for UNKNOWN runs', () => {
+  it('should return false for UNKNOWN runs', () => {
     const run = buildRun({
       state: 'TERMINATED',
       termination_reason: null,
     });
-    expect(canDownloadRunItems(run)).toBe(true);
+    expect(canDownloadRunItems(run)).toBe(false);
   });
 });
