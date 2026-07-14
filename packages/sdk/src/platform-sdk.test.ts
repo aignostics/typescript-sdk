@@ -528,10 +528,8 @@ describe('PlatformSDK', () => {
     ).rejects.toThrow(errorMessage);
     await expect(sdk.getRun('test-run-id')).rejects.toThrow(AuthenticationError);
     await expect(sdk.getRun('test-run-id')).rejects.toThrow(errorMessage);
-
     await expect(sdk.cancelApplicationRun('test-run-id')).rejects.toThrow(AuthenticationError);
     await expect(sdk.cancelApplicationRun('test-run-id')).rejects.toThrow(errorMessage);
-
     await expect(sdk.listRunResults('test-run-id')).rejects.toThrow(AuthenticationError);
     await expect(sdk.listRunResults('test-run-id')).rejects.toThrow(errorMessage);
   });
