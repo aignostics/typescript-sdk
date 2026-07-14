@@ -3,13 +3,14 @@ import { ItemStatus } from './types.js';
 
 /**
  * Determine whether a single run item's output artifact is available for download.
- * Only items in the COMPLETED state have downloadable artifacts.
+ * Disabled for PENDING, PROCESSING, FAILED, and SKIPPED items; available otherwise
+ * (including COMPLETED and UNKNOWN).
  *
  * @param item - Raw item response from the API
- * @returns `true` if the item is in a COMPLETED state
+ * @returns `true` if the item's output artifact is available for download
  */
 export const canDownloadItem = (item: ItemResultReadResponse): boolean => {
-  return getItemStatus(item) === 'COMPLETED';
+  return !['PENDING', 'PROCESSING', 'FAILED', 'SKIPPED'].includes(getItemStatus(item));
 };
 
 /** Termination reasons that mark a terminated item as FAILED. */

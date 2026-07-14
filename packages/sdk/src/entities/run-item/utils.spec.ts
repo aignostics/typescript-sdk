@@ -126,7 +126,7 @@ describe('canDownloadItem', () => {
     );
   });
 
-  it('should return false for UNKNOWN items', () => {
-    expect(canDownloadItem(buildItem({ state: 'TERMINATED' }))).toBe(false);
+  it('should return true for UNKNOWN items', () => {
+    expect(canDownloadItem(buildItem({ state: 'TERMINATED' }))).toBe(true);
   });
 });
