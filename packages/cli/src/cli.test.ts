@@ -472,6 +472,136 @@ describe('CLI Integration Tests', () => {
     });
   });
 
+  describe('runs results delete command', () => {
+    it('should delete run results successfully', async () => {
+      process.argv = [
+        'node',
+        'cli.js',
+        'runs',
+        'results',
+        'delete',
+        'run-1',
+        '--endpoint',
+        'https://api.example.com',
+      ];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith('✅ Successfully deleted results for run: run-1');
+    });
+
+    it('should require applicationRunId parameter', async () => {
+      process.argv = ['node', 'cli.js', 'runs', 'results', 'delete'];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        expect.stringContaining('Not enough non-option arguments')
+      );
+    });
+  });
+
+  describe('runs metadata set command', () => {
+    it('should update run custom metadata successfully', async () => {
+      process.argv = [
+        'node',
+        'cli.js',
+        'runs',
+        'metadata',
+        'set',
+        'run-1',
+        '{"note":"reviewed"}',
+        '--endpoint',
+        'https://api.example.com',
+      ];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        '✅ Updated custom metadata for run run-1:',
+        expect.stringContaining('custom_metadata_checksum')
+      );
+    });
+
+    it('should require applicationRunId and customMetadata parameters', async () => {
+      process.argv = ['node', 'cli.js', 'runs', 'metadata', 'set'];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        expect.stringContaining('Not enough non-option arguments')
+      );
+    });
+  });
+
+  describe('runs items get command', () => {
+    it('should get a single run item successfully', async () => {
+      process.argv = [
+        'node',
+        'cli.js',
+        'runs',
+        'items',
+        'get',
+        'run-1',
+        'ext-1',
+        '--endpoint',
+        'https://api.example.com',
+      ];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Run item details for run-1/ext-1:',
+        expect.stringContaining('item_id')
+      );
+    });
+
+    it('should require applicationRunId and externalId parameters', async () => {
+      process.argv = ['node', 'cli.js', 'runs', 'items', 'get'];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        expect.stringContaining('Not enough non-option arguments')
+      );
+    });
+  });
+
+  describe('runs items metadata set command', () => {
+    it('should update run item custom metadata successfully', async () => {
+      process.argv = [
+        'node',
+        'cli.js',
+        'runs',
+        'items',
+        'metadata',
+        'set',
+        'run-1',
+        'ext-1',
+        '{"reviewed":true}',
+        '--endpoint',
+        'https://api.example.com',
+      ];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        '✅ Updated custom metadata for item run-1/ext-1:',
+        expect.stringContaining('custom_metadata_checksum')
+      );
+    });
+
+    it('should require applicationRunId, externalId, and customMetadata parameters', async () => {
+      process.argv = ['node', 'cli.js', 'runs', 'items', 'metadata', 'set'];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        expect.stringContaining('Not enough non-option arguments')
+      );
+    });
+  });
+
   describe('runs create command', () => {
     it('should create application run successfully with empty items', async () => {
       // Mock process.argv for yargs
@@ -897,6 +1027,76 @@ describe('CLI Integration Tests', () => {
 
       expect(consoleSpy.error).toHaveBeenCalledWith(
         '❌ Failed to list run results:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+
+    it('should handle API errors for runs results delete', async () => {
+      server.use(http.delete('*/v1/runs/:runId/artifacts', () => HttpResponse.error()));
+
+      process.argv = ['node', 'cli.js', 'runs', 'results', 'delete', 'run-1'];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to delete run results:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+
+    it('should handle API errors for runs metadata set', async () => {
+      server.use(http.put('*/v1/runs/:runId/custom-metadata', () => HttpResponse.error()));
+
+      process.argv = ['node', 'cli.js', 'runs', 'metadata', 'set', 'run-1', '{}'];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to update run metadata:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+
+    it('should handle invalid custom metadata JSON for runs metadata set', async () => {
+      process.argv = ['node', 'cli.js', 'runs', 'metadata', 'set', 'run-1', 'not-json'];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Invalid custom metadata JSON:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+
+    it('should handle API errors for runs items get', async () => {
+      server.use(http.get('*/v1/runs/:runId/items/:externalId', () => HttpResponse.error()));
+
+      process.argv = ['node', 'cli.js', 'runs', 'items', 'get', 'run-1', 'ext-1'];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to get run item:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+
+    it('should handle API errors for runs items metadata set', async () => {
+      server.use(
+        http.put('*/v1/runs/:runId/items/:externalId/custom-metadata', () => HttpResponse.error())
+      );
+
+      process.argv = ['node', 'cli.js', 'runs', 'items', 'metadata', 'set', 'run-1', 'ext-1', '{}'];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to update run item metadata:',
         expect.any(Error)
       );
       expect(mockExit).toHaveBeenCalledWith(1);

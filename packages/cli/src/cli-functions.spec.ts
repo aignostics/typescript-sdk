@@ -11,6 +11,10 @@ import {
   getRun,
   cancelApplicationRun,
   listRunResults,
+  getRunItem,
+  updateRunMetadata,
+  updateRunItemMetadata,
+  deleteRunResults,
   createApplicationRun,
   resolveItemsInput,
   handleLogin,
@@ -52,6 +56,10 @@ const platformSDKMock = {
   getRun: vi.fn(),
   cancelApplicationRun: vi.fn(),
   listRunResults: vi.fn(),
+  getRunItem: vi.fn(),
+  updateRunMetadata: vi.fn(),
+  updateRunItemMetadata: vi.fn(),
+  deleteRunResults: vi.fn(),
   createApplicationRun: vi.fn(),
   getConfig: vi.fn(),
   getVersion: vi.fn(),
@@ -600,6 +608,166 @@ describe('CLI Functions Unit Tests', () => {
 
       expect(consoleSpy.error).toHaveBeenCalledWith(
         '❌ Failed to list run results:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('getRunItem', () => {
+    it('should get a single run item successfully', async () => {
+      const itemResponse = {
+        item_id: 'item-1',
+        external_id: 'ext-1',
+        status: 'SUCCEEDED',
+        input_artifacts: [],
+        output_artifacts: [],
+      };
+      platformSDKMock.getRunItem.mockResolvedValue(itemResponse);
+
+      await getRunItem('production', mockAuthService, 'run-1', 'ext-1');
+
+      expect(platformSDKMock.getRunItem).toHaveBeenCalledWith('run-1', 'ext-1');
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Run item details for run-1/ext-1:',
+        JSON.stringify(itemResponse, null, 2)
+      );
+    });
+
+    it('should handle API error', async () => {
+      platformSDKMock.getRunItem.mockRejectedValue(new Error('API error'));
+
+      await getRunItem('production', mockAuthService, 'run-1', 'ext-1');
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to get run item:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('updateRunMetadata', () => {
+    it('should update run custom metadata successfully', async () => {
+      const updateResponse = { custom_metadata_checksum: 'abc123' };
+      platformSDKMock.updateRunMetadata.mockResolvedValue(updateResponse);
+
+      await updateRunMetadata('production', mockAuthService, 'run-1', '{"note":"reviewed"}');
+
+      expect(platformSDKMock.updateRunMetadata).toHaveBeenCalledWith('run-1', { note: 'reviewed' });
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        '✅ Updated custom metadata for run run-1:',
+        JSON.stringify(updateResponse, null, 2)
+      );
+    });
+
+    it('should support clearing metadata with null', async () => {
+      const updateResponse = { custom_metadata_checksum: null };
+      platformSDKMock.updateRunMetadata.mockResolvedValue(updateResponse);
+
+      await updateRunMetadata('production', mockAuthService, 'run-1', 'null');
+
+      expect(platformSDKMock.updateRunMetadata).toHaveBeenCalledWith('run-1', null);
+    });
+
+    it('should handle invalid custom metadata JSON', async () => {
+      await updateRunMetadata('production', mockAuthService, 'run-1', 'not-json');
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Invalid custom metadata JSON:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+      expect(platformSDKMock.updateRunMetadata).not.toHaveBeenCalled();
+    });
+
+    it('should handle non-object custom metadata JSON', async () => {
+      await updateRunMetadata('production', mockAuthService, 'run-1', '"just a string"');
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Invalid custom metadata JSON:',
+        expect.any(TypeError)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+      expect(platformSDKMock.updateRunMetadata).not.toHaveBeenCalled();
+    });
+
+    it('should handle API error', async () => {
+      platformSDKMock.updateRunMetadata.mockRejectedValue(new Error('API error'));
+
+      await updateRunMetadata('production', mockAuthService, 'run-1', '{}');
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to update run metadata:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('updateRunItemMetadata', () => {
+    it('should update run item custom metadata successfully', async () => {
+      const updateResponse = { custom_metadata_checksum: 'abc123' };
+      platformSDKMock.updateRunItemMetadata.mockResolvedValue(updateResponse);
+
+      await updateRunItemMetadata(
+        'production',
+        mockAuthService,
+        'run-1',
+        'ext-1',
+        '{"reviewed":true}'
+      );
+
+      expect(platformSDKMock.updateRunItemMetadata).toHaveBeenCalledWith('run-1', 'ext-1', {
+        reviewed: true,
+      });
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        '✅ Updated custom metadata for item run-1/ext-1:',
+        JSON.stringify(updateResponse, null, 2)
+      );
+    });
+
+    it('should handle invalid custom metadata JSON', async () => {
+      await updateRunItemMetadata('production', mockAuthService, 'run-1', 'ext-1', 'not-json');
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Invalid custom metadata JSON:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+      expect(platformSDKMock.updateRunItemMetadata).not.toHaveBeenCalled();
+    });
+
+    it('should handle API error', async () => {
+      platformSDKMock.updateRunItemMetadata.mockRejectedValue(new Error('API error'));
+
+      await updateRunItemMetadata('production', mockAuthService, 'run-1', 'ext-1', '{}');
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to update run item metadata:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('deleteRunResults', () => {
+    it('should delete run results successfully', async () => {
+      platformSDKMock.deleteRunResults.mockResolvedValue(undefined);
+
+      await deleteRunResults('production', mockAuthService, 'run-1');
+
+      expect(platformSDKMock.deleteRunResults).toHaveBeenCalledWith('run-1');
+      expect(consoleSpy.log).toHaveBeenCalledWith('✅ Successfully deleted results for run: run-1');
+    });
+
+    it('should handle API error', async () => {
+      platformSDKMock.deleteRunResults.mockRejectedValue(new Error('API error'));
+
+      await deleteRunResults('production', mockAuthService, 'run-1');
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to delete run results:',
         expect.any(Error)
       );
       expect(mockExit).toHaveBeenCalledWith(1);

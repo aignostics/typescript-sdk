@@ -288,6 +288,102 @@ describe('PlatformSDK', () => {
     await expect(sdk.cancelApplicationRun('test-run-id')).rejects.toThrow('Resource not found: ');
   });
 
+  it('should get a single run item successfully', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with successful response
+    setMockScenario('success');
+
+    const result = await sdk.getRunItem('test-run-id', 'test-external-id');
+    expect(result).toHaveProperty('item_id');
+    expect(result).toHaveProperty('external_id');
+
+    // Enriched ApplicationRunItem properties
+    expect(result).toHaveProperty('status');
+    expect(result).toHaveProperty('can_download');
+  });
+
+  it('should handle get run item failure', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with error response
+    setMockScenario('notFoundError');
+
+    await expect(sdk.getRunItem('test-run-id', 'test-external-id')).rejects.toThrow(
+      'Resource not found: '
+    );
+  });
+
+  it('should update run custom metadata successfully', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with successful response
+    setMockScenario('success');
+
+    const result = await sdk.updateRunMetadata('test-run-id', { note: 'Reviewed' });
+    expect(result).toHaveProperty('custom_metadata_checksum');
+  });
+
+  it('should handle update run custom metadata failure', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with error response
+    setMockScenario('notFoundError');
+
+    await expect(sdk.updateRunMetadata('test-run-id', { note: 'Reviewed' })).rejects.toThrow(
+      'Resource not found: '
+    );
+  });
+
+  it('should update run item custom metadata successfully', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with successful response
+    setMockScenario('success');
+
+    const result = await sdk.updateRunItemMetadata('test-run-id', 'test-external-id', {
+      reviewed: true,
+    });
+    expect(result).toHaveProperty('custom_metadata_checksum');
+  });
+
+  it('should handle update run item custom metadata failure', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with error response
+    setMockScenario('notFoundError');
+
+    await expect(
+      sdk.updateRunItemMetadata('test-run-id', 'test-external-id', { reviewed: true })
+    ).rejects.toThrow('Resource not found: ');
+  });
+
+  it('should delete run results successfully', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with successful response
+    setMockScenario('success');
+
+    await expect(sdk.deleteRunResults('test-run-id')).resolves.toBeUndefined();
+  });
+
+  it('should handle delete run results failure', async () => {
+    // Mock token provider to return a valid token
+    mockTokenProvider.mockResolvedValue('mocked-token');
+
+    // Use mock server with error response
+    setMockScenario('notFoundError');
+
+    await expect(sdk.deleteRunResults('test-run-id')).rejects.toThrow('Resource not found: ');
+  });
+
   it('should list run results successfully', async () => {
     // Mock token provider to return a valid token
     mockTokenProvider.mockResolvedValue('mocked-token');

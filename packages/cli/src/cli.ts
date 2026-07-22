@@ -1,4 +1,5 @@
 import yargs from 'yargs';
+import type { Argv } from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { z } from 'zod';
 import { AuthService } from './utils/auth.js';
@@ -14,6 +15,10 @@ import {
   getRun,
   cancelApplicationRun,
   listRunResults,
+  getRunItem,
+  updateRunMetadata,
+  updateRunItemMetadata,
+  deleteRunResults,
   createApplicationRun,
   resolveItemsInput,
   handleLogin,
@@ -32,6 +37,42 @@ const authService = new AuthService(new FileSystemTokenStorage());
 const environmentSchema = z.enum(
   Object.keys(environmentConfig) as [EnvironmentKey, ...EnvironmentKey[]]
 );
+
+function buildRunItemMetadataCommands(itemMetadataYargs: Argv) {
+  return itemMetadataYargs
+    .command(
+      'set <applicationRunId> <externalId> <customMetadata>',
+      'Set (replace) the custom metadata for an item',
+      yargs =>
+        yargs
+          .positional('applicationRunId', {
+            describe: 'Application run ID containing the item',
+            type: 'string',
+            demandOption: true,
+          })
+          .positional('externalId', {
+            describe: 'External ID of the item to set custom metadata for',
+            type: 'string',
+            demandOption: true,
+          })
+          .positional('customMetadata', {
+            describe: 'Custom metadata as a JSON object string (or "null" to clear it)',
+            type: 'string',
+            demandOption: true,
+          }),
+      argv => {
+        const env = environmentSchema.parse(argv.environment);
+        return updateRunItemMetadata(
+          env,
+          authService,
+          argv.applicationRunId,
+          argv.externalId,
+          argv.customMetadata
+        );
+      }
+    )
+    .demandCommand(1, 'You need at least one metadata subcommand');
+}
 
 /**
  * CLI for the Aignostics Platform SDK
@@ -240,6 +281,39 @@ export async function main() {
             }
           )
           .command(
+            'metadata',
+            'Manage application run custom metadata',
+            metadataYargs =>
+              metadataYargs
+                .command(
+                  'set <applicationRunId> <customMetadata>',
+                  'Set (replace) the custom metadata for a run',
+                  yargs =>
+                    yargs
+                      .positional('applicationRunId', {
+                        describe: 'Application run ID to set custom metadata for',
+                        type: 'string',
+                        demandOption: true,
+                      })
+                      .positional('customMetadata', {
+                        describe: 'Custom metadata as a JSON object string (or "null" to clear it)',
+                        type: 'string',
+                        demandOption: true,
+                      }),
+                  argv => {
+                    const env = environmentSchema.parse(argv.environment);
+                    return updateRunMetadata(
+                      env,
+                      authService,
+                      argv.applicationRunId,
+                      argv.customMetadata
+                    );
+                  }
+                )
+                .demandCommand(1, 'You need at least one metadata subcommand'),
+            () => undefined
+          )
+          .command(
             'results',
             'Manage application run results',
             resultsYargs =>
@@ -258,7 +332,55 @@ export async function main() {
                     return listRunResults(env, authService, argv.applicationRunId);
                   }
                 )
+                .command(
+                  'delete <applicationRunId>',
+                  'Delete results for a specific application run',
+                  yargs =>
+                    yargs.positional('applicationRunId', {
+                      describe: 'Application run ID to delete results for',
+                      type: 'string',
+                      demandOption: true,
+                    }),
+                  argv => {
+                    const env = environmentSchema.parse(argv.environment);
+                    return deleteRunResults(env, authService, argv.applicationRunId);
+                  }
+                )
                 .demandCommand(1, 'You need at least one results subcommand'),
+            () => undefined
+          )
+          .command(
+            'items',
+            'Manage individual items within an application run',
+            itemsYargs =>
+              itemsYargs
+                .command(
+                  'get <applicationRunId> <externalId>',
+                  'Get details of a specific item within an application run',
+                  yargs =>
+                    yargs
+                      .positional('applicationRunId', {
+                        describe: 'Application run ID containing the item',
+                        type: 'string',
+                        demandOption: true,
+                      })
+                      .positional('externalId', {
+                        describe: 'External ID of the item to get',
+                        type: 'string',
+                        demandOption: true,
+                      }),
+                  argv => {
+                    const env = environmentSchema.parse(argv.environment);
+                    return getRunItem(env, authService, argv.applicationRunId, argv.externalId);
+                  }
+                )
+                .command(
+                  'metadata',
+                  'Manage custom metadata for an item within an application run',
+                  buildRunItemMetadataCommands,
+                  () => undefined
+                )
+                .demandCommand(1, 'You need at least one items subcommand'),
             () => undefined
           )
           .demandCommand(1, 'You need at least one runs subcommand'),
