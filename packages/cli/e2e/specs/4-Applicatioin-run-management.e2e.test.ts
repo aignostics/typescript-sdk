@@ -16,15 +16,13 @@ describe('SWR Application Run management', () => {
       'test-app',
       '--applicationVersion',
       '1.0.0',
+      '--format',
+      'json',
     ]);
 
     expect(exitCode).toBe(0);
 
-    // Match the JSON array after the prefix
-    const runList = String(stdout).match(/Application runs: (\[.*\])/s);
-    expect(runList).toBeTruthy();
-
-    const runs = JSON.parse(runList![1]) as Array<RunReadResponse>;
+    const runs = JSON.parse(String(stdout)) as Array<RunReadResponse>;
     expect(Array.isArray(runs)).toBe(true);
 
     expect(runs[0].application_id).toBe('test-app');
@@ -42,28 +40,25 @@ describe('SWR Application Run management', () => {
       'test-app',
       '--applicationVersion',
       '1.0.0',
+      '--format',
+      'json',
     ]);
 
     expect(exitCode).toBe(0);
-    const runList = String(stdout).match(/Application runs: (\[.*\])/s);
-
-    const runs = JSON.parse(runList![1]) as Array<RunReadResponse>;
+    const runs = JSON.parse(String(stdout)) as Array<RunReadResponse>;
     const latestRunId = runs[0].run_id;
 
     const { stdout: runDetailsStdout, exitCode: runDetailsExitCode } = await executeCLI([
       'runs',
       'get',
       latestRunId,
+      '--format',
+      'json',
     ]);
 
     expect(runDetailsExitCode).toBe(0);
 
-    const runDetailsMatch = String(runDetailsStdout).match(
-      new RegExp(`Run details for ${latestRunId}: (\\{.*\\})`, 's')
-    );
-    expect(runDetailsMatch).toBeTruthy();
-
-    const runDetails = JSON.parse(runDetailsMatch![1]) as RunReadResponse;
+    const runDetails = JSON.parse(String(runDetailsStdout)) as RunReadResponse;
     expect(runDetails.run_id).toBe(latestRunId);
     expect(runDetails.application_id).toBe('test-app');
   });
@@ -79,12 +74,12 @@ describe('SWR Application Run management', () => {
       'test-app',
       '--applicationVersion',
       '1.0.0',
+      '--format',
+      'json',
     ]);
 
     expect(exitCode).toBe(0);
-    const runList = String(stdout).match(/Application runs: (\[.*\])/s);
-
-    const runs = JSON.parse(runList![1]) as Array<RunReadResponse>;
+    const runs = JSON.parse(String(stdout)) as Array<RunReadResponse>;
     const pendingRunId = runs.find(run => run.state === 'PENDING')?.run_id;
 
     if (!pendingRunId) {

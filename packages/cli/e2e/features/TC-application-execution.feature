@@ -14,7 +14,6 @@ Feature: Application Execution
     Given I have 2 valid input artifacts for "test-app" version "1.0.0"
     When I run the CLI command "runs create test-app 1.0.0 --items <items_json>"
     Then the exit code should be 0
-    And I should see "Application run created successfully:" in the output
     And the output should contain a JSON object with property "run_id"
 
   @id:TC-RUN-CREATE-INVALID-VERSION

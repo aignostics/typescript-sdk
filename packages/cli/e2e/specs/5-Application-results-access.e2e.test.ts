@@ -16,12 +16,12 @@ describe('Application Results Access', () => {
       'test-app',
       '--applicationVersion',
       '1.0.0',
+      '--format',
+      'json',
     ]);
 
     expect(exitCode).toBe(0);
-    const runList = String(stdout).match(/Application runs: (\[.*\])/s);
-
-    const runs = JSON.parse(runList![1]) as Array<RunReadResponse>;
+    const runs = JSON.parse(String(stdout)) as Array<RunReadResponse>;
     const latestRunId = runs[0].run_id;
 
     const { stdout: runResultsStdout, exitCode: runResultsExitCode } = await executeCLI([
@@ -29,16 +29,13 @@ describe('Application Results Access', () => {
       'results',
       'list',
       latestRunId,
+      '--format',
+      'json',
     ]);
 
     expect(runResultsExitCode).toBe(0);
 
-    const runResultsMatch = String(runResultsStdout).match(
-      new RegExp(`Run results for ${latestRunId}: (\\[.*\\])`, 's')
-    );
-    expect(runResultsMatch).toBeTruthy();
-
-    const runResults = JSON.parse(runResultsMatch![1]) as RunReadResponse[];
+    const runResults = JSON.parse(String(runResultsStdout)) as RunReadResponse[];
     expect(Array.isArray(runResults)).toBe(true);
   });
 
@@ -56,12 +53,12 @@ describe('Application Results Access', () => {
       'test-app',
       '--applicationVersion',
       '1.0.0',
+      '--format',
+      'json',
     ]);
 
     expect(exitCode).toBe(0);
-    const runList = String(stdout).match(/Application runs: (\[.*\])/s);
-
-    const runs = JSON.parse(runList![1]) as Array<RunReadResponse>;
+    const runs = JSON.parse(String(stdout)) as Array<RunReadResponse>;
     const latestRunId = runs[0].run_id;
 
     const { stdout: runResultsStdout, exitCode: runResultsExitCode } = await executeCLI([
@@ -69,16 +66,13 @@ describe('Application Results Access', () => {
       'results',
       'list',
       latestRunId,
+      '--format',
+      'json',
     ]);
 
     expect(runResultsExitCode).toBe(0);
 
-    const runResultsMatch = String(runResultsStdout).match(
-      new RegExp(`Run results for ${latestRunId}: (\\[.*\\])`, 's')
-    );
-    expect(runResultsMatch).toBeTruthy();
-
-    const runResults = JSON.parse(runResultsMatch![1]) as ItemResultReadResponse[];
+    const runResults = JSON.parse(String(runResultsStdout)) as ItemResultReadResponse[];
 
     runResults.forEach(result => {
       expect(result).toHaveProperty('state');
