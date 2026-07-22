@@ -1,4 +1,10 @@
-import { PlatformSDKHttp, type ItemCreationRequest } from '@aignostics/sdk';
+import {
+  PlatformSDKHttp,
+  type ItemCreationRequest,
+  type GrantRelation,
+  type ResourceType,
+  type SubjectType,
+} from '@aignostics/sdk';
 import { AuthService, type LoginWithCallbackConfig } from './utils/auth.js';
 import { startCallbackServer, waitForCallback } from './utils/oauth-callback-server.js';
 import { readFileSync } from 'fs';
@@ -495,6 +501,201 @@ export async function handleStatus(
     }
   } catch (error) {
     console.error('❌ Error checking status:', error);
+    process.exit(1);
+  }
+}
+
+export async function createGrant(
+  environment: EnvironmentKey,
+  authService: AuthService,
+  options: {
+    resourceType: ResourceType;
+    resourceId: string;
+    subjectType: SubjectType;
+    subjectId?: string;
+    subjectEmail?: string;
+    relation: GrantRelation;
+  }
+): Promise<void> {
+  const { endpoint } = environmentConfig[environment];
+  const sdk = new PlatformSDKHttp({
+    baseURL: endpoint,
+    tokenProvider: () => authService.getValidAccessToken(environment),
+  });
+  try {
+    const response = await sdk.createGrant({
+      resource_type: options.resourceType,
+      resource_id: options.resourceId,
+      subject_type: options.subjectType,
+      subject_id: options.subjectId,
+      subject_email: options.subjectEmail,
+      relation: options.relation,
+    });
+    console.log('✅ Grant created successfully:', JSON.stringify(response, null, 2));
+  } catch (error) {
+    console.error('❌ Failed to create grant:', error);
+    process.exit(1);
+  }
+}
+
+export async function listGrants(
+  environment: EnvironmentKey,
+  authService: AuthService,
+  options?: {
+    resourceType?: ResourceType;
+    resourceId?: string;
+    subjectType?: SubjectType;
+    subjectId?: string;
+    revoked?: boolean;
+    sort?: string;
+  }
+): Promise<void> {
+  const { endpoint } = environmentConfig[environment];
+  const sdk = new PlatformSDKHttp({
+    baseURL: endpoint,
+    tokenProvider: () => authService.getValidAccessToken(environment),
+  });
+  try {
+    const response = await sdk.listGrants({
+      resourceType: options?.resourceType,
+      resourceId: options?.resourceId,
+      subjectType: options?.subjectType,
+      subjectId: options?.subjectId,
+      revoked: options?.revoked,
+      sort: options?.sort ? [options.sort] : undefined,
+    });
+    console.log('Grants:', JSON.stringify(response, null, 2));
+  } catch (error) {
+    console.error('❌ Failed to list grants:', error);
+    process.exit(1);
+  }
+}
+
+export async function getGrant(
+  environment: EnvironmentKey,
+  authService: AuthService,
+  grantId: string
+): Promise<void> {
+  const { endpoint } = environmentConfig[environment];
+  const sdk = new PlatformSDKHttp({
+    baseURL: endpoint,
+    tokenProvider: () => authService.getValidAccessToken(environment),
+  });
+  try {
+    const response = await sdk.getGrant(grantId);
+    console.log(`Grant details for ${grantId}:`, JSON.stringify(response, null, 2));
+  } catch (error) {
+    console.error('❌ Failed to get grant:', error);
+    process.exit(1);
+  }
+}
+
+export async function revokeGrant(
+  environment: EnvironmentKey,
+  authService: AuthService,
+  grantId: string
+): Promise<void> {
+  const { endpoint } = environmentConfig[environment];
+  const sdk = new PlatformSDKHttp({
+    baseURL: endpoint,
+    tokenProvider: () => authService.getValidAccessToken(environment),
+  });
+  try {
+    const response = await sdk.revokeGrant(grantId);
+    console.log(`✅ Grant revoked successfully:`, JSON.stringify(response, null, 2));
+  } catch (error) {
+    console.error('❌ Failed to revoke grant:', error);
+    process.exit(1);
+  }
+}
+
+export async function createShareToken(
+  environment: EnvironmentKey,
+  authService: AuthService,
+  options?: {
+    expiresAt?: string;
+  }
+): Promise<void> {
+  const { endpoint } = environmentConfig[environment];
+  const sdk = new PlatformSDKHttp({
+    baseURL: endpoint,
+    tokenProvider: () => authService.getValidAccessToken(environment),
+  });
+  try {
+    const response = await sdk.createShareToken({
+      expires_at: options?.expiresAt,
+    });
+    console.log('✅ Share token created successfully:', JSON.stringify(response, null, 2));
+    console.log('⚠️  Save the share_token value now — it will not be shown again.');
+  } catch (error) {
+    console.error('❌ Failed to create share token:', error);
+    process.exit(1);
+  }
+}
+
+export async function listShareTokens(
+  environment: EnvironmentKey,
+  authService: AuthService,
+  options?: {
+    runId?: string;
+    createdBy?: string;
+    revoked?: boolean;
+    sort?: string;
+  }
+): Promise<void> {
+  const { endpoint } = environmentConfig[environment];
+  const sdk = new PlatformSDKHttp({
+    baseURL: endpoint,
+    tokenProvider: () => authService.getValidAccessToken(environment),
+  });
+  try {
+    const response = await sdk.listShareTokens({
+      runId: options?.runId,
+      createdBy: options?.createdBy,
+      revoked: options?.revoked,
+      sort: options?.sort ? [options.sort] : undefined,
+    });
+    console.log('Share tokens:', JSON.stringify(response, null, 2));
+  } catch (error) {
+    console.error('❌ Failed to list share tokens:', error);
+    process.exit(1);
+  }
+}
+
+export async function getShareToken(
+  environment: EnvironmentKey,
+  authService: AuthService,
+  shareTokenId: string
+): Promise<void> {
+  const { endpoint } = environmentConfig[environment];
+  const sdk = new PlatformSDKHttp({
+    baseURL: endpoint,
+    tokenProvider: () => authService.getValidAccessToken(environment),
+  });
+  try {
+    const response = await sdk.getShareToken(shareTokenId);
+    console.log(`Share token details for ${shareTokenId}:`, JSON.stringify(response, null, 2));
+  } catch (error) {
+    console.error('❌ Failed to get share token:', error);
+    process.exit(1);
+  }
+}
+
+export async function revokeShareToken(
+  environment: EnvironmentKey,
+  authService: AuthService,
+  shareTokenId: string
+): Promise<void> {
+  const { endpoint } = environmentConfig[environment];
+  const sdk = new PlatformSDKHttp({
+    baseURL: endpoint,
+    tokenProvider: () => authService.getValidAccessToken(environment),
+  });
+  try {
+    const response = await sdk.revokeShareToken(shareTokenId);
+    console.log(`✅ Share token revoked successfully:`, JSON.stringify(response, null, 2));
+  } catch (error) {
+    console.error('❌ Failed to revoke share token:', error);
     process.exit(1);
   }
 }

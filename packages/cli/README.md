@@ -84,6 +84,34 @@ aignostics-platform runs metadata set <applicationRunId> '{"note": "Reviewed by 
 aignostics-platform runs items metadata set <applicationRunId> <externalId> '{"reviewed": true}'
 ```
 
+### Access Grants & Share Tokens
+
+```bash
+# Grant a user access to a run
+aignostics-platform grants create --resourceType run --resourceId <runId> --subjectType user --subjectEmail colleague@example.com --relation viewer
+
+# List grants, optionally filtered
+aignostics-platform grants list --resourceType run --resourceId <runId>
+
+# Get details of a specific grant
+aignostics-platform grants get <grantId>
+
+# Revoke a grant
+aignostics-platform grants revoke <grantId>
+
+# Create a share token (the token value is shown only once)
+aignostics-platform share-tokens create --expiresAt 2026-01-01T00:00:00Z
+
+# List share tokens, optionally filtered
+aignostics-platform share-tokens list --runId <runId>
+
+# Get details of a specific share token
+aignostics-platform share-tokens get <shareTokenId>
+
+# Revoke a share token
+aignostics-platform share-tokens revoke <shareTokenId>
+```
+
 ## Commands
 
 - `info` - Display CLI version information
@@ -91,5 +119,7 @@ aignostics-platform runs items metadata set <applicationRunId> <externalId> '{"r
 - `auth` - `login`, `logout`, `status`
 - `applications` - `list`, `get`, `versions list`, `versions get`
 - `runs` - `create`, `list`, `get`, `cancel`, `metadata set`, `results list`, `results delete`, `items get`, `items metadata set`
+- `grants` - `create`, `list`, `get`, `revoke`
+- `share-tokens` - `create`, `list`, `get`, `revoke`
 
 For detailed usage information, use `aignostics-platform --help` or `aignostics-platform <command> --help`.

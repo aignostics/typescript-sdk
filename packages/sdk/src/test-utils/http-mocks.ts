@@ -14,6 +14,9 @@ import type {
   InputArtifact,
   OutputArtifact,
   CustomMetadataUpdateResponse,
+  GrantReadResponse,
+  ShareTokenCreateResponse,
+  ShareTokenReadResponse,
 } from '../generated/index.js';
 
 // Factories for generating mock data
@@ -162,6 +165,33 @@ const customMetadataUpdateResponseFactory = Factory.define<CustomMetadataUpdateR
   custom_metadata_checksum: faker.string.alphanumeric(8),
 }));
 
+const grantFactory = Factory.define<GrantReadResponse>(() => ({
+  grant_id: faker.string.uuid(),
+  resource_type: 'run',
+  resource_id: faker.string.uuid(),
+  subject_type: 'user',
+  subject_id: faker.string.uuid(),
+  relation: 'viewer',
+  created_by: faker.string.uuid(),
+  created_at: faker.date.past().toISOString(),
+  revoked: false,
+}));
+
+const shareTokenCreateResponseFactory = Factory.define<ShareTokenCreateResponse>(() => ({
+  share_token_id: faker.string.uuid(),
+  share_token: faker.string.alphanumeric(32),
+  created_at: faker.date.past().toISOString(),
+  expires_at: null,
+  revoked: false,
+}));
+
+const shareTokenReadResponseFactory = Factory.define<ShareTokenReadResponse>(() => ({
+  share_token_id: faker.string.uuid(),
+  created_at: faker.date.past().toISOString(),
+  expires_at: null,
+  revoked: false,
+}));
+
 /**
  * Mock responses for API endpoints using factories
  */
@@ -195,6 +225,20 @@ export const mockResponses = {
 
   // Mock custom metadata update response
   customMetadataUpdateSuccess: customMetadataUpdateResponseFactory.build(),
+  // Mock grant response
+  grantSuccess: grantFactory.build(),
+
+  // Mock grants list response
+  grantsSuccess: grantFactory.buildList(2),
+
+  // Mock share token creation response (includes the one-time token)
+  shareTokenCreateSuccess: shareTokenCreateResponseFactory.build(),
+
+  // Mock share token read response
+  shareTokenSuccess: shareTokenReadResponseFactory.build(),
+
+  // Mock share tokens list response
+  shareTokensSuccess: shareTokenReadResponseFactory.buildList(2),
 
   // Mock error response
   error: {
@@ -227,6 +271,9 @@ export const factories = {
   itemResult: itemResultFactory,
   outputArtifact: outputArtifactFactory,
   customMetadataUpdateResponse: customMetadataUpdateResponseFactory,
+  grant: grantFactory,
+  shareTokenCreateResponse: shareTokenCreateResponseFactory,
+  shareTokenReadResponse: shareTokenReadResponseFactory,
 };
 
 /**
@@ -276,6 +323,30 @@ export const handlers = {
         status: 200,
         headers: { 'Content-Type': 'application/octet-stream' },
       });
+    }),
+    http.post('*/v1/access/grants', () => {
+      return HttpResponse.json(mockResponses.grantSuccess, { status: 201 });
+    }),
+    http.get('*/v1/access/grants', () => {
+      return HttpResponse.json(mockResponses.grantsSuccess, { status: 200 });
+    }),
+    http.get('*/v1/access/grants/:grantId', () => {
+      return HttpResponse.json(mockResponses.grantSuccess, { status: 200 });
+    }),
+    http.delete('*/v1/access/grants/:grantId', () => {
+      return HttpResponse.json(mockResponses.grantSuccess, { status: 200 });
+    }),
+    http.post('*/v1/access/share-tokens', () => {
+      return HttpResponse.json(mockResponses.shareTokenCreateSuccess, { status: 201 });
+    }),
+    http.get('*/v1/access/share-tokens', () => {
+      return HttpResponse.json(mockResponses.shareTokensSuccess, { status: 200 });
+    }),
+    http.get('*/v1/access/share-tokens/:shareTokenId', () => {
+      return HttpResponse.json(mockResponses.shareTokenSuccess, { status: 200 });
+    }),
+    http.delete('*/v1/access/share-tokens/:shareTokenId', () => {
+      return HttpResponse.json(mockResponses.shareTokenSuccess, { status: 200 });
     }),
   ],
 
@@ -357,6 +428,30 @@ export const handlers = {
     http.get('*/v1/runs/:runId/artifacts/:artifactId/file', () => {
       return HttpResponse.json(mockResponses.error, { status: 404 });
     }),
+    http.post('*/v1/access/grants', () => {
+      return HttpResponse.json(mockResponses.error, { status: 404 });
+    }),
+    http.get('*/v1/access/grants', () => {
+      return HttpResponse.json(mockResponses.error, { status: 404 });
+    }),
+    http.get('*/v1/access/grants/:grantId', () => {
+      return HttpResponse.json(mockResponses.error, { status: 404 });
+    }),
+    http.delete('*/v1/access/grants/:grantId', () => {
+      return HttpResponse.json(mockResponses.error, { status: 404 });
+    }),
+    http.post('*/v1/access/share-tokens', () => {
+      return HttpResponse.json(mockResponses.error, { status: 404 });
+    }),
+    http.get('*/v1/access/share-tokens', () => {
+      return HttpResponse.json(mockResponses.error, { status: 404 });
+    }),
+    http.get('*/v1/access/share-tokens/:shareTokenId', () => {
+      return HttpResponse.json(mockResponses.error, { status: 404 });
+    }),
+    http.delete('*/v1/access/share-tokens/:shareTokenId', () => {
+      return HttpResponse.json(mockResponses.error, { status: 404 });
+    }),
   ],
 
   validationError: [
@@ -397,6 +492,30 @@ export const handlers = {
       return HttpResponse.json(mockResponses.validationError, { status: 422 });
     }),
     http.get('*/v1/runs/:runId/artifacts/:artifactId/file', () => {
+      return HttpResponse.json(mockResponses.validationError, { status: 422 });
+    }),
+    http.post('*/v1/access/grants', () => {
+      return HttpResponse.json(mockResponses.validationError, { status: 422 });
+    }),
+    http.get('*/v1/access/grants', () => {
+      return HttpResponse.json(mockResponses.validationError, { status: 422 });
+    }),
+    http.get('*/v1/access/grants/:grantId', () => {
+      return HttpResponse.json(mockResponses.validationError, { status: 422 });
+    }),
+    http.delete('*/v1/access/grants/:grantId', () => {
+      return HttpResponse.json(mockResponses.validationError, { status: 422 });
+    }),
+    http.post('*/v1/access/share-tokens', () => {
+      return HttpResponse.json(mockResponses.validationError, { status: 422 });
+    }),
+    http.get('*/v1/access/share-tokens', () => {
+      return HttpResponse.json(mockResponses.validationError, { status: 422 });
+    }),
+    http.get('*/v1/access/share-tokens/:shareTokenId', () => {
+      return HttpResponse.json(mockResponses.validationError, { status: 422 });
+    }),
+    http.delete('*/v1/access/share-tokens/:shareTokenId', () => {
       return HttpResponse.json(mockResponses.validationError, { status: 422 });
     }),
   ],
@@ -441,6 +560,30 @@ export const handlers = {
     http.get('*/v1/runs/:runId/artifacts/:artifactId/file', () => {
       return HttpResponse.json(mockResponses.error, { status: 500 });
     }),
+    http.post('*/v1/access/grants', () => {
+      return HttpResponse.json(mockResponses.error, { status: 500 });
+    }),
+    http.get('*/v1/access/grants', () => {
+      return HttpResponse.json(mockResponses.error, { status: 500 });
+    }),
+    http.get('*/v1/access/grants/:grantId', () => {
+      return HttpResponse.json(mockResponses.error, { status: 500 });
+    }),
+    http.delete('*/v1/access/grants/:grantId', () => {
+      return HttpResponse.json(mockResponses.error, { status: 500 });
+    }),
+    http.post('*/v1/access/share-tokens', () => {
+      return HttpResponse.json(mockResponses.error, { status: 500 });
+    }),
+    http.get('*/v1/access/share-tokens', () => {
+      return HttpResponse.json(mockResponses.error, { status: 500 });
+    }),
+    http.get('*/v1/access/share-tokens/:shareTokenId', () => {
+      return HttpResponse.json(mockResponses.error, { status: 500 });
+    }),
+    http.delete('*/v1/access/share-tokens/:shareTokenId', () => {
+      return HttpResponse.json(mockResponses.error, { status: 500 });
+    }),
   ],
 
   // Network error (connection failure)
@@ -482,6 +625,30 @@ export const handlers = {
       return HttpResponse.error();
     }),
     http.get('*/v1/runs/:runId/artifacts/:artifactId/file', () => {
+      return HttpResponse.error();
+    }),
+    http.post('*/v1/access/grants', () => {
+      return HttpResponse.error();
+    }),
+    http.get('*/v1/access/grants', () => {
+      return HttpResponse.error();
+    }),
+    http.get('*/v1/access/grants/:grantId', () => {
+      return HttpResponse.error();
+    }),
+    http.delete('*/v1/access/grants/:grantId', () => {
+      return HttpResponse.error();
+    }),
+    http.post('*/v1/access/share-tokens', () => {
+      return HttpResponse.error();
+    }),
+    http.get('*/v1/access/share-tokens', () => {
+      return HttpResponse.error();
+    }),
+    http.get('*/v1/access/share-tokens/:shareTokenId', () => {
+      return HttpResponse.error();
+    }),
+    http.delete('*/v1/access/share-tokens/:shareTokenId', () => {
       return HttpResponse.error();
     }),
   ],

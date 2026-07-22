@@ -26,9 +26,22 @@ import {
   handleStatus,
   handleLoginWithRefreshToken,
   getApplicationVersionDetails,
+  createGrant,
+  listGrants,
+  getGrant,
+  revokeGrant,
+  createShareToken,
+  listShareTokens,
+  getShareToken,
+  revokeShareToken,
 } from './cli-functions.js';
 import { EnvironmentKey, environmentConfig } from './utils/environment.js';
-import { AuthenticationError } from '@aignostics/sdk';
+import {
+  AuthenticationError,
+  type ResourceType,
+  type SubjectType,
+  type GrantRelation,
+} from '@aignostics/sdk';
 
 // Create a shared auth service instance for the CLI
 const authService = new AuthService(new FileSystemTokenStorage());
@@ -384,6 +397,215 @@ export async function main() {
             () => undefined
           )
           .demandCommand(1, 'You need at least one runs subcommand'),
+      () => undefined
+    )
+    .command(
+      'grants',
+      'Manage access grants',
+      grantsYargs =>
+        grantsYargs
+          .command(
+            'create',
+            'Create a grant to share access to a resource',
+            yargs =>
+              yargs
+                .option('resourceType', {
+                  describe: 'Type of resource to grant access to',
+                  type: 'string',
+                  choices: ['run', 'item', 'output_artifact', 'share_token'],
+                  demandOption: true,
+                })
+                .option('resourceId', {
+                  describe: 'ID of the resource to grant access to',
+                  type: 'string',
+                  demandOption: true,
+                })
+                .option('subjectType', {
+                  describe: 'Type of subject to grant access to',
+                  type: 'string',
+                  choices: ['user', 'organization_admin', 'organization_user', 'share_token'],
+                  demandOption: true,
+                })
+                .option('subjectId', {
+                  describe: 'ID of the subject to grant access to',
+                  type: 'string',
+                })
+                .option('subjectEmail', {
+                  describe: 'Email of the user subject to grant access to',
+                  type: 'string',
+                })
+                .option('relation', {
+                  describe: 'Relation to grant',
+                  type: 'string',
+                  choices: ['owner', 'editor', 'viewer'],
+                  demandOption: true,
+                }),
+            argv => {
+              const env = environmentSchema.parse(argv.environment);
+              return createGrant(env, authService, {
+                resourceType: argv.resourceType as ResourceType,
+                resourceId: argv.resourceId,
+                subjectType: argv.subjectType as SubjectType,
+                subjectId: argv.subjectId,
+                subjectEmail: argv.subjectEmail,
+                relation: argv.relation as GrantRelation,
+              });
+            }
+          )
+          .command(
+            'list',
+            'List grants',
+            yargs =>
+              yargs
+                .option('resourceType', {
+                  describe: 'Filter by resource type',
+                  type: 'string',
+                  choices: ['run', 'item', 'output_artifact', 'share_token'],
+                })
+                .option('resourceId', {
+                  describe: 'Filter by resource ID',
+                  type: 'string',
+                })
+                .option('subjectType', {
+                  describe: 'Filter by subject type',
+                  type: 'string',
+                  choices: ['user', 'organization_admin', 'organization_user', 'share_token'],
+                })
+                .option('subjectId', {
+                  describe: 'Filter by subject ID',
+                  type: 'string',
+                })
+                .option('revoked', {
+                  describe: 'Filter by revocation status',
+                  type: 'boolean',
+                })
+                .option('sort', {
+                  describe: 'Sort by field (e.g., "-created_at")',
+                  type: 'string',
+                }),
+            argv => {
+              const env = environmentSchema.parse(argv.environment);
+              return listGrants(env, authService, {
+                resourceType: argv.resourceType as ResourceType | undefined,
+                resourceId: argv.resourceId,
+                subjectType: argv.subjectType as SubjectType | undefined,
+                subjectId: argv.subjectId,
+                revoked: argv.revoked,
+                sort: argv.sort,
+              });
+            }
+          )
+          .command(
+            'get <grantId>',
+            'Get details of a specific grant',
+            yargs =>
+              yargs.positional('grantId', {
+                describe: 'Grant ID to get details for',
+                type: 'string',
+                demandOption: true,
+              }),
+            argv => {
+              const env = environmentSchema.parse(argv.environment);
+              return getGrant(env, authService, argv.grantId);
+            }
+          )
+          .command(
+            'revoke <grantId>',
+            'Revoke a specific grant',
+            yargs =>
+              yargs.positional('grantId', {
+                describe: 'Grant ID to revoke',
+                type: 'string',
+                demandOption: true,
+              }),
+            argv => {
+              const env = environmentSchema.parse(argv.environment);
+              return revokeGrant(env, authService, argv.grantId);
+            }
+          )
+          .demandCommand(1, 'You need at least one grants subcommand'),
+      () => undefined
+    )
+    .command(
+      'share-tokens',
+      'Manage share tokens',
+      shareTokensYargs =>
+        shareTokensYargs
+          .command(
+            'create',
+            'Create a share token',
+            yargs =>
+              yargs.option('expiresAt', {
+                describe: 'ISO 8601 expiration date/time for the share token',
+                type: 'string',
+              }),
+            argv => {
+              const env = environmentSchema.parse(argv.environment);
+              return createShareToken(env, authService, {
+                expiresAt: argv.expiresAt,
+              });
+            }
+          )
+          .command(
+            'list',
+            'List share tokens',
+            yargs =>
+              yargs
+                .option('runId', {
+                  describe: 'Filter by run ID',
+                  type: 'string',
+                })
+                .option('createdBy', {
+                  describe: 'Filter by share token creator',
+                  type: 'string',
+                })
+                .option('revoked', {
+                  describe: 'Filter by revocation status',
+                  type: 'boolean',
+                })
+                .option('sort', {
+                  describe: 'Sort by field (e.g., "-created_at")',
+                  type: 'string',
+                }),
+            argv => {
+              const env = environmentSchema.parse(argv.environment);
+              return listShareTokens(env, authService, {
+                runId: argv.runId,
+                createdBy: argv.createdBy,
+                revoked: argv.revoked,
+                sort: argv.sort,
+              });
+            }
+          )
+          .command(
+            'get <shareTokenId>',
+            'Get details of a specific share token',
+            yargs =>
+              yargs.positional('shareTokenId', {
+                describe: 'Share token ID to get details for',
+                type: 'string',
+                demandOption: true,
+              }),
+            argv => {
+              const env = environmentSchema.parse(argv.environment);
+              return getShareToken(env, authService, argv.shareTokenId);
+            }
+          )
+          .command(
+            'revoke <shareTokenId>',
+            'Revoke a specific share token',
+            yargs =>
+              yargs.positional('shareTokenId', {
+                describe: 'Share token ID to revoke',
+                type: 'string',
+                demandOption: true,
+              }),
+            argv => {
+              const env = environmentSchema.parse(argv.environment);
+              return revokeShareToken(env, authService, argv.shareTokenId);
+            }
+          )
+          .demandCommand(1, 'You need at least one share-tokens subcommand'),
       () => undefined
     )
     .command(
