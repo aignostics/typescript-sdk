@@ -12,6 +12,10 @@ npm install -g @aignostics/cli
 
 All commands accept a global `--environment` option (`production` [default], `staging`, `develop`).
 
+All commands also accept a global `--format` option (`text` [default], `json`). `text` prints a
+human-friendly table or summary showing the most relevant fields; `json` prints the full raw
+response, useful for scripting.
+
 ### Authentication
 
 ```bash

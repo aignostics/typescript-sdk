@@ -4,6 +4,16 @@ import {
   type GrantRelation,
   type ResourceType,
   type SubjectType,
+  type GrantReadResponse,
+  type ShareTokenReadResponse,
+  type ShareTokenCreateResponse,
+  type ApplicationReadShortResponse,
+  type ApplicationReadResponse,
+  type ApplicationVersion,
+  type RunReadResponse,
+  type ItemResultReadResponse,
+  type VersionReadResponse,
+  type RunCreationResponse,
 } from '@aignostics/sdk';
 import { AuthService, type LoginWithCallbackConfig } from './utils/auth.js';
 import { startCallbackServer, waitForCallback } from './utils/oauth-callback-server.js';
@@ -14,7 +24,9 @@ import { environmentConfig, EnvironmentKey } from './utils/environment.js';
 
 // Read package.json synchronously for CommonJS compatibility
 const packageJsonPath = join(__dirname, '../package.json');
-const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8')) as { version: string };
+const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8')) as {
+  version: string;
+};
 
 export function handleInfo(): void {
   console.log('Aignostics Platform SDK');
@@ -46,14 +58,13 @@ export async function testApi(
 export async function listApplications(
   environment: EnvironmentKey,
   authService: AuthService
-): Promise<void> {
+): Promise<ApplicationReadShortResponse[]> {
   const { endpoint } = environmentConfig[environment];
   const sdk = new PlatformSDKHttp({
     baseURL: endpoint,
     tokenProvider: () => authService.getValidAccessToken(environment),
   });
-  const response = await sdk.listApplications();
-  console.log('Applications:', JSON.stringify(response, null, 2));
+  return sdk.listApplications();
 }
 
 export async function getApplicationVersionDetails(
@@ -61,18 +72,14 @@ export async function getApplicationVersionDetails(
   authService: AuthService,
   applicationId: string,
   versionNumber: string
-): Promise<void> {
+): Promise<VersionReadResponse | undefined> {
   const { endpoint } = environmentConfig[environment];
   const sdk = new PlatformSDKHttp({
     baseURL: endpoint,
     tokenProvider: () => authService.getValidAccessToken(environment),
   });
   try {
-    const response = await sdk.getApplicationVersionDetails(applicationId, versionNumber);
-    console.log(
-      `Application version details for ${applicationId} v${versionNumber}:`,
-      JSON.stringify(response, null, 2)
-    );
+    return await sdk.getApplicationVersionDetails(applicationId, versionNumber);
   } catch (error) {
     console.error('❌ Failed to get application version details:', error);
     process.exit(1);
@@ -83,15 +90,14 @@ export async function getApplicationDetails(
   environment: EnvironmentKey,
   authService: AuthService,
   applicationId: string
-): Promise<void> {
+): Promise<ApplicationReadResponse | undefined> {
   const { endpoint } = environmentConfig[environment];
   const sdk = new PlatformSDKHttp({
     baseURL: endpoint,
     tokenProvider: () => authService.getValidAccessToken(environment),
   });
   try {
-    const response = await sdk.getApplication(applicationId);
-    console.log(`Application details for ${applicationId}:`, JSON.stringify(response, null, 2));
+    return await sdk.getApplication(applicationId);
   } catch (error) {
     console.error('❌ Failed to get application details:', error);
     process.exit(1);
@@ -102,7 +108,7 @@ export async function listApplicationVersions(
   environment: EnvironmentKey,
   authService: AuthService,
   applicationId: string
-): Promise<void> {
+): Promise<ApplicationVersion[] | undefined> {
   const { endpoint } = environmentConfig[environment];
   const sdk = new PlatformSDKHttp({
     baseURL: endpoint,
@@ -110,10 +116,7 @@ export async function listApplicationVersions(
   });
   try {
     const response = await sdk.getApplication(applicationId);
-    console.log(
-      `Application versions for ${applicationId}:`,
-      JSON.stringify(response.versions, null, 2)
-    );
+    return response.versions;
   } catch (error) {
     console.error('❌ Failed to list application versions:', error);
     process.exit(1);
@@ -129,7 +132,7 @@ export async function listApplicationRuns(
     customMetadata?: string;
     sort?: string;
   }
-): Promise<void> {
+): Promise<RunReadResponse[] | undefined> {
   let sortBy: string[] | undefined;
 
   if (options?.sort) {
@@ -149,8 +152,7 @@ export async function listApplicationRuns(
     tokenProvider: () => authService.getValidAccessToken(environment),
   });
   try {
-    const response = await sdk.listApplicationRuns({ ...options, sort: sortBy });
-    console.log('Application runs:', JSON.stringify(response, null, 2));
+    return await sdk.listApplicationRuns({ ...options, sort: sortBy });
   } catch (error) {
     console.error('❌ Failed to list application runs:', error);
     process.exit(1);
@@ -161,15 +163,14 @@ export async function getRun(
   environment: EnvironmentKey,
   authService: AuthService,
   applicationRunId: string
-): Promise<void> {
+): Promise<RunReadResponse | undefined> {
   const { endpoint } = environmentConfig[environment];
   const sdk = new PlatformSDKHttp({
     baseURL: endpoint,
     tokenProvider: () => authService.getValidAccessToken(environment),
   });
   try {
-    const response = await sdk.getRun(applicationRunId);
-    console.log(`Run details for ${applicationRunId}:`, JSON.stringify(response, null, 2));
+    return await sdk.getRun(applicationRunId);
   } catch (error) {
     console.error('❌ Failed to get run:', error);
     process.exit(1);
@@ -199,15 +200,14 @@ export async function listRunResults(
   environment: EnvironmentKey,
   authService: AuthService,
   applicationRunId: string
-): Promise<void> {
+): Promise<ItemResultReadResponse[] | undefined> {
   const { endpoint } = environmentConfig[environment];
   const sdk = new PlatformSDKHttp({
     baseURL: endpoint,
     tokenProvider: () => authService.getValidAccessToken(environment),
   });
   try {
-    const response = await sdk.listRunResults(applicationRunId);
-    console.log(`Run results for ${applicationRunId}:`, JSON.stringify(response, null, 2));
+    return await sdk.listRunResults(applicationRunId);
   } catch (error) {
     console.error('❌ Failed to list run results:', error);
     process.exit(1);
@@ -377,7 +377,7 @@ export async function createApplicationRun(
   applicationId: string,
   versionNumber: string,
   itemsJson: string
-): Promise<void> {
+): Promise<RunCreationResponse | undefined> {
   const { endpoint } = environmentConfig[environment];
   const sdk = new PlatformSDKHttp({
     baseURL: endpoint,
@@ -403,7 +403,7 @@ export async function createApplicationRun(
       version_number: versionNumber,
       items: items,
     });
-    console.log('✅ Application run created successfully:', JSON.stringify(response, null, 2));
+    return response;
   } catch (error) {
     console.error('❌ Failed to create application run:', error);
     process.exit(1);
@@ -516,14 +516,14 @@ export async function createGrant(
     subjectEmail?: string;
     relation: GrantRelation;
   }
-): Promise<void> {
+): Promise<GrantReadResponse | undefined> {
   const { endpoint } = environmentConfig[environment];
   const sdk = new PlatformSDKHttp({
     baseURL: endpoint,
     tokenProvider: () => authService.getValidAccessToken(environment),
   });
   try {
-    const response = await sdk.createGrant({
+    return await sdk.createGrant({
       resource_type: options.resourceType,
       resource_id: options.resourceId,
       subject_type: options.subjectType,
@@ -531,7 +531,6 @@ export async function createGrant(
       subject_email: options.subjectEmail,
       relation: options.relation,
     });
-    console.log('✅ Grant created successfully:', JSON.stringify(response, null, 2));
   } catch (error) {
     console.error('❌ Failed to create grant:', error);
     process.exit(1);
@@ -549,14 +548,14 @@ export async function listGrants(
     revoked?: boolean;
     sort?: string;
   }
-): Promise<void> {
+): Promise<GrantReadResponse[] | undefined> {
   const { endpoint } = environmentConfig[environment];
   const sdk = new PlatformSDKHttp({
     baseURL: endpoint,
     tokenProvider: () => authService.getValidAccessToken(environment),
   });
   try {
-    const response = await sdk.listGrants({
+    return await sdk.listGrants({
       resourceType: options?.resourceType,
       resourceId: options?.resourceId,
       subjectType: options?.subjectType,
@@ -564,7 +563,6 @@ export async function listGrants(
       revoked: options?.revoked,
       sort: options?.sort ? [options.sort] : undefined,
     });
-    console.log('Grants:', JSON.stringify(response, null, 2));
   } catch (error) {
     console.error('❌ Failed to list grants:', error);
     process.exit(1);
@@ -575,15 +573,14 @@ export async function getGrant(
   environment: EnvironmentKey,
   authService: AuthService,
   grantId: string
-): Promise<void> {
+): Promise<GrantReadResponse | undefined> {
   const { endpoint } = environmentConfig[environment];
   const sdk = new PlatformSDKHttp({
     baseURL: endpoint,
     tokenProvider: () => authService.getValidAccessToken(environment),
   });
   try {
-    const response = await sdk.getGrant(grantId);
-    console.log(`Grant details for ${grantId}:`, JSON.stringify(response, null, 2));
+    return await sdk.getGrant(grantId);
   } catch (error) {
     console.error('❌ Failed to get grant:', error);
     process.exit(1);
@@ -594,15 +591,14 @@ export async function revokeGrant(
   environment: EnvironmentKey,
   authService: AuthService,
   grantId: string
-): Promise<void> {
+): Promise<GrantReadResponse | undefined> {
   const { endpoint } = environmentConfig[environment];
   const sdk = new PlatformSDKHttp({
     baseURL: endpoint,
     tokenProvider: () => authService.getValidAccessToken(environment),
   });
   try {
-    const response = await sdk.revokeGrant(grantId);
-    console.log(`✅ Grant revoked successfully:`, JSON.stringify(response, null, 2));
+    return await sdk.revokeGrant(grantId);
   } catch (error) {
     console.error('❌ Failed to revoke grant:', error);
     process.exit(1);
@@ -615,7 +611,7 @@ export async function createShareToken(
   options?: {
     expiresAt?: string;
   }
-): Promise<void> {
+): Promise<ShareTokenCreateResponse | undefined> {
   const { endpoint } = environmentConfig[environment];
   const sdk = new PlatformSDKHttp({
     baseURL: endpoint,
@@ -625,8 +621,8 @@ export async function createShareToken(
     const response = await sdk.createShareToken({
       expires_at: options?.expiresAt,
     });
-    console.log('✅ Share token created successfully:', JSON.stringify(response, null, 2));
-    console.log('⚠️  Save the share_token value now — it will not be shown again.');
+    console.error('⚠️  Save the share_token value now — it will not be shown again.');
+    return response;
   } catch (error) {
     console.error('❌ Failed to create share token:', error);
     process.exit(1);
@@ -642,20 +638,19 @@ export async function listShareTokens(
     revoked?: boolean;
     sort?: string;
   }
-): Promise<void> {
+): Promise<ShareTokenReadResponse[] | undefined> {
   const { endpoint } = environmentConfig[environment];
   const sdk = new PlatformSDKHttp({
     baseURL: endpoint,
     tokenProvider: () => authService.getValidAccessToken(environment),
   });
   try {
-    const response = await sdk.listShareTokens({
+    return await sdk.listShareTokens({
       runId: options?.runId,
       createdBy: options?.createdBy,
       revoked: options?.revoked,
       sort: options?.sort ? [options.sort] : undefined,
     });
-    console.log('Share tokens:', JSON.stringify(response, null, 2));
   } catch (error) {
     console.error('❌ Failed to list share tokens:', error);
     process.exit(1);
@@ -666,15 +661,14 @@ export async function getShareToken(
   environment: EnvironmentKey,
   authService: AuthService,
   shareTokenId: string
-): Promise<void> {
+): Promise<ShareTokenReadResponse | undefined> {
   const { endpoint } = environmentConfig[environment];
   const sdk = new PlatformSDKHttp({
     baseURL: endpoint,
     tokenProvider: () => authService.getValidAccessToken(environment),
   });
   try {
-    const response = await sdk.getShareToken(shareTokenId);
-    console.log(`Share token details for ${shareTokenId}:`, JSON.stringify(response, null, 2));
+    return await sdk.getShareToken(shareTokenId);
   } catch (error) {
     console.error('❌ Failed to get share token:', error);
     process.exit(1);
@@ -685,15 +679,14 @@ export async function revokeShareToken(
   environment: EnvironmentKey,
   authService: AuthService,
   shareTokenId: string
-): Promise<void> {
+): Promise<ShareTokenReadResponse | undefined> {
   const { endpoint } = environmentConfig[environment];
   const sdk = new PlatformSDKHttp({
     baseURL: endpoint,
     tokenProvider: () => authService.getValidAccessToken(environment),
   });
   try {
-    const response = await sdk.revokeShareToken(shareTokenId);
-    console.log(`✅ Share token revoked successfully:`, JSON.stringify(response, null, 2));
+    return await sdk.revokeShareToken(shareTokenId);
   } catch (error) {
     console.error('❌ Failed to revoke share token:', error);
     process.exit(1);

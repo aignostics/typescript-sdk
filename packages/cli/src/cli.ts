@@ -41,7 +41,21 @@ import {
   type ResourceType,
   type SubjectType,
   type GrantRelation,
+  type GrantReadResponse,
+  type ShareTokenReadResponse,
+  type ShareTokenCreateResponse,
+  type ApplicationReadShortResponse,
+  type ApplicationReadResponse,
+  type ApplicationVersion,
+  type RunReadResponse,
+  type ItemResultReadResponse,
+  type VersionReadResponse,
+  type RunCreationResponse,
+  getRunStatus,
+  getRunProgress,
+  getItemStatus,
 } from '@aignostics/sdk';
+import { OutputFormat, format, printTable, printKeyValue } from './utils/formatting.js';
 
 // Create a shared auth service instance for the CLI
 const authService = new AuthService(new FileSystemTokenStorage());
@@ -87,6 +101,144 @@ function buildRunItemMetadataCommands(itemMetadataYargs: Argv) {
     .demandCommand(1, 'You need at least one metadata subcommand');
 }
 
+function printApplicationsTable(applications: ApplicationReadShortResponse[]): void {
+  printTable(
+    ['ID', 'Name', 'Latest Version'],
+    applications.map(app => [app.application_id, app.name, app.latest_version?.number ?? '-'])
+  );
+}
+
+function printApplicationDetails(application: ApplicationReadResponse): void {
+  printKeyValue([
+    ['Application ID', application.application_id],
+    ['Name', application.name],
+    ['Description', application.description],
+    ['Regulatory Classes', application.regulatory_classes.join(', ') || '-'],
+    ['Versions', application.versions.length],
+  ]);
+}
+
+function printApplicationVersionsTable(versions: ApplicationVersion[]): void {
+  printTable(
+    ['Number', 'Released At'],
+    versions.map(version => [version.number, version.released_at])
+  );
+}
+
+function printApplicationVersionDetails(version: VersionReadResponse): void {
+  printKeyValue([
+    ['Version Number', version.version_number],
+    ['Released At', version.released_at],
+    ['Changelog', version.changelog],
+    ['Input Artifacts', version.input_artifacts.length],
+    ['Output Artifacts', version.output_artifacts.length],
+  ]);
+}
+
+function printRunsTable(runs: RunReadResponse[]): void {
+  printTable(
+    ['Run ID', 'Application', 'Version', 'Status', 'Progress', 'Submitted At'],
+    runs.map(run => [
+      run.run_id,
+      run.application_id,
+      run.version_number,
+      getRunStatus(run),
+      `${getRunProgress(run)}%`,
+      run.submitted_at,
+    ])
+  );
+}
+
+function printRunDetails(run: RunReadResponse): void {
+  printKeyValue([
+    ['Run ID', run.run_id],
+    ['Application', run.application_id],
+    ['Version', run.version_number],
+    ['Status', getRunStatus(run)],
+    ['Progress', `${getRunProgress(run)}%`],
+    ['Submitted At', run.submitted_at],
+    ['Submitted By', run.submitted_by],
+  ]);
+}
+
+function printRunResultsTable(items: ItemResultReadResponse[]): void {
+  printTable(
+    ['External ID', 'Status'],
+    items.map(item => [item.external_id, getItemStatus(item)])
+  );
+}
+
+function printRunCreationResult(run: RunCreationResponse): void {
+  printKeyValue([['Run ID', run.run_id]]);
+}
+
+function printGrantsTable(grants: GrantReadResponse[]): void {
+  printTable(
+    [
+      'Grant ID',
+      'Resource Type',
+      'Resource ID',
+      'Subject Type',
+      'Subject ID',
+      'Relation',
+      'Revoked',
+    ],
+    grants.map(grant => [
+      grant.grant_id,
+      grant.resource_type,
+      grant.resource_id,
+      grant.subject_type,
+      grant.subject_id,
+      grant.relation,
+      String(grant.revoked),
+    ])
+  );
+}
+
+function printGrantDetails(grant: GrantReadResponse): void {
+  printKeyValue([
+    ['Grant ID', grant.grant_id],
+    ['Resource Type', grant.resource_type],
+    ['Resource ID', grant.resource_id],
+    ['Subject Type', grant.subject_type],
+    ['Subject ID', grant.subject_id],
+    ['Relation', grant.relation],
+    ['Created By', grant.created_by],
+    ['Created At', grant.created_at],
+    ['Revoked', String(grant.revoked)],
+  ]);
+}
+
+function printShareTokensTable(shareTokens: ShareTokenReadResponse[]): void {
+  printTable(
+    ['Share Token ID', 'Created At', 'Expires At', 'Revoked'],
+    shareTokens.map(shareToken => [
+      shareToken.share_token_id,
+      shareToken.created_at,
+      shareToken.expires_at ?? '-',
+      String(shareToken.revoked),
+    ])
+  );
+}
+
+function printShareTokenDetails(shareToken: ShareTokenReadResponse): void {
+  printKeyValue([
+    ['Share Token ID', shareToken.share_token_id],
+    ['Created At', shareToken.created_at],
+    ['Expires At', shareToken.expires_at ?? '-'],
+    ['Revoked', String(shareToken.revoked)],
+  ]);
+}
+
+function printShareTokenCreationResult(shareToken: ShareTokenCreateResponse): void {
+  printKeyValue([
+    ['Share Token ID', shareToken.share_token_id],
+    ['Share Token', shareToken.share_token],
+    ['Created At', shareToken.created_at],
+    ['Expires At', shareToken.expires_at ?? '-'],
+  ]);
+}
+
 /**
  * CLI for the Aignostics Platform SDK
  */
@@ -100,6 +252,12 @@ export async function main() {
       type: 'string',
       default: 'production',
       choices: Object.keys(environmentConfig),
+    })
+    .option('format', {
+      describe: 'Output format for command results',
+      type: 'string',
+      default: 'text',
+      choices: ['text', 'json'],
     })
     .command('info', 'Display SDK information', {}, handleInfo)
     .command(
@@ -122,7 +280,11 @@ export async function main() {
             yargs => yargs,
             argv => {
               const env = environmentSchema.parse(argv.environment);
-              return listApplications(env, authService);
+              return format(
+                argv.format as OutputFormat,
+                listApplications(env, authService),
+                printApplicationsTable
+              );
             }
           )
           .command(
@@ -136,7 +298,11 @@ export async function main() {
               }),
             argv => {
               const env = environmentSchema.parse(argv.environment);
-              return getApplicationDetails(env, authService, argv.applicationId);
+              return format(
+                argv.format as OutputFormat,
+                getApplicationDetails(env, authService, argv.applicationId),
+                printApplicationDetails
+              );
             }
           )
           .command(
@@ -155,7 +321,11 @@ export async function main() {
                     }),
                   argv => {
                     const env = environmentSchema.parse(argv.environment);
-                    return listApplicationVersions(env, authService, argv.applicationId);
+                    return format(
+                      argv.format as OutputFormat,
+                      listApplicationVersions(env, authService, argv.applicationId),
+                      printApplicationVersionsTable
+                    );
                   }
                 )
                 .command(
@@ -175,11 +345,15 @@ export async function main() {
                       }),
                   argv => {
                     const env = environmentSchema.parse(argv.environment);
-                    return getApplicationVersionDetails(
-                      env,
-                      authService,
-                      argv.applicationId,
-                      argv.versionNumber
+                    return format(
+                      argv.format as OutputFormat,
+                      getApplicationVersionDetails(
+                        env,
+                        authService,
+                        argv.applicationId,
+                        argv.versionNumber
+                      ),
+                      printApplicationVersionDetails
                     );
                   }
                 )
@@ -224,12 +398,16 @@ export async function main() {
                 items: argv.items,
                 itemsFile: argv.itemsFile,
               });
-              return createApplicationRun(
-                env,
-                authService,
-                argv.applicationId,
-                argv.versionNumber,
-                itemsJson
+              return format(
+                argv.format as OutputFormat,
+                createApplicationRun(
+                  env,
+                  authService,
+                  argv.applicationId,
+                  argv.versionNumber,
+                  itemsJson
+                ),
+                printRunCreationResult
               );
             }
           )
@@ -257,12 +435,16 @@ export async function main() {
                 }),
             argv => {
               const env = environmentSchema.parse(argv.environment);
-              return listApplicationRuns(env, authService, {
-                applicationId: argv.applicationId,
-                applicationVersion: argv.applicationVersion,
-                customMetadata: argv.customMetadata,
-                sort: argv.sort,
-              });
+              return format(
+                argv.format as OutputFormat,
+                listApplicationRuns(env, authService, {
+                  applicationId: argv.applicationId,
+                  applicationVersion: argv.applicationVersion,
+                  customMetadata: argv.customMetadata,
+                  sort: argv.sort,
+                }),
+                printRunsTable
+              );
             }
           )
           .command(
@@ -276,7 +458,11 @@ export async function main() {
               }),
             argv => {
               const env = environmentSchema.parse(argv.environment);
-              return getRun(env, authService, argv.applicationRunId);
+              return format(
+                argv.format as OutputFormat,
+                getRun(env, authService, argv.applicationRunId),
+                printRunDetails
+              );
             }
           )
           .command(
@@ -342,7 +528,11 @@ export async function main() {
                     }),
                   argv => {
                     const env = environmentSchema.parse(argv.environment);
-                    return listRunResults(env, authService, argv.applicationRunId);
+                    return format(
+                      argv.format as OutputFormat,
+                      listRunResults(env, authService, argv.applicationRunId),
+                      printRunResultsTable
+                    );
                   }
                 )
                 .command(
@@ -442,14 +632,18 @@ export async function main() {
                 }),
             argv => {
               const env = environmentSchema.parse(argv.environment);
-              return createGrant(env, authService, {
-                resourceType: argv.resourceType as ResourceType,
-                resourceId: argv.resourceId,
-                subjectType: argv.subjectType as SubjectType,
-                subjectId: argv.subjectId,
-                subjectEmail: argv.subjectEmail,
-                relation: argv.relation as GrantRelation,
-              });
+              return format(
+                argv.format as OutputFormat,
+                createGrant(env, authService, {
+                  resourceType: argv.resourceType as ResourceType,
+                  resourceId: argv.resourceId,
+                  subjectType: argv.subjectType as SubjectType,
+                  subjectId: argv.subjectId,
+                  subjectEmail: argv.subjectEmail,
+                  relation: argv.relation as GrantRelation,
+                }),
+                printGrantDetails
+              );
             }
           )
           .command(
@@ -485,14 +679,18 @@ export async function main() {
                 }),
             argv => {
               const env = environmentSchema.parse(argv.environment);
-              return listGrants(env, authService, {
-                resourceType: argv.resourceType as ResourceType | undefined,
-                resourceId: argv.resourceId,
-                subjectType: argv.subjectType as SubjectType | undefined,
-                subjectId: argv.subjectId,
-                revoked: argv.revoked,
-                sort: argv.sort,
-              });
+              return format(
+                argv.format as OutputFormat,
+                listGrants(env, authService, {
+                  resourceType: argv.resourceType as ResourceType | undefined,
+                  resourceId: argv.resourceId,
+                  subjectType: argv.subjectType as SubjectType | undefined,
+                  subjectId: argv.subjectId,
+                  revoked: argv.revoked,
+                  sort: argv.sort,
+                }),
+                printGrantsTable
+              );
             }
           )
           .command(
@@ -506,7 +704,11 @@ export async function main() {
               }),
             argv => {
               const env = environmentSchema.parse(argv.environment);
-              return getGrant(env, authService, argv.grantId);
+              return format(
+                argv.format as OutputFormat,
+                getGrant(env, authService, argv.grantId),
+                printGrantDetails
+              );
             }
           )
           .command(
@@ -520,7 +722,11 @@ export async function main() {
               }),
             argv => {
               const env = environmentSchema.parse(argv.environment);
-              return revokeGrant(env, authService, argv.grantId);
+              return format(
+                argv.format as OutputFormat,
+                revokeGrant(env, authService, argv.grantId),
+                printGrantDetails
+              );
             }
           )
           .demandCommand(1, 'You need at least one grants subcommand'),
@@ -541,9 +747,13 @@ export async function main() {
               }),
             argv => {
               const env = environmentSchema.parse(argv.environment);
-              return createShareToken(env, authService, {
-                expiresAt: argv.expiresAt,
-              });
+              return format(
+                argv.format as OutputFormat,
+                createShareToken(env, authService, {
+                  expiresAt: argv.expiresAt,
+                }),
+                printShareTokenCreationResult
+              );
             }
           )
           .command(
@@ -569,12 +779,16 @@ export async function main() {
                 }),
             argv => {
               const env = environmentSchema.parse(argv.environment);
-              return listShareTokens(env, authService, {
-                runId: argv.runId,
-                createdBy: argv.createdBy,
-                revoked: argv.revoked,
-                sort: argv.sort,
-              });
+              return format(
+                argv.format as OutputFormat,
+                listShareTokens(env, authService, {
+                  runId: argv.runId,
+                  createdBy: argv.createdBy,
+                  revoked: argv.revoked,
+                  sort: argv.sort,
+                }),
+                printShareTokensTable
+              );
             }
           )
           .command(
@@ -588,7 +802,11 @@ export async function main() {
               }),
             argv => {
               const env = environmentSchema.parse(argv.environment);
-              return getShareToken(env, authService, argv.shareTokenId);
+              return format(
+                argv.format as OutputFormat,
+                getShareToken(env, authService, argv.shareTokenId),
+                printShareTokenDetails
+              );
             }
           )
           .command(
@@ -602,7 +820,11 @@ export async function main() {
               }),
             argv => {
               const env = environmentSchema.parse(argv.environment);
-              return revokeShareToken(env, authService, argv.shareTokenId);
+              return format(
+                argv.format as OutputFormat,
+                revokeShareToken(env, authService, argv.shareTokenId),
+                printShareTokenDetails
+              );
             }
           )
           .demandCommand(1, 'You need at least one share-tokens subcommand'),
