@@ -208,6 +208,132 @@ export async function listRunResults(
   }
 }
 
+export async function getRunItem(
+  environment: EnvironmentKey,
+  authService: AuthService,
+  applicationRunId: string,
+  externalId: string
+): Promise<void> {
+  const { endpoint } = environmentConfig[environment];
+  const sdk = new PlatformSDKHttp({
+    baseURL: endpoint,
+    tokenProvider: () => authService.getValidAccessToken(environment),
+  });
+  try {
+    const response = await sdk.getRunItem(applicationRunId, externalId);
+    console.log(
+      `Run item details for ${applicationRunId}/${externalId}:`,
+      JSON.stringify(response, null, 2)
+    );
+  } catch (error) {
+    console.error('❌ Failed to get run item:', error);
+    process.exit(1);
+  }
+}
+
+/**
+ * Parse a JSON string as a custom metadata object, or `null` if the string is
+ * the literal `"null"`. Prints an error and exits the process on invalid input.
+ */
+function parseCustomMetadataJson(
+  customMetadataJson: string,
+  errorMessage: string
+): Record<string, unknown> | null | undefined {
+  try {
+    const parsed = JSON.parse(customMetadataJson) as unknown;
+    if (parsed !== null && typeof parsed !== 'object') {
+      throw new TypeError('Custom metadata must be a JSON object or null');
+    }
+    return parsed as Record<string, unknown> | null;
+  } catch (parseError) {
+    console.error(errorMessage, parseError);
+    process.exit(1);
+    return undefined; // Ensure we don't continue execution in tests
+  }
+}
+
+export async function updateRunMetadata(
+  environment: EnvironmentKey,
+  authService: AuthService,
+  applicationRunId: string,
+  customMetadataJson: string
+): Promise<void> {
+  const customMetadata = parseCustomMetadataJson(
+    customMetadataJson,
+    '❌ Invalid custom metadata JSON:'
+  );
+  if (customMetadata === undefined) {
+    return; // Ensure we don't continue execution in tests
+  }
+
+  const { endpoint } = environmentConfig[environment];
+  const sdk = new PlatformSDKHttp({
+    baseURL: endpoint,
+    tokenProvider: () => authService.getValidAccessToken(environment),
+  });
+  try {
+    const response = await sdk.updateRunMetadata(applicationRunId, customMetadata);
+    console.log(
+      `✅ Updated custom metadata for run ${applicationRunId}:`,
+      JSON.stringify(response, null, 2)
+    );
+  } catch (error) {
+    console.error('❌ Failed to update run metadata:', error);
+    process.exit(1);
+  }
+}
+
+export async function updateRunItemMetadata(
+  environment: EnvironmentKey,
+  authService: AuthService,
+  applicationRunId: string,
+  externalId: string,
+  customMetadataJson: string
+): Promise<void> {
+  const customMetadata = parseCustomMetadataJson(
+    customMetadataJson,
+    '❌ Invalid custom metadata JSON:'
+  );
+  if (customMetadata === undefined) {
+    return; // Ensure we don't continue execution in tests
+  }
+
+  const { endpoint } = environmentConfig[environment];
+  const sdk = new PlatformSDKHttp({
+    baseURL: endpoint,
+    tokenProvider: () => authService.getValidAccessToken(environment),
+  });
+  try {
+    const response = await sdk.updateRunItemMetadata(applicationRunId, externalId, customMetadata);
+    console.log(
+      `✅ Updated custom metadata for item ${applicationRunId}/${externalId}:`,
+      JSON.stringify(response, null, 2)
+    );
+  } catch (error) {
+    console.error('❌ Failed to update run item metadata:', error);
+    process.exit(1);
+  }
+}
+
+export async function deleteRunResults(
+  environment: EnvironmentKey,
+  authService: AuthService,
+  applicationRunId: string
+): Promise<void> {
+  const { endpoint } = environmentConfig[environment];
+  const sdk = new PlatformSDKHttp({
+    baseURL: endpoint,
+    tokenProvider: () => authService.getValidAccessToken(environment),
+  });
+  try {
+    await sdk.deleteRunResults(applicationRunId);
+    console.log(`✅ Successfully deleted results for run: ${applicationRunId}`);
+  } catch (error) {
+    console.error('❌ Failed to delete run results:', error);
+    process.exit(1);
+  }
+}
+
 /**
  * Resolve the JSON string of items to submit for a run, from (in order of precedence):
  * an inline `--items` value, an `--items-file` path, or piped stdin. Falls back to an

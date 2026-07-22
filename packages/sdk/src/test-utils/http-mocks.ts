@@ -13,6 +13,7 @@ import type {
   VersionReadResponse,
   InputArtifact,
   OutputArtifact,
+  CustomMetadataUpdateResponse,
 } from '../generated/index.js';
 
 // Factories for generating mock data
@@ -157,6 +158,10 @@ const runCreationResponseFactory = Factory.define<RunCreationResponse>(() => ({
   run_id: faker.string.uuid(),
 }));
 
+const customMetadataUpdateResponseFactory = Factory.define<CustomMetadataUpdateResponse>(() => ({
+  custom_metadata_checksum: faker.string.alphanumeric(8),
+}));
+
 /**
  * Mock responses for API endpoints using factories
  */
@@ -184,6 +189,12 @@ export const mockResponses = {
 
   // Mock run results response
   runResultsSuccess: itemResultFactory.buildList(2),
+
+  // Mock single run item response
+  runItemSuccess: itemResultFactory.build(),
+
+  // Mock custom metadata update response
+  customMetadataUpdateSuccess: customMetadataUpdateResponseFactory.build(),
 
   // Mock error response
   error: {
@@ -215,6 +226,7 @@ export const factories = {
   runCreationResponse: runCreationResponseFactory,
   itemResult: itemResultFactory,
   outputArtifact: outputArtifactFactory,
+  customMetadataUpdateResponse: customMetadataUpdateResponseFactory,
 };
 
 /**
@@ -247,6 +259,18 @@ export const handlers = {
     http.get('*/v1/runs/:runId/items', () => {
       return HttpResponse.json(mockResponses.runResultsSuccess, { status: 200 });
     }),
+    http.get('*/v1/runs/:runId/items/:externalId', () => {
+      return HttpResponse.json(mockResponses.runItemSuccess, { status: 200 });
+    }),
+    http.put('*/v1/runs/:runId/custom-metadata', () => {
+      return HttpResponse.json(mockResponses.customMetadataUpdateSuccess, { status: 200 });
+    }),
+    http.put('*/v1/runs/:runId/items/:externalId/custom-metadata', () => {
+      return HttpResponse.json(mockResponses.customMetadataUpdateSuccess, { status: 200 });
+    }),
+    http.delete('*/v1/runs/:runId/artifacts', () => {
+      return HttpResponse.json({}, { status: 202 });
+    }),
     http.get('*/v1/runs/:runId/artifacts/:artifactId/file', () => {
       return new HttpResponse(new ArrayBuffer(8), {
         status: 200,
@@ -271,6 +295,18 @@ export const handlers = {
     }),
     http.get('*/v1/runs/:runId/items', () => {
       return HttpResponse.json([], { status: 200 });
+    }),
+    http.get('*/v1/runs/:runId/items/:externalId', () => {
+      return HttpResponse.json(mockResponses.runItemSuccess, { status: 200 });
+    }),
+    http.put('*/v1/runs/:runId/custom-metadata', () => {
+      return HttpResponse.json(mockResponses.customMetadataUpdateSuccess, { status: 200 });
+    }),
+    http.put('*/v1/runs/:runId/items/:externalId/custom-metadata', () => {
+      return HttpResponse.json(mockResponses.customMetadataUpdateSuccess, { status: 200 });
+    }),
+    http.delete('*/v1/runs/:runId/artifacts', () => {
+      return HttpResponse.json({}, { status: 202 });
     }),
     http.get('*/v1/runs/:runId/artifacts/:artifactId/file', () => {
       return new HttpResponse(new ArrayBuffer(0), {
@@ -306,6 +342,18 @@ export const handlers = {
     http.get('*/v1/runs/:runId/items', () => {
       return HttpResponse.json(mockResponses.error, { status: 404 });
     }),
+    http.get('*/v1/runs/:runId/items/:externalId', () => {
+      return HttpResponse.json(mockResponses.error, { status: 404 });
+    }),
+    http.put('*/v1/runs/:runId/custom-metadata', () => {
+      return HttpResponse.json(mockResponses.error, { status: 404 });
+    }),
+    http.put('*/v1/runs/:runId/items/:externalId/custom-metadata', () => {
+      return HttpResponse.json(mockResponses.error, { status: 404 });
+    }),
+    http.delete('*/v1/runs/:runId/artifacts', () => {
+      return HttpResponse.json(mockResponses.error, { status: 404 });
+    }),
     http.get('*/v1/runs/:runId/artifacts/:artifactId/file', () => {
       return HttpResponse.json(mockResponses.error, { status: 404 });
     }),
@@ -334,6 +382,18 @@ export const handlers = {
       return HttpResponse.json(mockResponses.validationError, { status: 422 });
     }),
     http.get('*/v1/runs/:runId/items', () => {
+      return HttpResponse.json(mockResponses.validationError, { status: 422 });
+    }),
+    http.get('*/v1/runs/:runId/items/:externalId', () => {
+      return HttpResponse.json(mockResponses.validationError, { status: 422 });
+    }),
+    http.put('*/v1/runs/:runId/custom-metadata', () => {
+      return HttpResponse.json(mockResponses.validationError, { status: 422 });
+    }),
+    http.put('*/v1/runs/:runId/items/:externalId/custom-metadata', () => {
+      return HttpResponse.json(mockResponses.validationError, { status: 422 });
+    }),
+    http.delete('*/v1/runs/:runId/artifacts', () => {
       return HttpResponse.json(mockResponses.validationError, { status: 422 });
     }),
     http.get('*/v1/runs/:runId/artifacts/:artifactId/file', () => {
@@ -366,6 +426,18 @@ export const handlers = {
     http.get('*/v1/runs/:runId/items', () => {
       return HttpResponse.json(mockResponses.error, { status: 500 });
     }),
+    http.get('*/v1/runs/:runId/items/:externalId', () => {
+      return HttpResponse.json(mockResponses.error, { status: 500 });
+    }),
+    http.put('*/v1/runs/:runId/custom-metadata', () => {
+      return HttpResponse.json(mockResponses.error, { status: 500 });
+    }),
+    http.put('*/v1/runs/:runId/items/:externalId/custom-metadata', () => {
+      return HttpResponse.json(mockResponses.error, { status: 500 });
+    }),
+    http.delete('*/v1/runs/:runId/artifacts', () => {
+      return HttpResponse.json(mockResponses.error, { status: 500 });
+    }),
     http.get('*/v1/runs/:runId/artifacts/:artifactId/file', () => {
       return HttpResponse.json(mockResponses.error, { status: 500 });
     }),
@@ -395,6 +467,18 @@ export const handlers = {
       return HttpResponse.error();
     }),
     http.get('*/v1/runs/:runId/items', () => {
+      return HttpResponse.error();
+    }),
+    http.get('*/v1/runs/:runId/items/:externalId', () => {
+      return HttpResponse.error();
+    }),
+    http.put('*/v1/runs/:runId/custom-metadata', () => {
+      return HttpResponse.error();
+    }),
+    http.put('*/v1/runs/:runId/items/:externalId/custom-metadata', () => {
+      return HttpResponse.error();
+    }),
+    http.delete('*/v1/runs/:runId/artifacts', () => {
       return HttpResponse.error();
     }),
     http.get('*/v1/runs/:runId/artifacts/:artifactId/file', () => {

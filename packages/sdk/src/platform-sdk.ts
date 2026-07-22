@@ -2,6 +2,7 @@ import packageJson from '../package.json' with { type: 'json' };
 import {
   ApplicationReadResponse,
   ApplicationReadShortResponse,
+  CustomMetadataUpdateResponse,
   ItemState,
   ItemTerminationReason,
   PublicApi,
@@ -137,6 +138,19 @@ export interface PlatformSDK {
       terminationReason?: ItemTerminationReason;
     }
   ): Promise<ApplicationRunItem[]>;
+  getRunItem(applicationRunId: string, externalId: string): Promise<ApplicationRunItem>;
+  updateRunMetadata(
+    applicationRunId: string,
+    customMetadata: Record<string, unknown> | null,
+    customMetadataChecksum?: string | null
+  ): Promise<CustomMetadataUpdateResponse>;
+  updateRunItemMetadata(
+    applicationRunId: string,
+    externalId: string,
+    customMetadata: Record<string, unknown> | null,
+    customMetadataChecksum?: string | null
+  ): Promise<CustomMetadataUpdateResponse>;
+  deleteRunResults(applicationRunId: string): Promise<void>;
   getApplicationVersionDetails(
     applicationId: string,
     version: string
@@ -589,6 +603,171 @@ export class PlatformSDKHttp implements PlatformSDK {
 
       // Enrich each raw ItemResultReadResponse with computed properties
       return response.data.map(processRunItem);
+    } catch (error) {
+      handleRequestError(error);
+    }
+  }
+
+  /**
+   * Retrieve a single item from an application run by its external ID
+   *
+   * This method fetches details for one specific result item within a run,
+   * identified by the `external_id` supplied when the run was created.
+   *
+   * @param applicationRunId - The unique identifier of the application run
+   * @param externalId - The external ID of the item, as supplied when creating the run
+   * @returns A promise that resolves to the enriched run item
+   * @throws {AuthenticationError} If no valid authentication token is available
+   * @throws {APIError} If the request fails (e.g., 404 if the item doesn't exist)
+   *
+   * @example
+   * ```typescript
+   * const sdk = new PlatformSDKHttp({ tokenProvider: () => 'your-token' });
+   *
+   * try {
+   *   const item = await sdk.getRunItem('run-123', 'slide-001');
+   *   console.log(`Item status: ${item.status}`);
+   * } catch (error) {
+   *   console.error('Failed to get run item:', error.message);
+   * }
+   * ```
+   */
+  async getRunItem(applicationRunId: string, externalId: string): Promise<ApplicationRunItem> {
+    const client = await this.#getClient();
+    try {
+      const response = await client.getItemByRunV1RunsRunIdItemsExternalIdGet({
+        runId: applicationRunId,
+        externalId,
+      });
+      return processRunItem(response.data);
+    } catch (error) {
+      handleRequestError(error);
+    }
+  }
+
+  /**
+   * Set (replace) the custom metadata attached to an application run
+   *
+   * This method overwrites the run's custom metadata, an arbitrary JSON object
+   * that consumers can use to store their own attributes (e.g. tags, notes,
+   * external references) alongside a run. Pass `null` to clear existing metadata.
+   *
+   * @param applicationRunId - The unique identifier of the application run
+   * @param customMetadata - The new custom metadata object, or `null` to clear it
+   * @param customMetadataChecksum - Optional checksum for optimistic concurrency control
+   * @returns A promise that resolves to the updated metadata checksum
+   * @throws {AuthenticationError} If no valid authentication token is available
+   * @throws {APIError} If the request fails (e.g., 404 if the run doesn't exist, 422 on checksum mismatch)
+   *
+   * @example
+   * ```typescript
+   * const sdk = new PlatformSDKHttp({ tokenProvider: () => 'your-token' });
+   *
+   * try {
+   *   await sdk.updateRunMetadata('run-123', { note: 'Reviewed by QA' });
+   * } catch (error) {
+   *   console.error('Failed to update run metadata:', error.message);
+   * }
+   * ```
+   */
+  async updateRunMetadata(
+    applicationRunId: string,
+    customMetadata: Record<string, unknown> | null,
+    customMetadataChecksum?: string | null
+  ): Promise<CustomMetadataUpdateResponse> {
+    const client = await this.#getClient();
+    try {
+      const response = await client.putRunCustomMetadataV1RunsRunIdCustomMetadataPut({
+        runId: applicationRunId,
+        customMetadataUpdateRequest: {
+          custom_metadata: customMetadata,
+          custom_metadata_checksum: customMetadataChecksum,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      handleRequestError(error);
+    }
+  }
+
+  /**
+   * Set (replace) the custom metadata attached to a single run item
+   *
+   * This method overwrites the custom metadata of one item within a run,
+   * identified by its `external_id`. Pass `null` to clear existing metadata.
+   *
+   * @param applicationRunId - The unique identifier of the application run
+   * @param externalId - The external ID of the item, as supplied when creating the run
+   * @param customMetadata - The new custom metadata object, or `null` to clear it
+   * @param customMetadataChecksum - Optional checksum for optimistic concurrency control
+   * @returns A promise that resolves to the updated metadata checksum
+   * @throws {AuthenticationError} If no valid authentication token is available
+   * @throws {APIError} If the request fails (e.g., 404 if the item doesn't exist, 422 on checksum mismatch)
+   *
+   * @example
+   * ```typescript
+   * const sdk = new PlatformSDKHttp({ tokenProvider: () => 'your-token' });
+   *
+   * try {
+   *   await sdk.updateRunItemMetadata('run-123', 'slide-001', { reviewed: true });
+   * } catch (error) {
+   *   console.error('Failed to update run item metadata:', error.message);
+   * }
+   * ```
+   */
+  async updateRunItemMetadata(
+    applicationRunId: string,
+    externalId: string,
+    customMetadata: Record<string, unknown> | null,
+    customMetadataChecksum?: string | null
+  ): Promise<CustomMetadataUpdateResponse> {
+    const client = await this.#getClient();
+    try {
+      const response =
+        await client.putItemCustomMetadataByRunV1RunsRunIdItemsExternalIdCustomMetadataPut({
+          runId: applicationRunId,
+          externalId,
+          customMetadataUpdateRequest: {
+            custom_metadata: customMetadata,
+            custom_metadata_checksum: customMetadataChecksum,
+          },
+        });
+      return response.data;
+    } catch (error) {
+      handleRequestError(error);
+    }
+  }
+
+  /**
+   * Delete the results (output artifacts) of an application run
+   *
+   * This method permanently deletes the output artifacts produced by a
+   * terminated run. The run and its items remain queryable, but their
+   * output artifacts are no longer available for download.
+   *
+   * @param applicationRunId - The unique identifier of the application run
+   * @returns A promise that resolves when the deletion request succeeds
+   * @throws {AuthenticationError} If no valid authentication token is available
+   * @throws {APIError} If the request fails (e.g., 404 if the run doesn't exist)
+   *
+   * @example
+   * ```typescript
+   * const sdk = new PlatformSDKHttp({ tokenProvider: () => 'your-token' });
+   *
+   * try {
+   *   await sdk.deleteRunResults('run-123');
+   *   console.log('Run results deleted');
+   * } catch (error) {
+   *   console.error('Failed to delete run results:', error.message);
+   * }
+   * ```
+   */
+  async deleteRunResults(applicationRunId: string): Promise<void> {
+    const client = await this.#getClient();
+    try {
+      await client.deleteRunItemsV1RunsRunIdArtifactsDelete({
+        runId: applicationRunId,
+      });
     } catch (error) {
       handleRequestError(error);
     }
