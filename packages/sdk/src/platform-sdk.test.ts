@@ -797,4 +797,141 @@ describe('PlatformSDK', () => {
     await expect(sdk.getRun('test-run-id')).rejects.toThrow(APIError);
     await expect(sdk.getRun('test-run-id')).rejects.toThrow('Resource gone:');
   });
+
+  describe('grants', () => {
+    beforeEach(() => {
+      mockTokenProvider.mockResolvedValue('mocked-token');
+    });
+
+    it('should create a grant successfully', async () => {
+      setMockScenario('success');
+
+      const result = await sdk.createGrant({
+        resource_type: 'run',
+        resource_id: 'run-123',
+        subject_type: 'user',
+        subject_email: 'colleague@example.com',
+        relation: 'viewer',
+      });
+
+      expect(result).toHaveProperty('grant_id');
+    });
+
+    it('should handle create grant failure', async () => {
+      setMockScenario('validationError');
+
+      await expect(
+        sdk.createGrant({
+          resource_type: 'run',
+          resource_id: 'run-123',
+          subject_type: 'user',
+          relation: 'viewer',
+        })
+      ).rejects.toThrow(APIError);
+    });
+
+    it('should list grants successfully', async () => {
+      setMockScenario('success');
+
+      const result = await sdk.listGrants({ resourceType: 'run', resourceId: 'run-123' });
+
+      expect(Array.isArray(result)).toBe(true);
+    });
+
+    it('should handle list grants failure', async () => {
+      setMockScenario('internalServerError');
+
+      await expect(sdk.listGrants()).rejects.toThrow(APIError);
+    });
+
+    it('should get a grant successfully', async () => {
+      setMockScenario('success');
+
+      const result = await sdk.getGrant('grant-123');
+
+      expect(result).toHaveProperty('grant_id');
+    });
+
+    it('should handle get grant failure', async () => {
+      setMockScenario('notFoundError');
+
+      await expect(sdk.getGrant('grant-123')).rejects.toThrow(APIError);
+    });
+
+    it('should revoke a grant successfully', async () => {
+      setMockScenario('success');
+
+      const result = await sdk.revokeGrant('grant-123');
+
+      expect(result).toHaveProperty('grant_id');
+    });
+
+    it('should handle revoke grant failure', async () => {
+      setMockScenario('notFoundError');
+
+      await expect(sdk.revokeGrant('grant-123')).rejects.toThrow(APIError);
+    });
+  });
+
+  describe('share tokens', () => {
+    beforeEach(() => {
+      mockTokenProvider.mockResolvedValue('mocked-token');
+    });
+
+    it('should create a share token successfully', async () => {
+      setMockScenario('success');
+
+      const result = await sdk.createShareToken({ expires_at: null });
+
+      expect(result).toHaveProperty('share_token');
+    });
+
+    it('should handle create share token failure', async () => {
+      setMockScenario('validationError');
+
+      await expect(sdk.createShareToken({})).rejects.toThrow(APIError);
+    });
+
+    it('should list share tokens successfully', async () => {
+      setMockScenario('success');
+
+      const result = await sdk.listShareTokens({ runId: 'run-123' });
+
+      expect(Array.isArray(result)).toBe(true);
+    });
+
+    it('should handle list share tokens failure', async () => {
+      setMockScenario('internalServerError');
+
+      await expect(sdk.listShareTokens()).rejects.toThrow(APIError);
+    });
+
+    it('should get a share token successfully', async () => {
+      setMockScenario('success');
+
+      const result = await sdk.getShareToken('share-token-123');
+
+      expect(result).toHaveProperty('share_token_id');
+    });
+
+    it('should handle get share token failure', async () => {
+      setMockScenario('notFoundError');
+
+      await expect(sdk.getShareToken('share-token-123')).rejects.toThrow(APIError);
+    });
+
+    it('should revoke a share token successfully', async () => {
+      setMockScenario('success');
+
+      const result = await sdk.revokeShareToken('share-token-123');
+
+      expect(result).toHaveProperty('share_token_id');
+    });
+
+    it('should handle revoke share token failure', async () => {
+      setMockScenario('notFoundError');
+
+      await expect(sdk.revokeShareToken('share-token-123')).rejects.toThrow(APIError);
+    });
+  });
 });

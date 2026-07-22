@@ -3,11 +3,19 @@ import {
   ApplicationReadResponse,
   ApplicationReadShortResponse,
   CustomMetadataUpdateResponse,
+  GrantCreateRequest,
+  GrantReadResponse,
+  GrantRelation,
   ItemState,
   ItemTerminationReason,
   PublicApi,
+  ResourceType,
   RunCreationRequest,
   RunCreationResponse,
+  ShareTokenCreateRequest,
+  ShareTokenCreateResponse,
+  ShareTokenReadResponse,
+  SubjectType,
   VersionReadResponse,
 } from './generated/index.js';
 import { APIError, AuthenticationError, UnexpectedError } from './errors.js';
@@ -157,6 +165,31 @@ export interface PlatformSDK {
   ): Promise<VersionReadResponse>;
   downloadArtifact(runId: string, artifactId: string): Promise<ArrayBuffer>;
   downloadArtifactStream(runId: string, artifactId: string): Promise<Readable>;
+  createGrant(request: GrantCreateRequest): Promise<GrantReadResponse>;
+  listGrants(options?: {
+    resourceType?: ResourceType;
+    resourceId?: string;
+    subjectType?: SubjectType;
+    subjectId?: string;
+    relation?: GrantRelation[];
+    revoked?: boolean;
+    page?: number;
+    pageSize?: number;
+    sort?: string[];
+  }): Promise<GrantReadResponse[]>;
+  getGrant(grantId: string): Promise<GrantReadResponse>;
+  revokeGrant(grantId: string): Promise<GrantReadResponse>;
+  createShareToken(request: ShareTokenCreateRequest): Promise<ShareTokenCreateResponse>;
+  listShareTokens(options?: {
+    runId?: string;
+    createdBy?: string;
+    revoked?: boolean;
+    page?: number;
+    pageSize?: number;
+    sort?: string[];
+  }): Promise<ShareTokenReadResponse[]>;
+  getShareToken(shareTokenId: string): Promise<ShareTokenReadResponse>;
+  revokeShareToken(shareTokenId: string): Promise<ShareTokenReadResponse>;
 }
 /**
  * Main SDK class for interacting with the Aignostics Platform
@@ -921,6 +954,265 @@ export class PlatformSDKHttp implements PlatformSDK {
         [403, 404, 410, 422]
       );
       return response.data as Readable;
+    } catch (error) {
+      handleRequestError(error);
+    }
+  }
+
+  /**
+   * Create a grant to share access to a resource with a subject (user or organization)
+   *
+   * @param request - The grant creation request
+   * @returns A promise that resolves to the created grant
+   * @throws {Error} If the request fails due to network issues, authentication problems, invalid request data, or API errors
+   *
+   * @example
+   * ```typescript
+   * const sdk = new PlatformSDKHttp({ tokenProvider: () => 'your-token' });
+   *
+   * const grant = await sdk.createGrant({
+   *   resource_type: 'run',
+   *   resource_id: 'run-123',
+   *   subject_type: 'user',
+   *   subject_email: 'colleague@example.com',
+   *   relation: 'viewer',
+   * });
+   * ```
+   */
+  async createGrant(request: GrantCreateRequest): Promise<GrantReadResponse> {
+    const client = await this.#getClient();
+    try {
+      const response = await client.createGrantV1AccessGrantsPost({
+        grantCreateRequest: request,
+      });
+      return response.data;
+    } catch (error) {
+      handleRequestError(error);
+    }
+  }
+
+  /**
+   * List grants, optionally filtered by resource, subject, relation, or revocation status
+   *
+   * @param options - Optional filters and pagination/sort options
+   * @returns A promise that resolves to an array of grants
+   * @throws {Error} If the request fails due to network issues, authentication problems, or API errors
+   *
+   * @example
+   * ```typescript
+   * const sdk = new PlatformSDKHttp({ tokenProvider: () => 'your-token' });
+   *
+   * const grants = await sdk.listGrants({ resourceType: 'run', resourceId: 'run-123' });
+   * ```
+   */
+  async listGrants({
+    resourceType,
+    resourceId,
+    subjectType,
+    subjectId,
+    relation,
+    revoked,
+    page,
+    pageSize,
+    sort,
+  }: {
+    resourceType?: ResourceType;
+    resourceId?: string;
+    subjectType?: SubjectType;
+    subjectId?: string;
+    relation?: GrantRelation[];
+    revoked?: boolean;
+    page?: number;
+    pageSize?: number;
+    sort?: string[];
+  } = {}): Promise<GrantReadResponse[]> {
+    const client = await this.#getClient();
+    try {
+      const response = await client.listGrantsV1AccessGrantsGet({
+        resourceType,
+        resourceId,
+        subjectType,
+        subjectId,
+        relation,
+        revoked,
+        page,
+        pageSize,
+        sort,
+      });
+      return response.data;
+    } catch (error) {
+      handleRequestError(error);
+    }
+  }
+
+  /**
+   * Get a grant by its ID
+   *
+   * @param grantId - The unique identifier of the grant
+   * @returns A promise that resolves to the grant details
+   * @throws {Error} If the request fails due to network issues, authentication problems, invalid grant ID, or API errors
+   *
+   * @example
+   * ```typescript
+   * const sdk = new PlatformSDKHttp({ tokenProvider: () => 'your-token' });
+   *
+   * const grant = await sdk.getGrant('grant-123');
+   * ```
+   */
+  async getGrant(grantId: string): Promise<GrantReadResponse> {
+    const client = await this.#getClient();
+    try {
+      const response = await client.getGrantV1AccessGrantsGrantIdGet({ grantId });
+      return response.data;
+    } catch (error) {
+      handleRequestError(error);
+    }
+  }
+
+  /**
+   * Revoke a grant by its ID
+   *
+   * @param grantId - The unique identifier of the grant to revoke
+   * @returns A promise that resolves to the revoked grant details
+   * @throws {Error} If the request fails due to network issues, authentication problems, invalid grant ID, or API errors
+   *
+   * @example
+   * ```typescript
+   * const sdk = new PlatformSDKHttp({ tokenProvider: () => 'your-token' });
+   *
+   * await sdk.revokeGrant('grant-123');
+   * ```
+   */
+  async revokeGrant(grantId: string): Promise<GrantReadResponse> {
+    const client = await this.#getClient();
+    try {
+      const response = await client.revokeGrantV1AccessGrantsGrantIdDelete({ grantId });
+      return response.data;
+    } catch (error) {
+      handleRequestError(error);
+    }
+  }
+
+  /**
+   * Create a share token. The returned share_token value is shown only once and is never stored.
+   * Use `createGrant` with `subject_type: 'share_token'` to grant access to a resource.
+   *
+   * @param request - The share token creation request
+   * @returns A promise that resolves to the created share token, including the one-time token value
+   * @throws {Error} If the request fails due to network issues, authentication problems, invalid request data, or API errors
+   *
+   * @example
+   * ```typescript
+   * const sdk = new PlatformSDKHttp({ tokenProvider: () => 'your-token' });
+   *
+   * const shareToken = await sdk.createShareToken({ expires_at: '2026-01-01T00:00:00Z' });
+   * console.log(shareToken.share_token); // Only shown once
+   * ```
+   */
+  async createShareToken(request: ShareTokenCreateRequest): Promise<ShareTokenCreateResponse> {
+    const client = await this.#getClient();
+    try {
+      const response = await client.createShareTokenV1AccessShareTokensPost({
+        shareTokenCreateRequest: request,
+      });
+      return response.data;
+    } catch (error) {
+      handleRequestError(error);
+    }
+  }
+
+  /**
+   * List share tokens, optionally filtered by run, creator, or revocation status
+   *
+   * @param options - Optional filters and pagination/sort options
+   * @returns A promise that resolves to an array of share tokens
+   * @throws {Error} If the request fails due to network issues, authentication problems, or API errors
+   *
+   * @example
+   * ```typescript
+   * const sdk = new PlatformSDKHttp({ tokenProvider: () => 'your-token' });
+   *
+   * const shareTokens = await sdk.listShareTokens({ runId: 'run-123' });
+   * ```
+   */
+  async listShareTokens({
+    runId,
+    createdBy,
+    revoked,
+    page,
+    pageSize,
+    sort,
+  }: {
+    runId?: string;
+    createdBy?: string;
+    revoked?: boolean;
+    page?: number;
+    pageSize?: number;
+    sort?: string[];
+  } = {}): Promise<ShareTokenReadResponse[]> {
+    const client = await this.#getClient();
+    try {
+      const response = await client.listShareTokensV1AccessShareTokensGet({
+        runId,
+        createdBy,
+        revoked,
+        page,
+        pageSize,
+        sort,
+      });
+      return response.data;
+    } catch (error) {
+      handleRequestError(error);
+    }
+  }
+
+  /**
+   * Get a share token by its ID
+   *
+   * @param shareTokenId - The unique identifier of the share token
+   * @returns A promise that resolves to the share token details (excludes the token value)
+   * @throws {Error} If the request fails due to network issues, authentication problems, invalid share token ID, or API errors
+   *
+   * @example
+   * ```typescript
+   * const sdk = new PlatformSDKHttp({ tokenProvider: () => 'your-token' });
+   *
+   * const shareToken = await sdk.getShareToken('share-token-123');
+   * ```
+   */
+  async getShareToken(shareTokenId: string): Promise<ShareTokenReadResponse> {
+    const client = await this.#getClient();
+    try {
+      const response = await client.getShareTokenV1AccessShareTokensShareTokenIdGet({
+        shareTokenId,
+      });
+      return response.data;
+    } catch (error) {
+      handleRequestError(error);
+    }
+  }
+
+  /**
+   * Revoke a share token by its ID. Invalidates the credential regardless of any active grants.
+   *
+   * @param shareTokenId - The unique identifier of the share token to revoke
+   * @returns A promise that resolves to the revoked share token details
+   * @throws {Error} If the request fails due to network issues, authentication problems, invalid share token ID, or API errors
+   *
+   * @example
+   * ```typescript
+   * const sdk = new PlatformSDKHttp({ tokenProvider: () => 'your-token' });
+   *
+   * await sdk.revokeShareToken('share-token-123');
+   * ```
+   */
+  async revokeShareToken(shareTokenId: string): Promise<ShareTokenReadResponse> {
+    const client = await this.#getClient();
+    try {
+      const response = await client.revokeShareTokenV1AccessShareTokensShareTokenIdDelete({
+        shareTokenId,
+      });
+      return response.data;
     } catch (error) {
       handleRequestError(error);
     }

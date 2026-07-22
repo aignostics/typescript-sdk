@@ -21,6 +21,14 @@ import {
   handleLogout,
   handleStatus,
   handleLoginWithRefreshToken,
+  createGrant,
+  listGrants,
+  getGrant,
+  revokeGrant,
+  createShareToken,
+  listShareTokens,
+  getShareToken,
+  revokeShareToken,
 } from './cli-functions.js';
 import { PlatformSDK, PlatformSDKHttp } from '@aignostics/sdk';
 import { AuthService, AuthState } from './utils/auth.js';
@@ -64,6 +72,16 @@ const platformSDKMock = {
   getConfig: vi.fn(),
   getVersion: vi.fn(),
   getApplication: vi.fn(),
+  createGrant: vi.fn(),
+  listGrants: vi.fn(),
+  getGrant: vi.fn(),
+  revokeGrant: vi.fn(),
+  createShareToken: vi.fn(),
+  listShareTokens: vi.fn(),
+  getShareToken: vi.fn(),
+  revokeShareToken: vi.fn(),
+  downloadArtifact: vi.fn(),
+  downloadArtifactStream: vi.fn(),
 } satisfies PlatformSDK;
 
 // Mock AuthService
@@ -750,6 +768,60 @@ describe('CLI Functions Unit Tests', () => {
       expect(mockExit).toHaveBeenCalledWith(1);
     });
   });
+  describe('createGrant', () => {
+    it('should create a grant successfully', async () => {
+      const grantResponse = {
+        grant_id: 'grant-1',
+        resource_type: 'run',
+        resource_id: 'run-1',
+        subject_type: 'user',
+        subject_id: 'user-1',
+        relation: 'viewer',
+        created_by: 'user-2',
+        created_at: '2023-01-01T00:00:00Z',
+        revoked: false,
+      };
+      platformSDKMock.createGrant.mockResolvedValue(grantResponse);
+
+      await createGrant('production', mockAuthService, {
+        resourceType: 'run',
+        resourceId: 'run-1',
+        subjectType: 'user',
+        subjectEmail: 'colleague@example.com',
+        relation: 'viewer',
+      });
+
+      expect(platformSDKMock.createGrant).toHaveBeenCalledWith({
+        resource_type: 'run',
+        resource_id: 'run-1',
+        subject_type: 'user',
+        subject_id: undefined,
+        subject_email: 'colleague@example.com',
+        relation: 'viewer',
+      });
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        '✅ Grant created successfully:',
+        JSON.stringify(grantResponse, null, 2)
+      );
+    });
+
+    it('should handle API error', async () => {
+      platformSDKMock.createGrant.mockRejectedValue(new Error('API error'));
+
+      await createGrant('production', mockAuthService, {
+        resourceType: 'run',
+        resourceId: 'run-1',
+        subjectType: 'user',
+        relation: 'viewer',
+      });
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to create grant:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+  });
 
   describe('deleteRunResults', () => {
     it('should delete run results successfully', async () => {
@@ -768,6 +840,242 @@ describe('CLI Functions Unit Tests', () => {
 
       expect(consoleSpy.error).toHaveBeenCalledWith(
         '❌ Failed to delete run results:',
+        expect.any(Error)
+      );
+    });
+  });
+
+  describe('listGrants', () => {
+    it('should list grants successfully', async () => {
+      const grantsResponse = [
+        {
+          grant_id: 'grant-1',
+          resource_type: 'run',
+          resource_id: 'run-1',
+          subject_type: 'user',
+          subject_id: 'user-1',
+          relation: 'viewer',
+          created_by: 'user-2',
+          created_at: '2023-01-01T00:00:00Z',
+          revoked: false,
+        },
+      ];
+      platformSDKMock.listGrants.mockResolvedValue(grantsResponse);
+
+      await listGrants('production', mockAuthService, { resourceId: 'run-1' });
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Grants:',
+        JSON.stringify(grantsResponse, null, 2)
+      );
+    });
+
+    it('should handle API error', async () => {
+      platformSDKMock.listGrants.mockRejectedValue(new Error('API error'));
+
+      await listGrants('production', mockAuthService);
+
+      expect(consoleSpy.error).toHaveBeenCalledWith('❌ Failed to list grants:', expect.any(Error));
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('getGrant', () => {
+    it('should get grant details successfully', async () => {
+      const grantResponse = {
+        grant_id: 'grant-1',
+        resource_type: 'run',
+        resource_id: 'run-1',
+        subject_type: 'user',
+        subject_id: 'user-1',
+        relation: 'viewer',
+        created_by: 'user-2',
+        created_at: '2023-01-01T00:00:00Z',
+        revoked: false,
+      };
+      platformSDKMock.getGrant.mockResolvedValue(grantResponse);
+
+      await getGrant('production', mockAuthService, 'grant-1');
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Grant details for grant-1:',
+        JSON.stringify(grantResponse, null, 2)
+      );
+    });
+
+    it('should handle API error', async () => {
+      platformSDKMock.getGrant.mockRejectedValue(new Error('API error'));
+
+      await getGrant('production', mockAuthService, 'grant-1');
+
+      expect(consoleSpy.error).toHaveBeenCalledWith('❌ Failed to get grant:', expect.any(Error));
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('revokeGrant', () => {
+    it('should revoke a grant successfully', async () => {
+      const grantResponse = {
+        grant_id: 'grant-1',
+        resource_type: 'run',
+        resource_id: 'run-1',
+        subject_type: 'user',
+        subject_id: 'user-1',
+        relation: 'viewer',
+        created_by: 'user-2',
+        created_at: '2023-01-01T00:00:00Z',
+        revoked: true,
+      };
+      platformSDKMock.revokeGrant.mockResolvedValue(grantResponse);
+
+      await revokeGrant('production', mockAuthService, 'grant-1');
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        '✅ Grant revoked successfully:',
+        JSON.stringify(grantResponse, null, 2)
+      );
+    });
+
+    it('should handle API error', async () => {
+      platformSDKMock.revokeGrant.mockRejectedValue(new Error('API error'));
+
+      await revokeGrant('production', mockAuthService, 'grant-1');
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to revoke grant:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('createShareToken', () => {
+    it('should create a share token successfully', async () => {
+      const shareTokenResponse = {
+        share_token_id: 'share-token-1',
+        share_token: 'secret-value',
+        created_at: '2023-01-01T00:00:00Z',
+        expires_at: null,
+        revoked: false,
+      };
+      platformSDKMock.createShareToken.mockResolvedValue(shareTokenResponse);
+
+      await createShareToken('production', mockAuthService, { expiresAt: '2026-01-01T00:00:00Z' });
+
+      expect(platformSDKMock.createShareToken).toHaveBeenCalledWith({
+        expires_at: '2026-01-01T00:00:00Z',
+      });
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        '✅ Share token created successfully:',
+        JSON.stringify(shareTokenResponse, null, 2)
+      );
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        '⚠️  Save the share_token value now — it will not be shown again.'
+      );
+    });
+
+    it('should handle API error', async () => {
+      platformSDKMock.createShareToken.mockRejectedValue(new Error('API error'));
+
+      await createShareToken('production', mockAuthService);
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to create share token:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('listShareTokens', () => {
+    it('should list share tokens successfully', async () => {
+      const shareTokensResponse = [
+        {
+          share_token_id: 'share-token-1',
+          created_at: '2023-01-01T00:00:00Z',
+          expires_at: null,
+          revoked: false,
+        },
+      ];
+      platformSDKMock.listShareTokens.mockResolvedValue(shareTokensResponse);
+
+      await listShareTokens('production', mockAuthService, { runId: 'run-1' });
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Share tokens:',
+        JSON.stringify(shareTokensResponse, null, 2)
+      );
+    });
+
+    it('should handle API error', async () => {
+      platformSDKMock.listShareTokens.mockRejectedValue(new Error('API error'));
+
+      await listShareTokens('production', mockAuthService);
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to list share tokens:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('getShareToken', () => {
+    it('should get share token details successfully', async () => {
+      const shareTokenResponse = {
+        share_token_id: 'share-token-1',
+        created_at: '2023-01-01T00:00:00Z',
+        expires_at: null,
+        revoked: false,
+      };
+      platformSDKMock.getShareToken.mockResolvedValue(shareTokenResponse);
+
+      await getShareToken('production', mockAuthService, 'share-token-1');
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Share token details for share-token-1:',
+        JSON.stringify(shareTokenResponse, null, 2)
+      );
+    });
+
+    it('should handle API error', async () => {
+      platformSDKMock.getShareToken.mockRejectedValue(new Error('API error'));
+
+      await getShareToken('production', mockAuthService, 'share-token-1');
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to get share token:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('revokeShareToken', () => {
+    it('should revoke a share token successfully', async () => {
+      const shareTokenResponse = {
+        share_token_id: 'share-token-1',
+        created_at: '2023-01-01T00:00:00Z',
+        expires_at: null,
+        revoked: true,
+      };
+      platformSDKMock.revokeShareToken.mockResolvedValue(shareTokenResponse);
+
+      await revokeShareToken('production', mockAuthService, 'share-token-1');
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        '✅ Share token revoked successfully:',
+        JSON.stringify(shareTokenResponse, null, 2)
+      );
+    });
+
+    it('should handle API error', async () => {
+      platformSDKMock.revokeShareToken.mockRejectedValue(new Error('API error'));
+
+      await revokeShareToken('production', mockAuthService, 'share-token-1');
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to revoke share token:',
         expect.any(Error)
       );
       expect(mockExit).toHaveBeenCalledWith(1);

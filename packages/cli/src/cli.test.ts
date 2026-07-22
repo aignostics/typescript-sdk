@@ -1131,6 +1131,248 @@ describe('CLI Integration Tests', () => {
     });
   });
 
+  describe('grants create command', () => {
+    it('should create a grant successfully', async () => {
+      process.argv = [
+        'node',
+        'cli.js',
+        'grants',
+        'create',
+        '--resourceType',
+        'run',
+        '--resourceId',
+        'run-1',
+        '--subjectType',
+        'user',
+        '--subjectEmail',
+        'colleague@example.com',
+        '--relation',
+        'viewer',
+      ];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        '✅ Grant created successfully:',
+        expect.stringContaining('grant_id')
+      );
+    });
+
+    it('should handle API errors for grants create', async () => {
+      server.use(http.post('*/v1/access/grants', () => HttpResponse.error()));
+
+      process.argv = [
+        'node',
+        'cli.js',
+        'grants',
+        'create',
+        '--resourceType',
+        'run',
+        '--resourceId',
+        'run-1',
+        '--subjectType',
+        'user',
+        '--relation',
+        'viewer',
+      ];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to create grant:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('grants list command', () => {
+    it('should list grants successfully', async () => {
+      process.argv = ['node', 'cli.js', 'grants', 'list', '--resourceId', 'run-1'];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith('Grants:', expect.stringContaining('grant_id'));
+    });
+
+    it('should handle API errors for grants list', async () => {
+      server.use(http.get('*/v1/access/grants', () => HttpResponse.error()));
+
+      process.argv = ['node', 'cli.js', 'grants', 'list'];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith('❌ Failed to list grants:', expect.any(Error));
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('grants get command', () => {
+    it('should get grant details successfully', async () => {
+      process.argv = ['node', 'cli.js', 'grants', 'get', 'grant-1'];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Grant details for grant-1:',
+        expect.stringContaining('grant_id')
+      );
+    });
+
+    it('should handle API errors for grants get', async () => {
+      server.use(http.get('*/v1/access/grants/:grantId', () => HttpResponse.error()));
+
+      process.argv = ['node', 'cli.js', 'grants', 'get', 'grant-1'];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith('❌ Failed to get grant:', expect.any(Error));
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('grants revoke command', () => {
+    it('should revoke a grant successfully', async () => {
+      process.argv = ['node', 'cli.js', 'grants', 'revoke', 'grant-1'];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        '✅ Grant revoked successfully:',
+        expect.stringContaining('grant_id')
+      );
+    });
+
+    it('should handle API errors for grants revoke', async () => {
+      server.use(http.delete('*/v1/access/grants/:grantId', () => HttpResponse.error()));
+
+      process.argv = ['node', 'cli.js', 'grants', 'revoke', 'grant-1'];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to revoke grant:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('share-tokens create command', () => {
+    it('should create a share token successfully', async () => {
+      process.argv = [
+        'node',
+        'cli.js',
+        'share-tokens',
+        'create',
+        '--expiresAt',
+        '2026-01-01T00:00:00Z',
+      ];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        '✅ Share token created successfully:',
+        expect.stringContaining('share_token')
+      );
+    });
+
+    it('should handle API errors for share-tokens create', async () => {
+      server.use(http.post('*/v1/access/share-tokens', () => HttpResponse.error()));
+
+      process.argv = ['node', 'cli.js', 'share-tokens', 'create'];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to create share token:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('share-tokens list command', () => {
+    it('should list share tokens successfully', async () => {
+      process.argv = ['node', 'cli.js', 'share-tokens', 'list', '--runId', 'run-1'];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Share tokens:',
+        expect.stringContaining('share_token_id')
+      );
+    });
+
+    it('should handle API errors for share-tokens list', async () => {
+      server.use(http.get('*/v1/access/share-tokens', () => HttpResponse.error()));
+
+      process.argv = ['node', 'cli.js', 'share-tokens', 'list'];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to list share tokens:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('share-tokens get command', () => {
+    it('should get share token details successfully', async () => {
+      process.argv = ['node', 'cli.js', 'share-tokens', 'get', 'share-token-1'];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        'Share token details for share-token-1:',
+        expect.stringContaining('share_token_id')
+      );
+    });
+
+    it('should handle API errors for share-tokens get', async () => {
+      server.use(http.get('*/v1/access/share-tokens/:shareTokenId', () => HttpResponse.error()));
+
+      process.argv = ['node', 'cli.js', 'share-tokens', 'get', 'share-token-1'];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to get share token:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('share-tokens revoke command', () => {
+    it('should revoke a share token successfully', async () => {
+      process.argv = ['node', 'cli.js', 'share-tokens', 'revoke', 'share-token-1'];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        '✅ Share token revoked successfully:',
+        expect.stringContaining('share_token_id')
+      );
+    });
+
+    it('should handle API errors for share-tokens revoke', async () => {
+      server.use(http.delete('*/v1/access/share-tokens/:shareTokenId', () => HttpResponse.error()));
+
+      process.argv = ['node', 'cli.js', 'share-tokens', 'revoke', 'share-token-1'];
+
+      await main();
+
+      expect(consoleSpy.error).toHaveBeenCalledWith(
+        '❌ Failed to revoke share token:',
+        expect.any(Error)
+      );
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+  });
+
   describe('unknown command handling', () => {
     it('should handle unknown command', async () => {
       process.argv = ['node', 'cli.js', 'unknown-command'];
