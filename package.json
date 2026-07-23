@@ -67,7 +67,7 @@
     "fs-extra": "11.3.6",
     "husky": "9.1.7",
     "license-checker-rseidelsohn": "5.0.1",
-    "msw": "2.10.4",
+    "msw": "2.15.0",
     "prettier": "3.9.6",
     "tsup": "8.5.1",
     "turbo": "2.10.6",
