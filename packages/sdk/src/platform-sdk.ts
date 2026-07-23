@@ -18,7 +18,12 @@ import {
   SubjectType,
   VersionReadResponse,
 } from './generated/index.js';
-import { APIError, AuthenticationError, UnexpectedError } from './errors.js';
+import {
+  APIError,
+  AuthenticationError,
+  UnexpectedError,
+  redactAuthorizationHeader,
+} from './errors.js';
 import { isAxiosError } from 'axios';
 import z from 'zod';
 import { processApplicationRun } from './entities/application-run/process-application-run.js';
@@ -42,6 +47,7 @@ const errorResponseSchema = z.union([validationErrorSchema, z.any()]);
 
 function handleRequestError(error: unknown): never {
   if (isAxiosError(error)) {
+    redactAuthorizationHeader(error);
     switch (error.status) {
       case 422: {
         throw new APIError(`Validation error: ${error.message}`, {
