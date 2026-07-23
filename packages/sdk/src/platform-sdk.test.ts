@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { http, HttpResponse } from 'msw';
+import { isAxiosError, type AxiosError } from 'axios';
 import { PlatformSDKHttp } from './platform-sdk.js';
 import { APIError, AuthenticationError } from './errors.js';
 import { setMockScenario, server } from './test-utils/http-mocks.js';
@@ -796,6 +797,26 @@ describe('PlatformSDK', () => {
 
     await expect(sdk.getRun('test-run-id')).rejects.toThrow(APIError);
     await expect(sdk.getRun('test-run-id')).rejects.toThrow('Resource gone:');
+  });
+
+  it('should redact the Authorization header from the original axios error', async () => {
+    const secretToken = 'secret-token';
+    mockTokenProvider.mockResolvedValue(secretToken);
+    setMockScenario('internalServerError');
+
+    let caught: APIError;
+    try {
+      await sdk.listApplications();
+    } catch (error) {
+      caught = error as APIError;
+    }
+
+    expect(caught!).toBeInstanceOf(APIError);
+    const originalError = caught!.originalError as AxiosError;
+    expect(isAxiosError(originalError)).toBe(true);
+
+    const headers = originalError.config!.headers;
+    expect(headers.Authorization).toBe('Bearer [redacted]');
   });
 
   describe('grants', () => {

@@ -1,3 +1,5 @@
+import type { AxiosError } from 'axios';
+
 export type ErrorCode =
   'AUTHENTICATION_ERROR' | 'API_ERROR' | 'CONFIGURATION_ERROR' | 'UNEXPECTED_ERROR';
 
@@ -119,5 +121,20 @@ export class UnexpectedError extends BaseError {
    */
   constructor(message: string, options: BaseErrorOptions = {}) {
     super(message, 'UNEXPECTED_ERROR', options);
+  }
+}
+
+/**
+ * Strips the Authorization header from an Axios error so it is never exposed to
+ * SDK consumers.
+ */
+export function redactAuthorizationHeader(error: AxiosError): void {
+  const headers = error.config?.headers;
+  if (headers && typeof headers === 'object') {
+    for (const key of Object.keys(headers)) {
+      if (key.toLowerCase() === 'authorization') {
+        headers[key] = 'Bearer [redacted]';
+      }
+    }
   }
 }
