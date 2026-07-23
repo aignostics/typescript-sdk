@@ -18,7 +18,7 @@
 <ul class="tsd-hierarchy">
 <li><a href="../interfaces/PlatformSDK.html" class="tsd-signature-type tsd-kind-interface">PlatformSDK</a></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L164">platform-sdk.ts:164</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L197">platform-sdk.ts:197</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -47,6 +47,14 @@
 <a href="#getconfig" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Config</span></a>
 <a href="#downloadartifact" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>download<wbr/>Artifact</span></a>
 <a href="#downloadartifactstream" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>download<wbr/>Artifact<wbr/>Stream</span></a>
+<a href="#creategrant" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>create<wbr/>Grant</span></a>
+<a href="#listgrants" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>list<wbr/>Grants</span></a>
+<a href="#getgrant" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Grant</span></a>
+<a href="#revokegrant" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>revoke<wbr/>Grant</span></a>
+<a href="#createsharetoken" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>create<wbr/>Share<wbr/>Token</span></a>
+<a href="#listsharetokens" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>list<wbr/>Share<wbr/>Tokens</span></a>
+<a href="#getsharetoken" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Share<wbr/>Token</span></a>
+<a href="#revokesharetoken" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>revoke<wbr/>Share<wbr/>Token</span></a>
 </div></section></div></details></section></section>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="constructors-1">Constructors<a href="#constructors-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
@@ -67,7 +75,7 @@
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">PlatformSDKHttp</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L171">platform-sdk.ts:171</a></li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L204">platform-sdk.ts:204</a></li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -98,7 +106,7 @@ It's useful for validating setup and troubleshooting connectivity issues.</p>
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#testconnection">testConnection</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L221">platform-sdk.ts:221</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L254">platform-sdk.ts:254</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="listapplications"><span>list<wbr/>Applications</span><a href="#listapplications" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -126,7 +134,7 @@ processing pipelines available on the Aignostics Platform.</p>
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#listapplications">listApplications</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L257">platform-sdk.ts:257</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L290">platform-sdk.ts:290</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getapplicationversiondetails"><span>get<wbr/>Application<wbr/>Version<wbr/>Details</span><a href="#getapplicationversiondetails" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -160,7 +168,7 @@ configurations or features.</p>
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#getapplicationversiondetails">getApplicationVersionDetails</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L294">platform-sdk.ts:294</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L327">platform-sdk.ts:327</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getapplication"><span>get<wbr/>Application</span><a href="#getapplication" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -192,7 +200,7 @@ by <code>listApplications()</code>.</p>
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#getapplication">getApplication</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L341">platform-sdk.ts:341</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L374">platform-sdk.ts:374</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="listapplicationruns"><span>list<wbr/>Application<wbr/>Runs</span><a href="#listapplicationruns" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -240,7 +248,7 @@ and/or application version to narrow down the results.</p>
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#listapplicationruns">listApplicationRuns</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L391">platform-sdk.ts:391</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L424">platform-sdk.ts:424</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="createapplicationrun"><span>create<wbr/>Application<wbr/>Run</span><a href="#createapplicationrun" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -271,7 +279,7 @@ asynchronously on the Aignostics Platform.</p>
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#createapplicationrun">createApplicationRun</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L455">platform-sdk.ts:455</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L488">platform-sdk.ts:488</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getrun"><span>get<wbr/>Run</span><a href="#getrun" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -301,7 +309,7 @@ its current status, progress, metadata, and execution information.</p>
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#getrun">getRun</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L492">platform-sdk.ts:492</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L525">platform-sdk.ts:525</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="cancelapplicationrun"><span>cancel<wbr/>Application<wbr/>Run</span><a href="#cancelapplicationrun" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -332,7 +340,7 @@ be resumed and will transition to a cancelled state.</p>
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#cancelapplicationrun">cancelApplicationRun</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L533">platform-sdk.ts:533</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L566">platform-sdk.ts:566</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="listrunresults"><span>list<wbr/>Run<wbr/>Results</span><a href="#listrunresults" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -364,7 +372,7 @@ artifacts from the AI model execution.</p>
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#listrunresults">listRunResults</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L574">platform-sdk.ts:574</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L607">platform-sdk.ts:607</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getrunitem"><span>get<wbr/>Run<wbr/>Item</span><a href="#getrunitem" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -400,7 +408,7 @@ identified by the <code>external_id</code> supplied when the run was created.</p
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#getrunitem">getRunItem</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L635">platform-sdk.ts:635</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L668">platform-sdk.ts:668</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="updaterunmetadata"><span>update<wbr/>Run<wbr/>Metadata</span><a href="#updaterunmetadata" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -440,7 +448,7 @@ external references) alongside a run. Pass <code>null</code> to clear existing m
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#updaterunmetadata">updateRunMetadata</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L673">platform-sdk.ts:673</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L706">platform-sdk.ts:706</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="updaterunitemmetadata"><span>update<wbr/>Run<wbr/>Item<wbr/>Metadata</span><a href="#updaterunitemmetadata" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -482,7 +490,7 @@ identified by its <code>external_id</code>. Pass <code>null</code> to clear exis
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#updaterunitemmetadata">updateRunItemMetadata</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L718">platform-sdk.ts:718</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L751">platform-sdk.ts:751</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="deleterunresults"><span>delete<wbr/>Run<wbr/>Results</span><a href="#deleterunresults" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -516,7 +524,7 @@ output artifacts are no longer available for download.</p>
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#deleterunresults">deleteRunResults</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L765">platform-sdk.ts:765</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L798">platform-sdk.ts:798</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getversion"><span>get<wbr/>Version</span><a href="#getversion" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -537,7 +545,7 @@ useful for debugging, logging, or ensuring compatibility with API versions.</p>
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#getversion">getVersion</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L790">platform-sdk.ts:790</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L823">platform-sdk.ts:823</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getconfig"><span>get<wbr/>Config</span><a href="#getconfig" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -559,7 +567,7 @@ object is a copy to prevent accidental modification of the internal config.</p>
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#getconfig">getConfig</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L816">platform-sdk.ts:816</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L849">platform-sdk.ts:849</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="downloadartifact"><span>download<wbr/>Artifact</span><a href="#downloadartifact" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -601,7 +609,7 @@ Non-retryable HTTP status codes (403, 404, 410, 422) will abort immediately.</p>
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#downloadartifact">downloadArtifact</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L852">platform-sdk.ts:852</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L885">platform-sdk.ts:885</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="downloadartifactstream"><span>download<wbr/>Artifact<wbr/>Stream</span><a href="#downloadartifactstream" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -650,7 +658,232 @@ listen for the stream's <code>error</code> event and re-download if needed.</p>
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#downloadartifactstream">downloadArtifactStream</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L907">platform-sdk.ts:907</a></li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L940">platform-sdk.ts:940</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="creategrant"><span>create<wbr/>Grant</span><a href="#creategrant" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="creategrant-1"><span class="tsd-kind-call-signature">createGrant</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">request</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">GrantCreateRequest</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">GrantReadResponse</span><span class="tsd-signature-symbol">&gt;</span><a href="#creategrant-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Create a grant to share access to a resource with a subject (user or organization)</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">request</span>: <span class="tsd-signature-type">GrantCreateRequest</span></span>
+<div class="tsd-comment tsd-typography"><p>The grant creation request</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">GrantReadResponse</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A promise that resolves to the created grant</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-25">Throws<a href="#throws-25" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If the request fails due to network issues, authentication problems, invalid request data, or API errors</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-17">Example<a href="#example-17" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">sdk</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">PlatformSDKHttp</span><span class="hl-1">({ </span><span class="hl-0">tokenProvider</span><span class="hl-5">:</span><span class="hl-1"> () </span><span class="hl-3">=&gt;</span><span class="hl-1"> </span><span class="hl-2">&#39;your-token&#39;</span><span class="hl-1"> });</span><br/><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">grant</span><span class="hl-1"> = </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">sdk</span><span class="hl-1">.</span><span class="hl-0">createGrant</span><span class="hl-1">({</span><br/><span class="hl-1">  </span><span class="hl-5">resource_type:</span><span class="hl-1"> </span><span class="hl-2">&#39;run&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-5">resource_id:</span><span class="hl-1"> </span><span class="hl-2">&#39;run-123&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-5">subject_type:</span><span class="hl-1"> </span><span class="hl-2">&#39;user&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-5">subject_email:</span><span class="hl-1"> </span><span class="hl-2">&#39;colleague@example.com&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-5">relation:</span><span class="hl-1"> </span><span class="hl-2">&#39;viewer&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">});</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#creategrant">createGrant</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L982">platform-sdk.ts:982</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="listgrants"><span>list<wbr/>Grants</span><a href="#listgrants" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="listgrants-1"><span class="tsd-kind-call-signature">listGrants</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">{</span><br/>        <span class="tsd-kind-property">resourceType</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">ResourceType</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">resourceId</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">subjectType</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">SubjectType</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">subjectId</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">relation</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">GrantRelation</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">revoked</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">page</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">pageSize</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">sort</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">GrantReadResponse</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><a href="#listgrants-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>List grants, optionally filtered by resource, subject, relation, or revocation status</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">options</span>: <span class="tsd-signature-symbol">{</span><br/>    <span class="tsd-kind-property">resourceType</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">ResourceType</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">resourceId</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">subjectType</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">SubjectType</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">subjectId</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">relation</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">GrantRelation</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">revoked</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">page</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">pageSize</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">sort</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol"> = {}</span></span>
+<div class="tsd-comment tsd-typography"><p>Optional filters and pagination/sort options</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">GrantReadResponse</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A promise that resolves to an array of grants</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-26">Throws<a href="#throws-26" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If the request fails due to network issues, authentication problems, or API errors</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-18">Example<a href="#example-18" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">sdk</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">PlatformSDKHttp</span><span class="hl-1">({ </span><span class="hl-0">tokenProvider</span><span class="hl-5">:</span><span class="hl-1"> () </span><span class="hl-3">=&gt;</span><span class="hl-1"> </span><span class="hl-2">&#39;your-token&#39;</span><span class="hl-1"> });</span><br/><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">grants</span><span class="hl-1"> = </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">sdk</span><span class="hl-1">.</span><span class="hl-0">listGrants</span><span class="hl-1">({ </span><span class="hl-5">resourceType:</span><span class="hl-1"> </span><span class="hl-2">&#39;run&#39;</span><span class="hl-1">, </span><span class="hl-5">resourceId:</span><span class="hl-1"> </span><span class="hl-2">&#39;run-123&#39;</span><span class="hl-1"> });</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#listgrants">listGrants</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L1008">platform-sdk.ts:1008</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="getgrant"><span>get<wbr/>Grant</span><a href="#getgrant" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="getgrant-1"><span class="tsd-kind-call-signature">getGrant</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">grantId</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">GrantReadResponse</span><span class="tsd-signature-symbol">&gt;</span><a href="#getgrant-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Get a grant by its ID</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">grantId</span>: <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>The unique identifier of the grant</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">GrantReadResponse</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A promise that resolves to the grant details</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-27">Throws<a href="#throws-27" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If the request fails due to network issues, authentication problems, invalid grant ID, or API errors</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-19">Example<a href="#example-19" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">sdk</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">PlatformSDKHttp</span><span class="hl-1">({ </span><span class="hl-0">tokenProvider</span><span class="hl-5">:</span><span class="hl-1"> () </span><span class="hl-3">=&gt;</span><span class="hl-1"> </span><span class="hl-2">&#39;your-token&#39;</span><span class="hl-1"> });</span><br/><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">grant</span><span class="hl-1"> = </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">sdk</span><span class="hl-1">.</span><span class="hl-0">getGrant</span><span class="hl-1">(</span><span class="hl-2">&#39;grant-123&#39;</span><span class="hl-1">);</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#getgrant">getGrant</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L1062">platform-sdk.ts:1062</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="revokegrant"><span>revoke<wbr/>Grant</span><a href="#revokegrant" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="revokegrant-1"><span class="tsd-kind-call-signature">revokeGrant</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">grantId</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">GrantReadResponse</span><span class="tsd-signature-symbol">&gt;</span><a href="#revokegrant-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Revoke a grant by its ID</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">grantId</span>: <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>The unique identifier of the grant to revoke</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">GrantReadResponse</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A promise that resolves to the revoked grant details</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-28">Throws<a href="#throws-28" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If the request fails due to network issues, authentication problems, invalid grant ID, or API errors</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-20">Example<a href="#example-20" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">sdk</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">PlatformSDKHttp</span><span class="hl-1">({ </span><span class="hl-0">tokenProvider</span><span class="hl-5">:</span><span class="hl-1"> () </span><span class="hl-3">=&gt;</span><span class="hl-1"> </span><span class="hl-2">&#39;your-token&#39;</span><span class="hl-1"> });</span><br/><br/><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">sdk</span><span class="hl-1">.</span><span class="hl-0">revokeGrant</span><span class="hl-1">(</span><span class="hl-2">&#39;grant-123&#39;</span><span class="hl-1">);</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#revokegrant">revokeGrant</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L1086">platform-sdk.ts:1086</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="createsharetoken"><span>create<wbr/>Share<wbr/>Token</span><a href="#createsharetoken" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="createsharetoken-1"><span class="tsd-kind-call-signature">createShareToken</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">request</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ShareTokenCreateRequest</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ShareTokenCreateResponse</span><span class="tsd-signature-symbol">&gt;</span><a href="#createsharetoken-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Create a share token. The returned share_token value is shown only once and is never stored.
+Use <code>createGrant</code> with <code>subject_type: 'share_token'</code> to grant access to a resource.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">request</span>: <span class="tsd-signature-type">ShareTokenCreateRequest</span></span>
+<div class="tsd-comment tsd-typography"><p>The share token creation request</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ShareTokenCreateResponse</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A promise that resolves to the created share token, including the one-time token value</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-29">Throws<a href="#throws-29" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If the request fails due to network issues, authentication problems, invalid request data, or API errors</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-21">Example<a href="#example-21" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">sdk</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">PlatformSDKHttp</span><span class="hl-1">({ </span><span class="hl-0">tokenProvider</span><span class="hl-5">:</span><span class="hl-1"> () </span><span class="hl-3">=&gt;</span><span class="hl-1"> </span><span class="hl-2">&#39;your-token&#39;</span><span class="hl-1"> });</span><br/><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">shareToken</span><span class="hl-1"> = </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">sdk</span><span class="hl-1">.</span><span class="hl-0">createShareToken</span><span class="hl-1">({ </span><span class="hl-5">expires_at:</span><span class="hl-1"> </span><span class="hl-2">&#39;2026-01-01T00:00:00Z&#39;</span><span class="hl-1"> });</span><br/><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-5">shareToken</span><span class="hl-1">.</span><span class="hl-5">share_token</span><span class="hl-1">); </span><span class="hl-7">// Only shown once</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#createsharetoken">createShareToken</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L1112">platform-sdk.ts:1112</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="listsharetokens"><span>list<wbr/>Share<wbr/>Tokens</span><a href="#listsharetokens" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="listsharetokens-1"><span class="tsd-kind-call-signature">listShareTokens</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">{</span><br/>        <span class="tsd-kind-property">runId</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">createdBy</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">revoked</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">page</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">pageSize</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">sort</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ShareTokenReadResponse</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><a href="#listsharetokens-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>List share tokens, optionally filtered by run, creator, or revocation status</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">options</span>: <span class="tsd-signature-symbol">{</span><br/>    <span class="tsd-kind-property">runId</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">createdBy</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">revoked</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">page</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">pageSize</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">sort</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol"> = {}</span></span>
+<div class="tsd-comment tsd-typography"><p>Optional filters and pagination/sort options</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ShareTokenReadResponse</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A promise that resolves to an array of share tokens</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-30">Throws<a href="#throws-30" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If the request fails due to network issues, authentication problems, or API errors</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-22">Example<a href="#example-22" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">sdk</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">PlatformSDKHttp</span><span class="hl-1">({ </span><span class="hl-0">tokenProvider</span><span class="hl-5">:</span><span class="hl-1"> () </span><span class="hl-3">=&gt;</span><span class="hl-1"> </span><span class="hl-2">&#39;your-token&#39;</span><span class="hl-1"> });</span><br/><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">shareTokens</span><span class="hl-1"> = </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">sdk</span><span class="hl-1">.</span><span class="hl-0">listShareTokens</span><span class="hl-1">({ </span><span class="hl-5">runId:</span><span class="hl-1"> </span><span class="hl-2">&#39;run-123&#39;</span><span class="hl-1"> });</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#listsharetokens">listShareTokens</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L1138">platform-sdk.ts:1138</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="getsharetoken"><span>get<wbr/>Share<wbr/>Token</span><a href="#getsharetoken" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="getsharetoken-1"><span class="tsd-kind-call-signature">getShareToken</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">shareTokenId</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ShareTokenReadResponse</span><span class="tsd-signature-symbol">&gt;</span><a href="#getsharetoken-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Get a share token by its ID</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">shareTokenId</span>: <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>The unique identifier of the share token</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ShareTokenReadResponse</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A promise that resolves to the share token details (excludes the token value)</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-31">Throws<a href="#throws-31" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If the request fails due to network issues, authentication problems, invalid share token ID, or API errors</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-23">Example<a href="#example-23" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">sdk</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">PlatformSDKHttp</span><span class="hl-1">({ </span><span class="hl-0">tokenProvider</span><span class="hl-5">:</span><span class="hl-1"> () </span><span class="hl-3">=&gt;</span><span class="hl-1"> </span><span class="hl-2">&#39;your-token&#39;</span><span class="hl-1"> });</span><br/><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">shareToken</span><span class="hl-1"> = </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">sdk</span><span class="hl-1">.</span><span class="hl-0">getShareToken</span><span class="hl-1">(</span><span class="hl-2">&#39;share-token-123&#39;</span><span class="hl-1">);</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#getsharetoken">getShareToken</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L1183">platform-sdk.ts:1183</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="revokesharetoken"><span>revoke<wbr/>Share<wbr/>Token</span><a href="#revokesharetoken" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="revokesharetoken-1"><span class="tsd-kind-call-signature">revokeShareToken</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">shareTokenId</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ShareTokenReadResponse</span><span class="tsd-signature-symbol">&gt;</span><a href="#revokesharetoken-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Revoke a share token by its ID. Invalidates the credential regardless of any active grants.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">shareTokenId</span>: <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>The unique identifier of the share token to revoke</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ShareTokenReadResponse</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A promise that resolves to the revoked share token details</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-32">Throws<a href="#throws-32" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If the request fails due to network issues, authentication problems, invalid share token ID, or API errors</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-24">Example<a href="#example-24" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">sdk</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">PlatformSDKHttp</span><span class="hl-1">({ </span><span class="hl-0">tokenProvider</span><span class="hl-5">:</span><span class="hl-1"> () </span><span class="hl-3">=&gt;</span><span class="hl-1"> </span><span class="hl-2">&#39;your-token&#39;</span><span class="hl-1"> });</span><br/><br/><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">sdk</span><span class="hl-1">.</span><span class="hl-0">revokeShareToken</span><span class="hl-1">(</span><span class="hl-2">&#39;share-token-123&#39;</span><span class="hl-1">);</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#revokesharetoken">revokeShareToken</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L1209">platform-sdk.ts:1209</a></li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -667,7 +900,7 @@ listen for the stream's <code>error</code> event and re-download if needed.</p>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Constructors</summary>
 <div><a href="#constructor"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
-<div><a href="#testconnection"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>test<wbr/>Connection</span></a><a href="#listapplications"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>list<wbr/>Applications</span></a><a href="#getapplicationversiondetails"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Application<wbr/>Version<wbr/>Details</span></a><a href="#getapplication"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Application</span></a><a href="#listapplicationruns"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>list<wbr/>Application<wbr/>Runs</span></a><a href="#createapplicationrun"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>create<wbr/>Application<wbr/>Run</span></a><a href="#getrun"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Run</span></a><a href="#cancelapplicationrun"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>cancel<wbr/>Application<wbr/>Run</span></a><a href="#listrunresults"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>list<wbr/>Run<wbr/>Results</span></a><a href="#getrunitem"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Run<wbr/>Item</span></a><a href="#updaterunmetadata"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Run<wbr/>Metadata</span></a><a href="#updaterunitemmetadata"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Run<wbr/>Item<wbr/>Metadata</span></a><a href="#deleterunresults"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>delete<wbr/>Run<wbr/>Results</span></a><a href="#getversion"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Version</span></a><a href="#getconfig"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Config</span></a><a href="#downloadartifact"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>download<wbr/>Artifact</span></a><a href="#downloadartifactstream"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>download<wbr/>Artifact<wbr/>Stream</span></a></div></details></div></details></div>
+<div><a href="#testconnection"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>test<wbr/>Connection</span></a><a href="#listapplications"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>list<wbr/>Applications</span></a><a href="#getapplicationversiondetails"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Application<wbr/>Version<wbr/>Details</span></a><a href="#getapplication"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Application</span></a><a href="#listapplicationruns"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>list<wbr/>Application<wbr/>Runs</span></a><a href="#createapplicationrun"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>create<wbr/>Application<wbr/>Run</span></a><a href="#getrun"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Run</span></a><a href="#cancelapplicationrun"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>cancel<wbr/>Application<wbr/>Run</span></a><a href="#listrunresults"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>list<wbr/>Run<wbr/>Results</span></a><a href="#getrunitem"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Run<wbr/>Item</span></a><a href="#updaterunmetadata"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Run<wbr/>Metadata</span></a><a href="#updaterunitemmetadata"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Run<wbr/>Item<wbr/>Metadata</span></a><a href="#deleterunresults"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>delete<wbr/>Run<wbr/>Results</span></a><a href="#getversion"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Version</span></a><a href="#getconfig"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Config</span></a><a href="#downloadartifact"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>download<wbr/>Artifact</span></a><a href="#downloadartifactstream"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>download<wbr/>Artifact<wbr/>Stream</span></a><a href="#creategrant"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>create<wbr/>Grant</span></a><a href="#listgrants"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>list<wbr/>Grants</span></a><a href="#getgrant"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Grant</span></a><a href="#revokegrant"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>revoke<wbr/>Grant</span></a><a href="#createsharetoken"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>create<wbr/>Share<wbr/>Token</span></a><a href="#listsharetokens"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>list<wbr/>Share<wbr/>Tokens</span></a><a href="#getsharetoken"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Share<wbr/>Token</span></a><a href="#revokesharetoken"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>revoke<wbr/>Share<wbr/>Token</span></a></div></details></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="../modules.html">Aignostics Platform TypeScript SDK - v3.7.0</a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container">
