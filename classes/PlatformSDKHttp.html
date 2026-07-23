@@ -18,7 +18,7 @@
 <ul class="tsd-hierarchy">
 <li><a href="../interfaces/PlatformSDK.html" class="tsd-signature-type tsd-kind-interface">PlatformSDK</a></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L150">platform-sdk.ts:150</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L164">platform-sdk.ts:164</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -39,6 +39,10 @@
 <a href="#getrun" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Run</span></a>
 <a href="#cancelapplicationrun" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>cancel<wbr/>Application<wbr/>Run</span></a>
 <a href="#listrunresults" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>list<wbr/>Run<wbr/>Results</span></a>
+<a href="#getrunitem" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Run<wbr/>Item</span></a>
+<a href="#updaterunmetadata" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Run<wbr/>Metadata</span></a>
+<a href="#updaterunitemmetadata" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Run<wbr/>Item<wbr/>Metadata</span></a>
+<a href="#deleterunresults" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>delete<wbr/>Run<wbr/>Results</span></a>
 <a href="#getversion" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Version</span></a>
 <a href="#getconfig" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Config</span></a>
 <a href="#downloadartifact" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>download<wbr/>Artifact</span></a>
@@ -63,7 +67,7 @@
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">PlatformSDKHttp</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L157">platform-sdk.ts:157</a></li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L171">platform-sdk.ts:171</a></li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -94,7 +98,7 @@ It's useful for validating setup and troubleshooting connectivity issues.</p>
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#testconnection">testConnection</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L207">platform-sdk.ts:207</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L221">platform-sdk.ts:221</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="listapplications"><span>list<wbr/>Applications</span><a href="#listapplications" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -122,7 +126,7 @@ processing pipelines available on the Aignostics Platform.</p>
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#listapplications">listApplications</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L243">platform-sdk.ts:243</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L257">platform-sdk.ts:257</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getapplicationversiondetails"><span>get<wbr/>Application<wbr/>Version<wbr/>Details</span><a href="#getapplicationversiondetails" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -156,7 +160,7 @@ configurations or features.</p>
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#getapplicationversiondetails">getApplicationVersionDetails</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L280">platform-sdk.ts:280</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L294">platform-sdk.ts:294</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getapplication"><span>get<wbr/>Application</span><a href="#getapplication" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -188,7 +192,7 @@ by <code>listApplications()</code>.</p>
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#getapplication">getApplication</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L327">platform-sdk.ts:327</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L341">platform-sdk.ts:341</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="listapplicationruns"><span>list<wbr/>Application<wbr/>Runs</span><a href="#listapplicationruns" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -236,7 +240,7 @@ and/or application version to narrow down the results.</p>
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#listapplicationruns">listApplicationRuns</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L377">platform-sdk.ts:377</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L391">platform-sdk.ts:391</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="createapplicationrun"><span>create<wbr/>Application<wbr/>Run</span><a href="#createapplicationrun" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -267,7 +271,7 @@ asynchronously on the Aignostics Platform.</p>
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#createapplicationrun">createApplicationRun</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L441">platform-sdk.ts:441</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L455">platform-sdk.ts:455</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getrun"><span>get<wbr/>Run</span><a href="#getrun" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -297,7 +301,7 @@ its current status, progress, metadata, and execution information.</p>
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#getrun">getRun</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L478">platform-sdk.ts:478</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L492">platform-sdk.ts:492</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="cancelapplicationrun"><span>cancel<wbr/>Application<wbr/>Run</span><a href="#cancelapplicationrun" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -328,7 +332,7 @@ be resumed and will transition to a cancelled state.</p>
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#cancelapplicationrun">cancelApplicationRun</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L519">platform-sdk.ts:519</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L533">platform-sdk.ts:533</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="listrunresults"><span>list<wbr/>Run<wbr/>Results</span><a href="#listrunresults" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -360,7 +364,159 @@ artifacts from the AI model execution.</p>
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#listrunresults">listRunResults</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L560">platform-sdk.ts:560</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L574">platform-sdk.ts:574</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="getrunitem"><span>get<wbr/>Run<wbr/>Item</span><a href="#getrunitem" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="getrunitem-1"><span class="tsd-kind-call-signature">getRunItem</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">applicationRunId</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">externalId</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ApplicationRunItem.html" class="tsd-signature-type tsd-kind-interface">ApplicationRunItem</a><span class="tsd-signature-symbol">&gt;</span><a href="#getrunitem-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Retrieve a single item from an application run by its external ID</p>
+<p>This method fetches details for one specific result item within a run,
+identified by the <code>external_id</code> supplied when the run was created.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">applicationRunId</span>: <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>The unique identifier of the application run</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">externalId</span>: <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>The external ID of the item, as supplied when creating the run</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ApplicationRunItem.html" class="tsd-signature-type tsd-kind-interface">ApplicationRunItem</a><span class="tsd-signature-symbol">&gt;</span></h4><p>A promise that resolves to the enriched run item</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-11">Throws<a href="#throws-11" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If no valid authentication token is available</p>
+</div>
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-12">Throws<a href="#throws-12" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If the request fails (e.g., 404 if the item doesn't exist)</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-9">Example<a href="#example-9" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">sdk</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">PlatformSDKHttp</span><span class="hl-1">({ </span><span class="hl-0">tokenProvider</span><span class="hl-5">:</span><span class="hl-1"> () </span><span class="hl-3">=&gt;</span><span class="hl-1"> </span><span class="hl-2">&#39;your-token&#39;</span><span class="hl-1"> });</span><br/><br/><span class="hl-4">try</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">item</span><span class="hl-1"> = </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">sdk</span><span class="hl-1">.</span><span class="hl-0">getRunItem</span><span class="hl-1">(</span><span class="hl-2">&#39;run-123&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;slide-001&#39;</span><span class="hl-1">);</span><br/><span class="hl-1">  </span><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-2">`Item status: </span><span class="hl-3">${</span><span class="hl-5">item</span><span class="hl-8">.</span><span class="hl-5">status</span><span class="hl-3">}</span><span class="hl-2">`</span><span class="hl-1">);</span><br/><span class="hl-1">} </span><span class="hl-4">catch</span><span class="hl-1"> (</span><span class="hl-5">error</span><span class="hl-1">) {</span><br/><span class="hl-1">  </span><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">error</span><span class="hl-1">(</span><span class="hl-2">&#39;Failed to get run item:&#39;</span><span class="hl-1">, </span><span class="hl-5">error</span><span class="hl-1">.</span><span class="hl-5">message</span><span class="hl-1">);</span><br/><span class="hl-1">}</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#getrunitem">getRunItem</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L635">platform-sdk.ts:635</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="updaterunmetadata"><span>update<wbr/>Run<wbr/>Metadata</span><a href="#updaterunmetadata" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="updaterunmetadata-1"><span class="tsd-kind-call-signature">updateRunMetadata</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">applicationRunId</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">customMetadata</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">customMetadataChecksum</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">CustomMetadataUpdateResponse</span><span class="tsd-signature-symbol">&gt;</span><a href="#updaterunmetadata-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Set (replace) the custom metadata attached to an application run</p>
+<p>This method overwrites the run's custom metadata, an arbitrary JSON object
+that consumers can use to store their own attributes (e.g. tags, notes,
+external references) alongside a run. Pass <code>null</code> to clear existing metadata.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">applicationRunId</span>: <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>The unique identifier of the application run</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">customMetadata</span>: <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></span>
+<div class="tsd-comment tsd-typography"><p>The new custom metadata object, or <code>null</code> to clear it</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">customMetadataChecksum</span>: <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></span>
+<div class="tsd-comment tsd-typography"><p>Optional checksum for optimistic concurrency control</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">CustomMetadataUpdateResponse</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A promise that resolves to the updated metadata checksum</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-13">Throws<a href="#throws-13" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If no valid authentication token is available</p>
+</div>
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-14">Throws<a href="#throws-14" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If the request fails (e.g., 404 if the run doesn't exist, 422 on checksum mismatch)</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-10">Example<a href="#example-10" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">sdk</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">PlatformSDKHttp</span><span class="hl-1">({ </span><span class="hl-0">tokenProvider</span><span class="hl-5">:</span><span class="hl-1"> () </span><span class="hl-3">=&gt;</span><span class="hl-1"> </span><span class="hl-2">&#39;your-token&#39;</span><span class="hl-1"> });</span><br/><br/><span class="hl-4">try</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">sdk</span><span class="hl-1">.</span><span class="hl-0">updateRunMetadata</span><span class="hl-1">(</span><span class="hl-2">&#39;run-123&#39;</span><span class="hl-1">, { </span><span class="hl-5">note:</span><span class="hl-1"> </span><span class="hl-2">&#39;Reviewed by QA&#39;</span><span class="hl-1"> });</span><br/><span class="hl-1">} </span><span class="hl-4">catch</span><span class="hl-1"> (</span><span class="hl-5">error</span><span class="hl-1">) {</span><br/><span class="hl-1">  </span><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">error</span><span class="hl-1">(</span><span class="hl-2">&#39;Failed to update run metadata:&#39;</span><span class="hl-1">, </span><span class="hl-5">error</span><span class="hl-1">.</span><span class="hl-5">message</span><span class="hl-1">);</span><br/><span class="hl-1">}</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#updaterunmetadata">updateRunMetadata</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L673">platform-sdk.ts:673</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="updaterunitemmetadata"><span>update<wbr/>Run<wbr/>Item<wbr/>Metadata</span><a href="#updaterunitemmetadata" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="updaterunitemmetadata-1"><span class="tsd-kind-call-signature">updateRunItemMetadata</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">applicationRunId</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">externalId</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">customMetadata</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">customMetadataChecksum</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">CustomMetadataUpdateResponse</span><span class="tsd-signature-symbol">&gt;</span><a href="#updaterunitemmetadata-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Set (replace) the custom metadata attached to a single run item</p>
+<p>This method overwrites the custom metadata of one item within a run,
+identified by its <code>external_id</code>. Pass <code>null</code> to clear existing metadata.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">applicationRunId</span>: <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>The unique identifier of the application run</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">externalId</span>: <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>The external ID of the item, as supplied when creating the run</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">customMetadata</span>: <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></span>
+<div class="tsd-comment tsd-typography"><p>The new custom metadata object, or <code>null</code> to clear it</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">customMetadataChecksum</span>: <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></span>
+<div class="tsd-comment tsd-typography"><p>Optional checksum for optimistic concurrency control</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">CustomMetadataUpdateResponse</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A promise that resolves to the updated metadata checksum</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-15">Throws<a href="#throws-15" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If no valid authentication token is available</p>
+</div>
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-16">Throws<a href="#throws-16" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If the request fails (e.g., 404 if the item doesn't exist, 422 on checksum mismatch)</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-11">Example<a href="#example-11" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">sdk</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">PlatformSDKHttp</span><span class="hl-1">({ </span><span class="hl-0">tokenProvider</span><span class="hl-5">:</span><span class="hl-1"> () </span><span class="hl-3">=&gt;</span><span class="hl-1"> </span><span class="hl-2">&#39;your-token&#39;</span><span class="hl-1"> });</span><br/><br/><span class="hl-4">try</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">sdk</span><span class="hl-1">.</span><span class="hl-0">updateRunItemMetadata</span><span class="hl-1">(</span><span class="hl-2">&#39;run-123&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;slide-001&#39;</span><span class="hl-1">, { </span><span class="hl-5">reviewed:</span><span class="hl-1"> </span><span class="hl-3">true</span><span class="hl-1"> });</span><br/><span class="hl-1">} </span><span class="hl-4">catch</span><span class="hl-1"> (</span><span class="hl-5">error</span><span class="hl-1">) {</span><br/><span class="hl-1">  </span><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">error</span><span class="hl-1">(</span><span class="hl-2">&#39;Failed to update run item metadata:&#39;</span><span class="hl-1">, </span><span class="hl-5">error</span><span class="hl-1">.</span><span class="hl-5">message</span><span class="hl-1">);</span><br/><span class="hl-1">}</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#updaterunitemmetadata">updateRunItemMetadata</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L718">platform-sdk.ts:718</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="deleterunresults"><span>delete<wbr/>Run<wbr/>Results</span><a href="#deleterunresults" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="deleterunresults-1"><span class="tsd-kind-call-signature">deleteRunResults</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">applicationRunId</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#deleterunresults-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Delete the results (output artifacts) of an application run</p>
+<p>This method permanently deletes the output artifacts produced by a
+terminated run. The run and its items remain queryable, but their
+output artifacts are no longer available for download.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">applicationRunId</span>: <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>The unique identifier of the application run</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A promise that resolves when the deletion request succeeds</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-17">Throws<a href="#throws-17" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If no valid authentication token is available</p>
+</div>
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-18">Throws<a href="#throws-18" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If the request fails (e.g., 404 if the run doesn't exist)</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-12">Example<a href="#example-12" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">sdk</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">PlatformSDKHttp</span><span class="hl-1">({ </span><span class="hl-0">tokenProvider</span><span class="hl-5">:</span><span class="hl-1"> () </span><span class="hl-3">=&gt;</span><span class="hl-1"> </span><span class="hl-2">&#39;your-token&#39;</span><span class="hl-1"> });</span><br/><br/><span class="hl-4">try</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">sdk</span><span class="hl-1">.</span><span class="hl-0">deleteRunResults</span><span class="hl-1">(</span><span class="hl-2">&#39;run-123&#39;</span><span class="hl-1">);</span><br/><span class="hl-1">  </span><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-2">&#39;Run results deleted&#39;</span><span class="hl-1">);</span><br/><span class="hl-1">} </span><span class="hl-4">catch</span><span class="hl-1"> (</span><span class="hl-5">error</span><span class="hl-1">) {</span><br/><span class="hl-1">  </span><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">error</span><span class="hl-1">(</span><span class="hl-2">&#39;Failed to delete run results:&#39;</span><span class="hl-1">, </span><span class="hl-5">error</span><span class="hl-1">.</span><span class="hl-5">message</span><span class="hl-1">);</span><br/><span class="hl-1">}</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#deleterunresults">deleteRunResults</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L765">platform-sdk.ts:765</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getversion"><span>get<wbr/>Version</span><a href="#getversion" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -375,13 +531,13 @@ useful for debugging, logging, or ensuring compatibility with API versions.</p>
 
 <div class="tsd-comment tsd-typography">
 <div class="tsd-tag-example">
-<h4 class="tsd-anchor-link" id="example-9">Example<a href="#example-9" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">sdk</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">PlatformSDKHttp</span><span class="hl-1">({ </span><span class="hl-0">tokenProvider</span><span class="hl-5">:</span><span class="hl-1"> () </span><span class="hl-3">=&gt;</span><span class="hl-1"> </span><span class="hl-2">&#39;your-token&#39;</span><span class="hl-1"> });</span><br/><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-2">`Using SDK version: </span><span class="hl-3">${</span><span class="hl-5">sdk</span><span class="hl-8">.</span><span class="hl-0">getVersion</span><span class="hl-8">()</span><span class="hl-3">}</span><span class="hl-2">`</span><span class="hl-1">);</span>
+<h4 class="tsd-anchor-link" id="example-13">Example<a href="#example-13" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">sdk</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">PlatformSDKHttp</span><span class="hl-1">({ </span><span class="hl-0">tokenProvider</span><span class="hl-5">:</span><span class="hl-1"> () </span><span class="hl-3">=&gt;</span><span class="hl-1"> </span><span class="hl-2">&#39;your-token&#39;</span><span class="hl-1"> });</span><br/><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-2">`Using SDK version: </span><span class="hl-3">${</span><span class="hl-5">sdk</span><span class="hl-8">.</span><span class="hl-0">getVersion</span><span class="hl-8">()</span><span class="hl-3">}</span><span class="hl-2">`</span><span class="hl-1">);</span>
 </code><button type="button">Copy</button></pre>
 
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#getversion">getVersion</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L611">platform-sdk.ts:611</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L790">platform-sdk.ts:790</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getconfig"><span>get<wbr/>Config</span><a href="#getconfig" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -397,13 +553,13 @@ object is a copy to prevent accidental modification of the internal config.</p>
 
 <div class="tsd-comment tsd-typography">
 <div class="tsd-tag-example">
-<h4 class="tsd-anchor-link" id="example-10">Example<a href="#example-10" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">sdk</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">PlatformSDKHttp</span><span class="hl-1">({</span><br/><span class="hl-1">  </span><span class="hl-5">baseURL:</span><span class="hl-1"> </span><span class="hl-2">&#39;https://api.aignostics.com&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-0">tokenProvider</span><span class="hl-5">:</span><span class="hl-1"> () </span><span class="hl-3">=&gt;</span><span class="hl-1"> </span><span class="hl-2">&#39;your-token&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-5">timeout:</span><span class="hl-1"> </span><span class="hl-9">30000</span><br/><span class="hl-1">});</span><br/><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">config</span><span class="hl-1"> = </span><span class="hl-5">sdk</span><span class="hl-1">.</span><span class="hl-0">getConfig</span><span class="hl-1">();</span><br/><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-2">`Base URL: </span><span class="hl-3">${</span><span class="hl-5">config</span><span class="hl-8">.</span><span class="hl-5">baseURL</span><span class="hl-3">}</span><span class="hl-2">`</span><span class="hl-1">);</span><br/><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-2">`Timeout: </span><span class="hl-3">${</span><span class="hl-5">config</span><span class="hl-8">.</span><span class="hl-5">timeout</span><span class="hl-3">}</span><span class="hl-2">ms`</span><span class="hl-1">);</span>
+<h4 class="tsd-anchor-link" id="example-14">Example<a href="#example-14" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">sdk</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">PlatformSDKHttp</span><span class="hl-1">({</span><br/><span class="hl-1">  </span><span class="hl-5">baseURL:</span><span class="hl-1"> </span><span class="hl-2">&#39;https://api.aignostics.com&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-0">tokenProvider</span><span class="hl-5">:</span><span class="hl-1"> () </span><span class="hl-3">=&gt;</span><span class="hl-1"> </span><span class="hl-2">&#39;your-token&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-5">timeout:</span><span class="hl-1"> </span><span class="hl-9">30000</span><br/><span class="hl-1">});</span><br/><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">config</span><span class="hl-1"> = </span><span class="hl-5">sdk</span><span class="hl-1">.</span><span class="hl-0">getConfig</span><span class="hl-1">();</span><br/><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-2">`Base URL: </span><span class="hl-3">${</span><span class="hl-5">config</span><span class="hl-8">.</span><span class="hl-5">baseURL</span><span class="hl-3">}</span><span class="hl-2">`</span><span class="hl-1">);</span><br/><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-2">`Timeout: </span><span class="hl-3">${</span><span class="hl-5">config</span><span class="hl-8">.</span><span class="hl-5">timeout</span><span class="hl-3">}</span><span class="hl-2">ms`</span><span class="hl-1">);</span>
 </code><button type="button">Copy</button></pre>
 
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#getconfig">getConfig</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L637">platform-sdk.ts:637</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L816">platform-sdk.ts:816</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="downloadartifact"><span>download<wbr/>Artifact</span><a href="#downloadartifact" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -430,22 +586,22 @@ Non-retryable HTTP status codes (403, 404, 410, 422) will abort immediately.</p>
 
 <div class="tsd-comment tsd-typography">
 <div class="tsd-tag-throws">
-<h4 class="tsd-anchor-link" id="throws-11">Throws<a href="#throws-11" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If no valid authentication token is available</p>
+<h4 class="tsd-anchor-link" id="throws-19">Throws<a href="#throws-19" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If no valid authentication token is available</p>
 </div>
 <div class="tsd-tag-throws">
-<h4 class="tsd-anchor-link" id="throws-12">Throws<a href="#throws-12" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If the API request fails (e.g., 403, 404, 410, 422, or other HTTP errors)</p>
+<h4 class="tsd-anchor-link" id="throws-20">Throws<a href="#throws-20" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If the API request fails (e.g., 403, 404, 410, 422, or other HTTP errors)</p>
 </div>
 <div class="tsd-tag-throws">
-<h4 class="tsd-anchor-link" id="throws-13">Throws<a href="#throws-13" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If a non-HTTP error occurs</p>
+<h4 class="tsd-anchor-link" id="throws-21">Throws<a href="#throws-21" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If a non-HTTP error occurs</p>
 </div>
 <div class="tsd-tag-example">
-<h4 class="tsd-anchor-link" id="example-11">Example<a href="#example-11" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">sdk</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">PlatformSDKHttp</span><span class="hl-1">({ </span><span class="hl-0">tokenProvider</span><span class="hl-5">:</span><span class="hl-1"> () </span><span class="hl-3">=&gt;</span><span class="hl-1"> </span><span class="hl-2">&#39;your-token&#39;</span><span class="hl-1"> });</span><br/><br/><span class="hl-4">try</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">buffer</span><span class="hl-1"> = </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">sdk</span><span class="hl-1">.</span><span class="hl-0">downloadArtifact</span><span class="hl-1">(</span><span class="hl-2">&#39;run-123&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;artifact-456&#39;</span><span class="hl-1">);</span><br/><span class="hl-1">  </span><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-2">`Downloaded </span><span class="hl-3">${</span><span class="hl-5">buffer</span><span class="hl-8">.</span><span class="hl-5">byteLength</span><span class="hl-3">}</span><span class="hl-2"> bytes`</span><span class="hl-1">);</span><br/><br/><span class="hl-1">  </span><span class="hl-7">// Write to file (Node.js)</span><br/><span class="hl-1">  </span><span class="hl-5">fs</span><span class="hl-1">.</span><span class="hl-0">writeFileSync</span><span class="hl-1">(</span><span class="hl-2">&#39;output.bin&#39;</span><span class="hl-1">, </span><span class="hl-5">Buffer</span><span class="hl-1">.</span><span class="hl-0">from</span><span class="hl-1">(</span><span class="hl-5">buffer</span><span class="hl-1">));</span><br/><span class="hl-1">} </span><span class="hl-4">catch</span><span class="hl-1"> (</span><span class="hl-5">error</span><span class="hl-1">) {</span><br/><span class="hl-1">  </span><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">error</span><span class="hl-1">(</span><span class="hl-2">&#39;Failed to download artifact:&#39;</span><span class="hl-1">, </span><span class="hl-5">error</span><span class="hl-1">.</span><span class="hl-5">message</span><span class="hl-1">);</span><br/><span class="hl-1">}</span>
+<h4 class="tsd-anchor-link" id="example-15">Example<a href="#example-15" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">sdk</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">PlatformSDKHttp</span><span class="hl-1">({ </span><span class="hl-0">tokenProvider</span><span class="hl-5">:</span><span class="hl-1"> () </span><span class="hl-3">=&gt;</span><span class="hl-1"> </span><span class="hl-2">&#39;your-token&#39;</span><span class="hl-1"> });</span><br/><br/><span class="hl-4">try</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">buffer</span><span class="hl-1"> = </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">sdk</span><span class="hl-1">.</span><span class="hl-0">downloadArtifact</span><span class="hl-1">(</span><span class="hl-2">&#39;run-123&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;artifact-456&#39;</span><span class="hl-1">);</span><br/><span class="hl-1">  </span><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-2">`Downloaded </span><span class="hl-3">${</span><span class="hl-5">buffer</span><span class="hl-8">.</span><span class="hl-5">byteLength</span><span class="hl-3">}</span><span class="hl-2"> bytes`</span><span class="hl-1">);</span><br/><br/><span class="hl-1">  </span><span class="hl-7">// Write to file (Node.js)</span><br/><span class="hl-1">  </span><span class="hl-5">fs</span><span class="hl-1">.</span><span class="hl-0">writeFileSync</span><span class="hl-1">(</span><span class="hl-2">&#39;output.bin&#39;</span><span class="hl-1">, </span><span class="hl-5">Buffer</span><span class="hl-1">.</span><span class="hl-0">from</span><span class="hl-1">(</span><span class="hl-5">buffer</span><span class="hl-1">));</span><br/><span class="hl-1">} </span><span class="hl-4">catch</span><span class="hl-1"> (</span><span class="hl-5">error</span><span class="hl-1">) {</span><br/><span class="hl-1">  </span><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">error</span><span class="hl-1">(</span><span class="hl-2">&#39;Failed to download artifact:&#39;</span><span class="hl-1">, </span><span class="hl-5">error</span><span class="hl-1">.</span><span class="hl-5">message</span><span class="hl-1">);</span><br/><span class="hl-1">}</span>
 </code><button type="button">Copy</button></pre>
 
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#downloadartifact">downloadArtifact</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L673">platform-sdk.ts:673</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L852">platform-sdk.ts:852</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="downloadartifactstream"><span>download<wbr/>Artifact<wbr/>Stream</span><a href="#downloadartifactstream" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -473,16 +629,16 @@ Non-retryable HTTP status codes (403, 404, 410, 422) will abort immediately.</p>
 
 <div class="tsd-comment tsd-typography">
 <div class="tsd-tag-throws">
-<h4 class="tsd-anchor-link" id="throws-14">Throws<a href="#throws-14" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If no valid authentication token is available</p>
+<h4 class="tsd-anchor-link" id="throws-22">Throws<a href="#throws-22" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If no valid authentication token is available</p>
 </div>
 <div class="tsd-tag-throws">
-<h4 class="tsd-anchor-link" id="throws-15">Throws<a href="#throws-15" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If the API request fails (e.g., 403, 404, 410, 422, or other HTTP errors)</p>
+<h4 class="tsd-anchor-link" id="throws-23">Throws<a href="#throws-23" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If the API request fails (e.g., 403, 404, 410, 422, or other HTTP errors)</p>
 </div>
 <div class="tsd-tag-throws">
-<h4 class="tsd-anchor-link" id="throws-16">Throws<a href="#throws-16" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If a non-HTTP error occurs</p>
+<h4 class="tsd-anchor-link" id="throws-24">Throws<a href="#throws-24" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If a non-HTTP error occurs</p>
 </div>
 <div class="tsd-tag-example">
-<h4 class="tsd-anchor-link" id="example-12">Example<a href="#example-12" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-4">import</span><span class="hl-1"> { </span><span class="hl-5">pipeline</span><span class="hl-1"> } </span><span class="hl-4">from</span><span class="hl-1"> </span><span class="hl-2">&#39;node:stream/promises&#39;</span><span class="hl-1">;</span><br/><span class="hl-4">import</span><span class="hl-1"> { </span><span class="hl-5">createWriteStream</span><span class="hl-1"> } </span><span class="hl-4">from</span><span class="hl-1"> </span><span class="hl-2">&#39;node:fs&#39;</span><span class="hl-1">;</span><br/><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">stream</span><span class="hl-1"> = </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">sdk</span><span class="hl-1">.</span><span class="hl-0">downloadArtifactStream</span><span class="hl-1">(</span><span class="hl-2">&#39;run-123&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;artifact-456&#39;</span><span class="hl-1">);</span><br/><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-0">pipeline</span><span class="hl-1">(</span><span class="hl-5">stream</span><span class="hl-1">, </span><span class="hl-0">createWriteStream</span><span class="hl-1">(</span><span class="hl-2">&#39;output.bin&#39;</span><span class="hl-1">));</span>
+<h4 class="tsd-anchor-link" id="example-16">Example<a href="#example-16" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-4">import</span><span class="hl-1"> { </span><span class="hl-5">pipeline</span><span class="hl-1"> } </span><span class="hl-4">from</span><span class="hl-1"> </span><span class="hl-2">&#39;node:stream/promises&#39;</span><span class="hl-1">;</span><br/><span class="hl-4">import</span><span class="hl-1"> { </span><span class="hl-5">createWriteStream</span><span class="hl-1"> } </span><span class="hl-4">from</span><span class="hl-1"> </span><span class="hl-2">&#39;node:fs&#39;</span><span class="hl-1">;</span><br/><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">stream</span><span class="hl-1"> = </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">sdk</span><span class="hl-1">.</span><span class="hl-0">downloadArtifactStream</span><span class="hl-1">(</span><span class="hl-2">&#39;run-123&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;artifact-456&#39;</span><span class="hl-1">);</span><br/><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-0">pipeline</span><span class="hl-1">(</span><span class="hl-5">stream</span><span class="hl-1">, </span><span class="hl-0">createWriteStream</span><span class="hl-1">(</span><span class="hl-2">&#39;output.bin&#39;</span><span class="hl-1">));</span>
 </code><button type="button">Copy</button></pre>
 
 </div>
@@ -494,7 +650,7 @@ listen for the stream's <code>error</code> event and re-download if needed.</p>
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/PlatformSDK.html">PlatformSDK</a>.<a href="../interfaces/PlatformSDK.html#downloadartifactstream">downloadArtifactStream</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L728">platform-sdk.ts:728</a></li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in <a href="https://github.com/aignostics/typescript-sdk/blob/main/packages/sdk/src/platform-sdk.ts#L907">platform-sdk.ts:907</a></li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -511,7 +667,7 @@ listen for the stream's <code>error</code> event and re-download if needed.</p>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Constructors</summary>
 <div><a href="#constructor"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
-<div><a href="#testconnection"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>test<wbr/>Connection</span></a><a href="#listapplications"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>list<wbr/>Applications</span></a><a href="#getapplicationversiondetails"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Application<wbr/>Version<wbr/>Details</span></a><a href="#getapplication"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Application</span></a><a href="#listapplicationruns"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>list<wbr/>Application<wbr/>Runs</span></a><a href="#createapplicationrun"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>create<wbr/>Application<wbr/>Run</span></a><a href="#getrun"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Run</span></a><a href="#cancelapplicationrun"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>cancel<wbr/>Application<wbr/>Run</span></a><a href="#listrunresults"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>list<wbr/>Run<wbr/>Results</span></a><a href="#getversion"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Version</span></a><a href="#getconfig"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Config</span></a><a href="#downloadartifact"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>download<wbr/>Artifact</span></a><a href="#downloadartifactstream"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>download<wbr/>Artifact<wbr/>Stream</span></a></div></details></div></details></div>
+<div><a href="#testconnection"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>test<wbr/>Connection</span></a><a href="#listapplications"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>list<wbr/>Applications</span></a><a href="#getapplicationversiondetails"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Application<wbr/>Version<wbr/>Details</span></a><a href="#getapplication"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Application</span></a><a href="#listapplicationruns"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>list<wbr/>Application<wbr/>Runs</span></a><a href="#createapplicationrun"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>create<wbr/>Application<wbr/>Run</span></a><a href="#getrun"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Run</span></a><a href="#cancelapplicationrun"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>cancel<wbr/>Application<wbr/>Run</span></a><a href="#listrunresults"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>list<wbr/>Run<wbr/>Results</span></a><a href="#getrunitem"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Run<wbr/>Item</span></a><a href="#updaterunmetadata"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Run<wbr/>Metadata</span></a><a href="#updaterunitemmetadata"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Run<wbr/>Item<wbr/>Metadata</span></a><a href="#deleterunresults"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>delete<wbr/>Run<wbr/>Results</span></a><a href="#getversion"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Version</span></a><a href="#getconfig"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Config</span></a><a href="#downloadartifact"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>download<wbr/>Artifact</span></a><a href="#downloadartifactstream"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>download<wbr/>Artifact<wbr/>Stream</span></a></div></details></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="../modules.html">Aignostics Platform TypeScript SDK - v3.7.0</a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container">

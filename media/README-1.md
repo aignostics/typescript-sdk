@@ -70,6 +70,18 @@ aignostics-platform runs cancel <applicationRunId>
 
 # List run results
 aignostics-platform runs results list <applicationRunId>
+
+# Delete run results
+aignostics-platform runs results delete <applicationRunId>
+
+# Get a single item within a run
+aignostics-platform runs items get <applicationRunId> <externalId>
+
+# Set (replace) a run's custom metadata (pass "null" to clear it)
+aignostics-platform runs metadata set <applicationRunId> '{"note": "Reviewed by QA"}'
+
+# Set (replace) a single item's custom metadata
+aignostics-platform runs items metadata set <applicationRunId> <externalId> '{"reviewed": true}'
 ```
 
 ## Commands
@@ -78,6 +90,6 @@ aignostics-platform runs results list <applicationRunId>
 - `test-api` - Test API connection
 - `auth` - `login`, `logout`, `status`
 - `applications` - `list`, `get`, `versions list`, `versions get`
-- `runs` - `create`, `list`, `get`, `cancel`, `results list`
+- `runs` - `create`, `list`, `get`, `cancel`, `metadata set`, `results list`, `results delete`, `items get`, `items metadata set`
 
 For detailed usage information, use `aignostics-platform --help` or `aignostics-platform <command> --help`.
