@@ -31,7 +31,7 @@ jobs:
                 path: test-results/cli/
             
             - name: Report to Ketryx
-              uses: Ketryx/ketryx-github-action@40b13ef68c772e96e58ec01a81f5b216d7710186 # v1.4.0
+              uses: Ketryx/ketryx-github-action@719ef26488ed7f9d36a45a6d67d649726d5ece6a # v1.5.0
               with:
                 project: ${{ vars.KETRYX_PROJECT }}
                 api-key: ${{ secrets.KETRYX_API_KEY }}
