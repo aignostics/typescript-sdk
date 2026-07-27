@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "semi": true,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "trailingComma": "es5",
+  "printWidth": 100,
+  "bracketSpacing": true,
+  "arrowParens": "avoid",
+  "sortPackageJson": false,
+  "ignorePatterns": [
+    "packages/sdk/src/generated/",
+    "packages/sdk/openapi.json"
+  ]
+}

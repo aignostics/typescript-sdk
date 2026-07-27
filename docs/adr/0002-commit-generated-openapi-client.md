@@ -26,7 +26,7 @@ any hand-edit or forgotten regen. Because the check compares against **raw**
 generator output, no CI step may reformat the generated code: the generator's
 output is committed verbatim (including its own `.gitignore`, `.openapi-generator/`,
 `docs/`, `git_push.sh`), and both `packages/sdk/src/generated/` and
-`packages/sdk/openapi.json` are excluded from Prettier (ESLint already excluded
+`packages/sdk/openapi.json` are excluded from oxfmt (oxlint already excluded
 `generated/`). Generated code is verified by the drift check, not by style tooling.
 
 ## Consequences

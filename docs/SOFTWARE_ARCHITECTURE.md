@@ -87,7 +87,7 @@ The Aignostics TypeScript SDK Repository provides TypeScript developers with too
 | Convention | Details |
 |------------|---------|
 | **Test Naming** | `.spec.ts` (unit), `.test.ts` (integration) |
-| **Code Style** | ESLint + Prettier configuration |
+| **Code Style** | oxlint + oxfmt configuration |
 | **Git Workflow** | Feature branches, pre-commit hooks for license checks |
 | **Documentation** | JSDoc for public API, Markdown for guides |
 
