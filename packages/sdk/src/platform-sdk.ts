@@ -6,6 +6,7 @@ import {
   GrantCreateRequest,
   GrantReadResponse,
   GrantRelation,
+  ItemResultReadResponse,
   ItemState,
   ItemTerminationReason,
   PublicApi,
@@ -16,6 +17,7 @@ import {
   ShareTokenCreateResponse,
   ShareTokenReadResponse,
   SubjectType,
+  RunReadResponse,
   VersionReadResponse,
 } from './generated/index.js';
 import {
@@ -26,10 +28,6 @@ import {
 } from './errors.js';
 import { isAxiosError } from 'axios';
 import z from 'zod';
-import { processApplicationRun } from './entities/application-run/process-application-run.js';
-import { ApplicationRun } from './entities/application-run/types.js';
-import { processRunItem } from './entities/run-item/process-run-item.js';
-import { ApplicationRunItem } from './entities/run-item/types.js';
 import { downloadWithRetry } from './utils/downloadWithRetry.js';
 import type { Readable } from 'node:stream';
 
@@ -137,9 +135,9 @@ export interface PlatformSDK {
     pageSize?: number;
     customMetadata?: string;
     sort?: string[];
-  }): Promise<ApplicationRun[]>;
+  }): Promise<RunReadResponse[]>;
   createApplicationRun(request: RunCreationRequest): Promise<RunCreationResponse>;
-  getRun(applicationRunId: string): Promise<ApplicationRun>;
+  getRun(applicationRunId: string): Promise<RunReadResponse>;
   cancelApplicationRun(applicationRunId: string): Promise<void>;
   listRunResults(
     applicationRunId: string,
@@ -151,8 +149,8 @@ export interface PlatformSDK {
       state?: ItemState;
       terminationReason?: ItemTerminationReason;
     }
-  ): Promise<ApplicationRunItem[]>;
-  getRunItem(applicationRunId: string, externalId: string): Promise<ApplicationRunItem>;
+  ): Promise<ItemResultReadResponse[]>;
+  getRunItem(applicationRunId: string, externalId: string): Promise<ItemResultReadResponse>;
   updateRunMetadata(
     applicationRunId: string,
     customMetadata: Record<string, unknown> | null,
@@ -434,7 +432,7 @@ export class PlatformSDKHttp implements PlatformSDK {
     sort?: string[];
     page?: number;
     pageSize?: number;
-  }): Promise<ApplicationRun[]> {
+  }): Promise<RunReadResponse[]> {
     const client = await this.#getClient();
     try {
       const response = await client.listRunsV1RunsGet({
@@ -446,8 +444,7 @@ export class PlatformSDKHttp implements PlatformSDK {
         pageSize: options?.pageSize,
       });
 
-      // Enrich each raw RunReadResponse with computed properties
-      return response.data.map(processApplicationRun);
+      return response.data;
     } catch (error) {
       handleRequestError(error);
     }
@@ -528,15 +525,14 @@ export class PlatformSDKHttp implements PlatformSDK {
    * }
    * ```
    */
-  async getRun(applicationRunId: string): Promise<ApplicationRun> {
+  async getRun(applicationRunId: string): Promise<RunReadResponse> {
     const client = await this.#getClient();
     try {
       const response = await client.getRunV1RunsRunIdGet({
         runId: applicationRunId,
       });
 
-      // Enrich raw RunReadResponse with computed properties
-      return processApplicationRun(response.data);
+      return response.data;
     } catch (error) {
       handleRequestError(error);
     }
@@ -627,7 +623,7 @@ export class PlatformSDKHttp implements PlatformSDK {
       state?: ItemState;
       terminationReason?: ItemTerminationReason;
     } = {}
-  ): Promise<ApplicationRunItem[]> {
+  ): Promise<ItemResultReadResponse[]> {
     const client = await this.#getClient();
     try {
       const response = await client.listRunItemsV1RunsRunIdItemsGet({
@@ -640,8 +636,7 @@ export class PlatformSDKHttp implements PlatformSDK {
         terminationReason,
       });
 
-      // Enrich each raw ItemResultReadResponse with computed properties
-      return response.data.map(processRunItem);
+      return response.data;
     } catch (error) {
       handleRequestError(error);
     }
@@ -671,14 +666,14 @@ export class PlatformSDKHttp implements PlatformSDK {
    * }
    * ```
    */
-  async getRunItem(applicationRunId: string, externalId: string): Promise<ApplicationRunItem> {
+  async getRunItem(applicationRunId: string, externalId: string): Promise<ItemResultReadResponse> {
     const client = await this.#getClient();
     try {
       const response = await client.getItemByRunV1RunsRunIdItemsExternalIdGet({
         runId: applicationRunId,
         externalId,
       });
-      return processRunItem(response.data);
+      return response.data;
     } catch (error) {
       handleRequestError(error);
     }

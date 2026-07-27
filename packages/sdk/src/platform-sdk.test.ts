@@ -203,14 +203,6 @@ describe('PlatformSDK', () => {
     expect(result.length).toBeGreaterThan(0);
     expect(result[0]).toHaveProperty('run_id');
     expect(result[0]).toHaveProperty('state');
-
-    // Enriched ApplicationRun properties
-    expect(result[0]).toHaveProperty('progress');
-    expect(result[0]).toHaveProperty('status');
-    expect(result[0]).toHaveProperty('can_download');
-    expect(typeof result[0].progress).toBe('number');
-    expect(typeof result[0].status).toBe('string');
-    expect(typeof result[0].can_download).toBe('boolean');
   });
 
   it('should list application runs with filters successfully', async () => {
@@ -248,14 +240,6 @@ describe('PlatformSDK', () => {
     expect(result).toHaveProperty('run_id');
     expect(result).toHaveProperty('state');
     expect(result).toHaveProperty('version_number');
-
-    // Enriched ApplicationRun properties
-    expect(result).toHaveProperty('progress');
-    expect(result).toHaveProperty('status');
-    expect(result).toHaveProperty('can_download');
-    expect(typeof result.progress).toBe('number');
-    expect(typeof result.status).toBe('string');
-    expect(typeof result.can_download).toBe('boolean');
   });
 
   it('should handle get run failure', async () => {
@@ -299,10 +283,6 @@ describe('PlatformSDK', () => {
     const result = await sdk.getRunItem('test-run-id', 'test-external-id');
     expect(result).toHaveProperty('item_id');
     expect(result).toHaveProperty('external_id');
-
-    // Enriched ApplicationRunItem properties
-    expect(result).toHaveProperty('status');
-    expect(result).toHaveProperty('can_download');
   });
 
   it('should handle get run item failure', async () => {
@@ -398,12 +378,6 @@ describe('PlatformSDK', () => {
     expect(result[0]).toHaveProperty('item_id');
     expect(result[0]).toHaveProperty('state');
     expect(result[0]).toHaveProperty('external_id');
-
-    // Enriched ApplicationRunItem properties
-    expect(result[0]).toHaveProperty('status');
-    expect(result[0]).toHaveProperty('can_download');
-    expect(typeof result[0].status).toBe('string');
-    expect(typeof result[0].can_download).toBe('boolean');
   });
 
   it('should list run results failure', async () => {
