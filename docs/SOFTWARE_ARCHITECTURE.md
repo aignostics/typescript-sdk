@@ -155,7 +155,7 @@ graph TB
     
     subgraph "Build Pipeline"
         CODEGEN[OpenAPI Generator]
-        TSUP[tsup Bundler]
+        TSDOWN[tsdown Bundler]
         TURBO[Turborepo Orchestrator]
     end
     
@@ -166,9 +166,9 @@ graph TB
     CLI_CMDS -->|uses| CLI_AUTH
     CLI_BIN -->|invokes| CLI_CMDS
     
-    TURBO -->|coordinates| TSUP
-    TSUP -->|bundles| SDK_MAIN
-    TSUP -->|bundles| CLI_BIN
+    TURBO -->|coordinates| TSDOWN
+    TSDOWN -->|bundles| SDK_MAIN
+    TSDOWN -->|bundles| CLI_BIN
 ```
 
 ---
@@ -541,7 +541,7 @@ graph TB
     subgraph "Development Environment"
         CODE[Source Code]
         TURBO[Turborepo Build]
-        TSUP[tsup Bundler]
+        TSDOWN[tsdown Bundler]
     end
     
     subgraph "Build Artifacts"
@@ -560,9 +560,9 @@ graph TB
     end
     
     CODE -->|npm run build:sdk| TURBO
-    TURBO -->|tsup| TSUP
-    TSUP -->|generates| SDK_DIST
-    TSUP -->|generates| CLI_DIST
+    TURBO -->|tsdown| TSDOWN
+    TSDOWN -->|generates| SDK_DIST
+    TSDOWN -->|generates| CLI_DIST
     
     SDK_DIST -->|npm publish| SDK_PKG
     CLI_DIST -->|npm publish| CLI_PKG

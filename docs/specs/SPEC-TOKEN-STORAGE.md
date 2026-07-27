@@ -279,7 +279,7 @@ File permissions enforce access control:
 ### 4.1 Technology Stack
 **Languages**: TypeScript 5.8.3
 **Runtime**: Node.js ≥18.0.0
-**Build Tools**: tsup (bundler), tsc (type checking)
+**Build Tools**: tsdown (bundler), tsc (type checking)
 **Testing Framework**: Vitest
 **Native Bindings**: @napi-rs/keyring (Rust-based native modules)
 

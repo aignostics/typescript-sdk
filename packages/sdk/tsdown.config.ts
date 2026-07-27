@@ -1,4 +1,4 @@
-import { defineConfig } from 'tsup';
+import { defineConfig } from 'tsdown';
 
 export default defineConfig({
   entry: ['src/index.ts', 'src/test-utils/http-mocks.ts'],
@@ -7,9 +7,10 @@ export default defineConfig({
   dts: true,
   sourcemap: true,
   clean: true,
-  splitting: false,
-  treeshake: true,
   outDir: 'dist',
-  external: ['axios'],
-  noExternal: ['p-retry'],
+  fixedExtension: false,
+  deps: {
+    alwaysBundle: ['p-retry'],
+    neverBundle: ['msw', 'fishery', '@faker-js/faker'],
+  },
 });

@@ -29,7 +29,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsup",
+    "build": "tsdown",
     "test": "vitest run --config vite.config.ts --passWithNoTests",
     "lint": "oxlint --no-error-on-unmatched-pattern .",
     "typecheck": "tsc --noEmit --project tsconfig.lib.json",

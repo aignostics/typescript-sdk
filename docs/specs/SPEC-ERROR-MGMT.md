@@ -230,7 +230,7 @@ Error messages are not validated or sanitized. Consumers should avoid including 
 ### 4.1 Technology Stack
 **Languages**: TypeScript 5.8.3
 **Runtime**: Node.js ≥18.0.0 (also compatible with modern browsers)
-**Build Tools**: tsup (bundler), tsc (type checking)
+**Build Tools**: tsdown (bundler), tsc (type checking)
 **Testing Framework**: Vitest
 
 ### 4.2 File Structure

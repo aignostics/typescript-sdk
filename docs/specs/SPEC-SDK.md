@@ -454,7 +454,7 @@ Authorization enforced by API server - SDK only provides valid token. API return
 ### 4.1 Technology Stack
 **Languages**: TypeScript 5.8.3
 **Runtime**: Node.js ≥18.0.0 (also browser-compatible)
-**Build Tools**: tsup (bundler for CJS and ESM), tsc (type checking)
+**Build Tools**: tsdown (bundler for CJS and ESM), tsc (type checking)
 **Testing Framework**: Vitest with MSW (Mock Service Worker)
 **API Client Generation**: OpenAPI Generator v7.14.0
 

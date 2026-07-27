@@ -1,4 +1,4 @@
-import { defineConfig } from 'tsup';
+import { defineConfig } from 'tsdown';
 
 export default defineConfig({
   entry: ['src/index.ts', 'src/bin.ts'],
@@ -7,18 +7,8 @@ export default defineConfig({
   dts: true,
   sourcemap: true,
   clean: true,
-  splitting: false,
-  treeshake: true,
   outDir: 'dist',
-  external: [
-    '@aignostics/sdk',
-    '@napi-rs/keyring',
-    'express',
-    'open',
-    'openid-client',
-    'yargs',
-    'zod',
-  ],
+  fixedExtension: false,
   banner: {
     js: '#!/usr/bin/env node',
   },
