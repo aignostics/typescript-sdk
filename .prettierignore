@@ -1,6 +1,0 @@
-# Generated OpenAPI client and its vendored spec are committed verbatim and
-# verified by the `check-generated` CI job (a plain `git diff` against fresh
-# generator output). They must never be reformatted, or the drift check breaks.
-# See docs/adr/0002-commit-generated-openapi-client.md.
-packages/sdk/src/generated/
-packages/sdk/openapi.json

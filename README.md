@@ -18,7 +18,7 @@ For general information about the Aignostics Platform [check this documentation 
 - 🚀 **Type-safe API client** - Generated from OpenAPI specifications
 - 🔧 **CLI tool** - Command-line interface for platform operations
 - 🧪 **Comprehensive testing** - 85%+ code coverage with unit and integration tests
-- 🛡️ **Code quality** - ESLint, Prettier, and SonarQube integration
+- 🛡️ **Code quality** - oxlint, oxfmt, and SonarQube integration
 
 ## Installation
 
