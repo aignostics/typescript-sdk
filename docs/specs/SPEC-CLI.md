@@ -369,7 +369,7 @@ Authorization handled by API server - CLI only provides valid access token in Au
 ### 4.1 Technology Stack
 **Languages**: TypeScript 5.8.3
 **Runtime**: Node.js ≥18.0.0
-**Build Tools**: tsup (bundler), tsc (type checking)
+**Build Tools**: tsdown (bundler), tsc (type checking)
 **Testing Framework**: Vitest (unit tests), E2E tests with real API
 **CLI Framework**: yargs 17.7.2
 

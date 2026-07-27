@@ -11,6 +11,6 @@
     "e2e/**/*.ts",
     "vite.config.ts",
     "vitest.setup.ts",
-    "tsup.config.ts"
+    "tsdown.config.ts"
   ]
 }
