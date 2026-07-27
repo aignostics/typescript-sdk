@@ -6,20 +6,18 @@ export * from './generated/index.js';
 // Export error classes
 export { BaseError, AuthenticationError, APIError, ConfigurationError } from './errors.js';
 
-export type { ApplicationRun, RunStatus } from './entities/application-run/types.js';
-export { processApplicationRun } from './entities/application-run/process-application-run.js';
 export {
   getRunProgress,
   getRunStatus,
   canDownloadRunItems,
-} from './entities/application-run/utils.js';
-export type { ApplicationRunItem, ItemStatus } from './entities/run-item/types.js';
-export { processRunItem } from './entities/run-item/process-run-item.js';
+  type RunStatus,
+} from './entities/application-run/index.js';
 export {
   canDownloadItem,
   getItemStatus,
   ERROR_TERMINATION_REASONS,
-} from './entities/run-item/utils.js';
+  type ItemStatus,
+} from './entities/run-item/index.js';
 // Export main SDK and types
 export {
   PlatformSDKHttp,
