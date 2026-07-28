@@ -64,7 +64,7 @@
     "husky": "9.1.7",
     "license-checker-rseidelsohn": "5.0.1",
     "msw": "2.15.0",
-    "oxfmt": "0.60.0",
+    "oxfmt": "0.61.0",
     "oxlint": "1.75.0",
     "oxlint-tsgolint": "7.0.2001",
     "tsup": "8.5.1",
