@@ -4,6 +4,16 @@ import { factories, handlers, server } from '@aignostics/sdk/test';
 import { http, HttpResponse } from 'msw';
 import { ZodError } from 'zod';
 import { Readable } from 'stream';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import { fileURLToPath } from 'url';
+
+// Read the CLI package version the same way handleInfo() does, so this test
+// doesn't hardcode a version string that drifts out of sync with package.json.
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
+const cliPackageVersion = (
+  JSON.parse(readFileSync(join(__dirname, '../package.json'), 'utf-8')) as { version: string }
+).version;
 
 // Mock process.exit to prevent test runner from exiting
 const mockExit = vi.fn();
@@ -94,7 +104,7 @@ describe('CLI Integration Tests', () => {
       await main();
 
       expect(consoleSpy.log).toHaveBeenCalledWith('Aignostics Platform SDK');
-      expect(consoleSpy.log).toHaveBeenCalledWith('Version:', '0.0.0-development');
+      expect(consoleSpy.log).toHaveBeenCalledWith('Version:', cliPackageVersion);
     });
   });
 
