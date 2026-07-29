@@ -10,6 +10,6 @@
   "sortPackageJson": false,
   "ignorePatterns": [
     "packages/sdk/src/generated/",
-    "packages/sdk/openapi.json"
+    "**/*.{md,yml,json}"
   ]
 }

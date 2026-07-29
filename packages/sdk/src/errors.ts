@@ -1,7 +1,10 @@
 import type { AxiosError } from 'axios';
 
 export type ErrorCode =
-  'AUTHENTICATION_ERROR' | 'API_ERROR' | 'CONFIGURATION_ERROR' | 'UNEXPECTED_ERROR';
+  | 'AUTHENTICATION_ERROR'
+  | 'API_ERROR'
+  | 'CONFIGURATION_ERROR'
+  | 'UNEXPECTED_ERROR';
 
 interface BaseErrorOptions {
   context?: Record<string, unknown>;
