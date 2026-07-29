@@ -1,6 +1,6 @@
 {
   "name": "@aignostics/sdk",
-  "version": "3.7.0",
+  "version": "3.8.0",
   "description": "The TypeScript SDK for Aignostics",
   "type": "module",
   "main": "./dist/index.cjs",
