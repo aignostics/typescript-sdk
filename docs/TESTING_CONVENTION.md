@@ -83,6 +83,13 @@ npm run test:coverage
 - Group related tests in `describe` blocks
 - Use descriptive test names that explain the behavior being tested
 
+## Mocking Scope
+
+- Prefer `vi.mock('module')` (auto-mock, no factory) over `vi.mock('module', () => ({ fx: /* implementation */ }))`. An inline factory hardcodes behavior for the whole file; auto-mocking replaces every export with a `vi.fn()` and lets each test configure only what it needs via `vi.mocked(fx).mockReturnValue(...)` / `.mockResolvedValue(...)` etc.
+- Only write a `vi.mock('module', () => (...))` factory when auto-mock genuinely doesn't work for the case (e.g. you need to keep some real exports alongside mocked ones, via `importOriginal`).
+- This keeps test setup close to the test it affects, avoids one test's mock silently changing another's behavior, and makes it obvious which tests depend on which mocked behavior.
+- Once `mockReset` is enabled (planned), mock implementations/return values set at module/`describe` scope are wiped before every test. Any default mock behavior that needs to persist across tests (e.g. a default resolved value used by most tests in a file) must be (re-)established in a `beforeEach`, not inline at module or `describe` level.
+
 ## Coverage Requirements
 
 - Overall coverage: 85% minimum

@@ -105,11 +105,16 @@ const mockAuthService = {
   loginWithRefreshToken: vi.fn(),
 } as unknown as AuthService;
 
-// Mock package.json
-vi.mock("../../package.json", () => ({
-  default: { version: "0.0.0-development" },
-  version: "0.0.0-development",
-}));
+// cli-functions.ts reads package.json synchronously via fs.readFileSync inside
+// handleInfo(). ESM named exports aren't spy-able directly, so mock the module,
+// defaulting to the real implementation so other tests are unaffected;
+vi.mock("fs", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("fs")>();
+  return {
+    ...actual,
+    readFileSync: vi.fn(actual.readFileSync),
+  };
+});
 
 describe("CLI Functions Unit Tests", () => {
   let consoleSpy: {
@@ -138,13 +143,15 @@ describe("CLI Functions Unit Tests", () => {
 
   describe("handleInfo", () => {
     it("should display SDK information", () => {
+      const mockVersion = "1.0.0";
+      vi.mocked(fs.readFileSync).mockReturnValueOnce(
+        JSON.stringify({ version: mockVersion }),
+      );
+
       handleInfo();
 
       expect(consoleSpy.log).toHaveBeenCalledWith("Aignostics Platform SDK");
-      expect(consoleSpy.log).toHaveBeenCalledWith(
-        "Version:",
-        "0.0.0-development",
-      );
+      expect(consoleSpy.log).toHaveBeenCalledWith("Version:", mockVersion);
     });
   });
 
