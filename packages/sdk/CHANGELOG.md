@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.8.1](https://github.com/aignostics/typescript-sdk/compare/sdk-v3.8.0...sdk-v3.8.1) (2026-07-29)
+
+
+### Bug Fixes
+
+* **workspace:** fix format script glob missing top-level src files ([d6c9d1e](https://github.com/aignostics/typescript-sdk/commit/d6c9d1e1f84852bc22ff7a5092a45f7627eef87d))
+
 ## [3.8.0](https://github.com/aignostics/typescript-sdk/compare/sdk-v3.7.0...sdk-v3.8.0) (2026-07-29)
 
 
