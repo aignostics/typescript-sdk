@@ -22,13 +22,13 @@ import { join } from 'path';
 import crypto from 'crypto';
 import { environmentConfig, EnvironmentKey } from './utils/environment.js';
 
-// Read package.json synchronously for CommonJS compatibility
-const packageJsonPath = join(__dirname, '../package.json');
-const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8')) as {
-  version: string;
-};
-
 export function handleInfo(): void {
+  // Read package.json synchronously for CommonJS compatibility
+  const packageJsonPath = join(__dirname, '../package.json');
+  const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8')) as {
+    version: string;
+  };
+
   console.log('Aignostics Platform SDK');
   console.log('Version:', packageJson.version);
 }
