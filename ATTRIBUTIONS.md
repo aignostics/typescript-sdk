@@ -2669,7 +2669,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-android-arm-eabi
 
-**Version:** 0.60.0  
+**Version:** 0.61.0  
 **License:** MIT
 
 ```
@@ -2698,7 +2698,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-android-arm64
 
-**Version:** 0.60.0  
+**Version:** 0.61.0  
 **License:** MIT
 
 ```
@@ -2727,7 +2727,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-darwin-arm64
 
-**Version:** 0.60.0  
+**Version:** 0.61.0  
 **License:** MIT
 
 ```
@@ -2756,7 +2756,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-darwin-x64
 
-**Version:** 0.60.0  
+**Version:** 0.61.0  
 **License:** MIT
 
 ```
@@ -2785,7 +2785,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-freebsd-x64
 
-**Version:** 0.60.0  
+**Version:** 0.61.0  
 **License:** MIT
 
 ```
@@ -2814,7 +2814,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-linux-arm-gnueabihf
 
-**Version:** 0.60.0  
+**Version:** 0.61.0  
 **License:** MIT
 
 ```
@@ -2843,7 +2843,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-linux-arm-musleabihf
 
-**Version:** 0.60.0  
+**Version:** 0.61.0  
 **License:** MIT
 
 ```
@@ -2872,7 +2872,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-linux-arm64-gnu
 
-**Version:** 0.60.0  
+**Version:** 0.61.0  
 **License:** MIT
 
 ```
@@ -2901,7 +2901,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-linux-arm64-musl
 
-**Version:** 0.60.0  
+**Version:** 0.61.0  
 **License:** MIT
 
 ```
@@ -2930,7 +2930,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-linux-ppc64-gnu
 
-**Version:** 0.60.0  
+**Version:** 0.61.0  
 **License:** MIT
 
 ```
@@ -2959,7 +2959,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-linux-riscv64-gnu
 
-**Version:** 0.60.0  
+**Version:** 0.61.0  
 **License:** MIT
 
 ```
@@ -2988,7 +2988,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-linux-riscv64-musl
 
-**Version:** 0.60.0  
+**Version:** 0.61.0  
 **License:** MIT
 
 ```
@@ -3017,7 +3017,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-linux-s390x-gnu
 
-**Version:** 0.60.0  
+**Version:** 0.61.0  
 **License:** MIT
 
 ```
@@ -3046,7 +3046,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-linux-x64-gnu
 
-**Version:** 0.60.0  
+**Version:** 0.61.0  
 **License:** MIT
 
 ```
@@ -3075,7 +3075,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-linux-x64-musl
 
-**Version:** 0.60.0  
+**Version:** 0.61.0  
 **License:** MIT
 
 ```
@@ -3104,7 +3104,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-openharmony-arm64
 
-**Version:** 0.60.0  
+**Version:** 0.61.0  
 **License:** MIT
 
 ```
@@ -3133,7 +3133,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-win32-arm64-msvc
 
-**Version:** 0.60.0  
+**Version:** 0.61.0  
 **License:** MIT
 
 ```
@@ -3162,7 +3162,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-win32-ia32-msvc
 
-**Version:** 0.60.0  
+**Version:** 0.61.0  
 **License:** MIT
 
 ```
@@ -3191,7 +3191,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-win32-x64-msvc
 
-**Version:** 0.60.0  
+**Version:** 0.61.0  
 **License:** MIT
 
 ```
@@ -3397,7 +3397,7 @@ SOFTWARE.
 
 ## @oxlint/binding-android-arm-eabi
 
-**Version:** 1.75.0  
+**Version:** 1.76.0  
 **License:** MIT
 
 ```
@@ -3426,7 +3426,7 @@ SOFTWARE.
 
 ## @oxlint/binding-android-arm64
 
-**Version:** 1.75.0  
+**Version:** 1.76.0  
 **License:** MIT
 
 ```
@@ -3455,7 +3455,7 @@ SOFTWARE.
 
 ## @oxlint/binding-darwin-arm64
 
-**Version:** 1.75.0  
+**Version:** 1.76.0  
 **License:** MIT
 
 ```
@@ -3484,7 +3484,7 @@ SOFTWARE.
 
 ## @oxlint/binding-darwin-x64
 
-**Version:** 1.75.0  
+**Version:** 1.76.0  
 **License:** MIT
 
 ```
@@ -3513,7 +3513,7 @@ SOFTWARE.
 
 ## @oxlint/binding-freebsd-x64
 
-**Version:** 1.75.0  
+**Version:** 1.76.0  
 **License:** MIT
 
 ```
@@ -3542,7 +3542,7 @@ SOFTWARE.
 
 ## @oxlint/binding-linux-arm-gnueabihf
 
-**Version:** 1.75.0  
+**Version:** 1.76.0  
 **License:** MIT
 
 ```
@@ -3571,7 +3571,7 @@ SOFTWARE.
 
 ## @oxlint/binding-linux-arm-musleabihf
 
-**Version:** 1.75.0  
+**Version:** 1.76.0  
 **License:** MIT
 
 ```
@@ -3600,7 +3600,7 @@ SOFTWARE.
 
 ## @oxlint/binding-linux-arm64-gnu
 
-**Version:** 1.75.0  
+**Version:** 1.76.0  
 **License:** MIT
 
 ```
@@ -3629,7 +3629,7 @@ SOFTWARE.
 
 ## @oxlint/binding-linux-arm64-musl
 
-**Version:** 1.75.0  
+**Version:** 1.76.0  
 **License:** MIT
 
 ```
@@ -3658,7 +3658,7 @@ SOFTWARE.
 
 ## @oxlint/binding-linux-ppc64-gnu
 
-**Version:** 1.75.0  
+**Version:** 1.76.0  
 **License:** MIT
 
 ```
@@ -3687,7 +3687,7 @@ SOFTWARE.
 
 ## @oxlint/binding-linux-riscv64-gnu
 
-**Version:** 1.75.0  
+**Version:** 1.76.0  
 **License:** MIT
 
 ```
@@ -3716,7 +3716,7 @@ SOFTWARE.
 
 ## @oxlint/binding-linux-riscv64-musl
 
-**Version:** 1.75.0  
+**Version:** 1.76.0  
 **License:** MIT
 
 ```
@@ -3745,7 +3745,7 @@ SOFTWARE.
 
 ## @oxlint/binding-linux-s390x-gnu
 
-**Version:** 1.75.0  
+**Version:** 1.76.0  
 **License:** MIT
 
 ```
@@ -3774,7 +3774,7 @@ SOFTWARE.
 
 ## @oxlint/binding-linux-x64-gnu
 
-**Version:** 1.75.0  
+**Version:** 1.76.0  
 **License:** MIT
 
 ```
@@ -3803,7 +3803,7 @@ SOFTWARE.
 
 ## @oxlint/binding-linux-x64-musl
 
-**Version:** 1.75.0  
+**Version:** 1.76.0  
 **License:** MIT
 
 ```
@@ -3832,7 +3832,7 @@ SOFTWARE.
 
 ## @oxlint/binding-openharmony-arm64
 
-**Version:** 1.75.0  
+**Version:** 1.76.0  
 **License:** MIT
 
 ```
@@ -3861,7 +3861,7 @@ SOFTWARE.
 
 ## @oxlint/binding-win32-arm64-msvc
 
-**Version:** 1.75.0  
+**Version:** 1.76.0  
 **License:** MIT
 
 ```
@@ -3890,7 +3890,7 @@ SOFTWARE.
 
 ## @oxlint/binding-win32-ia32-msvc
 
-**Version:** 1.75.0  
+**Version:** 1.76.0  
 **License:** MIT
 
 ```
@@ -3919,7 +3919,7 @@ SOFTWARE.
 
 ## @oxlint/binding-win32-x64-msvc
 
-**Version:** 1.75.0  
+**Version:** 1.76.0  
 **License:** MIT
 
 ```
@@ -15163,7 +15163,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## oxfmt
 
-**Version:** 0.60.0  
+**Version:** 0.61.0  
 **License:** MIT
 
 ```
@@ -15195,7 +15195,7 @@ SOFTWARE.
 
 ## oxlint
 
-**Version:** 1.75.0  
+**Version:** 1.76.0  
 **License:** MIT
 
 ```
