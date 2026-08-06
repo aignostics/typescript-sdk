@@ -22,6 +22,7 @@
     "emitDecoratorMetadata": true,
     "removeComments": false,
     "preserveConstEnums": true,
+    "rootDir": ".",
     "paths": {
       "@aignostics/sdk": ["./packages/sdk/src/index.ts"],
       "@aignostics/sdk/test": ["./packages/sdk/src/test-utils/http-mocks.ts"],

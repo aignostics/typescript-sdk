@@ -19757,7 +19757,7 @@ Apache License
 
 ## typescript
 
-**Version:** 5.9.3  
+**Version:** 6.0.3  
 **License:** Apache-2.0
 
 ```
