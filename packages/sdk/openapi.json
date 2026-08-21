@@ -3,7 +3,7 @@
   "info": {
     "title": "Aignostics Platform API",
     "description": "\nThe Aignostics Platform is a cloud-based service that enables organizations to access advanced computational pathology applications through a secure API.  The platform provides standardized access to Aignostics' portfolio of computational pathology solutions, with Atlas H&E-TME serving as an example of the available API endpoints. \n\nTo begin using the platform, your organization must first be registered by our business support team. If you don't have an account yet, please contact your account manager or email support@aignostics.com to get started. \n\nMore information about our applications can be found on [https://platform.aignostics.com](https://platform.aignostics.com).\n\n**How to authorize and test API endpoints:**\n\n1. Click the \"Authorize\" button in the right corner below\n3. Click \"Authorize\" button in the dialog to log in with your Aignostics Platform credentials\n4. After successful login, you'll be redirected back and can use \"Try it out\" on any endpoint\n\n**Note**: You only need to authorize once per session. The lock icons next to endpoints will show green when authorized.\n\n",
-    "version": "1.7.0"
+    "version": "1.8.0"
   },
   "servers": [
     {
@@ -224,7 +224,7 @@
                   "$ref": "#/components/schemas/VersionReadResponse"
                 },
                 "example": {
-                  "version_number": "0.4.4",
+                  "version_number": "1.3.0",
                   "changelog": "New deployment",
                   "input_artifacts": [
                     {
@@ -232,140 +232,159 @@
                       "mime_type": "image/tiff",
                       "metadata_schema": {
                         "type": "object",
+                        "title": "Slide Schema",
+                        "description": "Schema of a slide.",
                         "$defs": {
-                          "LungCancerMetadata": {
+                          "LungCancerSpecimen": {
                             "type": "object",
-                            "title": "LungCancerMetadata",
+                            "title": "LungCancerSpecimen",
                             "required": [
-                              "type",
-                              "tissue"
+                              "disease"
                             ],
                             "properties": {
-                              "type": {
-                                "enum": [
-                                  "lung"
-                                ],
+                              "disease": {
+                                "const": "LUNG_CANCER",
                                 "type": "string",
-                                "const": "lung",
-                                "title": "Type"
+                                "title": "Disease"
                               },
                               "tissue": {
                                 "enum": [
-                                  "lung",
-                                  "lymph node",
-                                  "liver",
-                                  "adrenal gland",
-                                  "bone",
-                                  "brain"
+                                  "LUNG",
+                                  "LYMPH_NODE",
+                                  "LIVER",
+                                  "ADRENAL_GLAND",
+                                  "BONE",
+                                  "BRAIN",
+                                  "OTHER"
                                 ],
                                 "type": "string",
-                                "title": "Tissue"
+                                "title": "Tissue",
+                                "default": "OTHER"
                               }
                             },
                             "additionalProperties": false
                           }
                         },
-                        "title": "ExternalImageMetadata",
-                        "$schema": "http://json-schema.org/draft-07/schema#",
                         "required": [
-                          "checksum_crc32c",
-                          "base_mpp",
-                          "width",
-                          "height",
-                          "cancer"
+                          "checksum_base64_crc32c",
+                          "staining_method",
+                          "specimen"
                         ],
                         "properties": {
-                          "stain": {
-                            "enum": [
-                              "H&E"
-                            ],
+                          "checksum_base64_crc32c": {
                             "type": "string",
+                            "title": "Base64 encoded big-endian CRC32C checksum"
+                          },
+                          "staining_method": {
                             "const": "H&E",
-                            "title": "Stain",
-                            "default": "H&E"
+                            "type": "string",
+                            "title": "Staining Method"
                           },
-                          "width": {
-                            "type": "integer",
-                            "title": "Width",
-                            "maximum": 150000,
-                            "minimum": 1
-                          },
-                          "cancer": {
+                          "specimen": {
                             "anyOf": [
                               {
-                                "$ref": "#/$defs/LungCancerMetadata"
+                                "$ref": "#/$defs/LungCancerSpecimen"
                               }
                             ],
-                            "title": "Cancer"
+                            "title": "Specimen"
                           },
-                          "height": {
-                            "type": "integer",
-                            "title": "Height",
-                            "maximum": 150000,
-                            "minimum": 1
-                          },
-                          "base_mpp": {
-                            "type": "number",
-                            "title": "Base Mpp",
-                            "maximum": 0.5,
-                            "minimum": 0.125
-                          },
-                          "mime_type": {
-                            "enum": [
-                              "application/dicom",
-                              "image/tiff"
+                          "media_type": {
+                            "anyOf": [
+                              {
+                                "enum": [
+                                  "application/dicom",
+                                  "image/tiff",
+                                  "application/octet-stream",
+                                  "application/zip"
+                                ],
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
                             ],
-                            "type": "string",
-                            "title": "Mime Type",
-                            "default": "image/tiff"
+                            "title": "Media Type"
                           },
-                          "checksum_crc32c": {
-                            "type": "string",
-                            "title": "Checksum Crc32C"
+                          "resolution_mpp": {
+                            "anyOf": [
+                              {
+                                "type": "number",
+                                "maximum": 0.55,
+                                "minimum": 0.08
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Resolution (mpp)"
+                          },
+                          "width_px": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 1
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Width (px)"
+                          },
+                          "height_px": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 1
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Height (px)"
                           }
                         },
-                        "description": "Metadata corresponding to an external image.",
                         "additionalProperties": false
                       }
                     }
                   ],
                   "output_artifacts": [
                     {
-                      "name": "tissue_qc:tiff_heatmap",
+                      "name": "tissue_qc:segmentation_map_image",
                       "mime_type": "image/tiff",
                       "metadata_schema": {
                         "type": "object",
-                        "title": "HeatmapMetadata",
-                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "title": "SegmentationMapImageMetadata",
+                        "description": "Metadata corresponding to a segmentation map image.",
                         "required": [
-                          "checksum_crc32c",
-                          "width",
-                          "height",
+                          "checksum_base64_crc32c",
+                          "width_px",
+                          "height_px",
                           "class_colors"
                         ],
                         "properties": {
-                          "width": {
-                            "type": "integer",
-                            "title": "Width"
-                          },
-                          "height": {
-                            "type": "integer",
-                            "title": "Height"
-                          },
-                          "base_mpp": {
-                            "type": "number",
-                            "title": "Base Mpp",
-                            "maximum": 0.5,
-                            "minimum": 0.125
-                          },
-                          "mime_type": {
-                            "enum": [
-                              "image/tiff"
-                            ],
+                          "checksum_base64_crc32c": {
                             "type": "string",
+                            "title": "Base64 encoded big-endian CRC32C checksum"
+                          },
+                          "width_px": {
+                            "type": "integer",
+                            "title": "Width Px"
+                          },
+                          "height_px": {
+                            "type": "integer",
+                            "title": "Height Px"
+                          },
+                          "media_type": {
                             "const": "image/tiff",
-                            "title": "Mime Type",
+                            "type": "string",
+                            "title": "Media Type",
                             "default": "image/tiff"
+                          },
+                          "resolution_mpp": {
+                            "type": "number",
+                            "title": "Resolution Mpp",
+                            "maximum": 0.55,
+                            "minimum": 0.08
                           },
                           "class_colors": {
                             "type": "object",
@@ -392,13 +411,8 @@
                                 }
                               ]
                             }
-                          },
-                          "checksum_crc32c": {
-                            "type": "string",
-                            "title": "Checksum Crc32C"
                           }
                         },
-                        "description": "Metadata corresponding to a segmentation heatmap file.",
                         "additionalProperties": false
                       },
                       "scope": "ITEM",
@@ -702,7 +716,7 @@
           "Public"
         ],
         "summary": "Initiate Run",
-        "description": "This endpoint initiates a processing run for a selected application and version, and returns a `run_id` for tracking purposes.\n\nSlide processing occurs asynchronously, allowing you to retrieve results for individual slides as soon as they\ncomplete processing. The system typically processes slides in batches.\nBelow is an example of the required payload for initiating an Atlas H&E TME processing run.\n\n\n### Payload\n\nThe payload includes `application_id`, optional `version_number`, and `items` base fields.\n\n`application_id` is the unique identifier for the application.\n`version_number` is the semantic version to use. If not provided, the latest available version will be used.\n\n`items` includes the list of the items to process (slides, in case of HETA application).\nEvery item has a set of standard fields defined by the API, plus the custom_metadata, specific to the\nchosen application.\n\nExample payload structure with the comments:\n```\n{\n    application_id: \"he-tme\",\n    version_number: \"1.0.0-beta\",\n    items: [{\n        \"external_id\": \"slide_1\",\n        \"custom_metadata\": {\"project\": \"sample-study\"},\n        \"input_artifacts\": [{\n            \"name\": \"user_slide\",\n            \"download_url\": \"https://...\",\n            \"metadata\": {\n                \"specimen\": {\n                  \"disease\": \"LUNG_CANCER\",\n                  \"tissue\": \"LUNG\"\n                },\n                \"staining_method\": \"H&E\",\n                \"width_px\": 136223,\n                \"height_px\": 87761,\n                \"resolution_mpp\": 0.2628238,\n                \"media-type\":\"image/tiff\",\n                \"checksum_base64_crc32c\": \"64RKKA==\"\n            }\n        }]\n    }]\n}\n```\n\n| Parameter  | Description |\n| :---- | :---- |\n| `application_id` required | Unique ID for the application |\n| `version_number` optional | Semantic version of the application. If not provided, the latest available version will be used |\n| `items` required | List of submitted items i.e. whole slide images (WSIs) with parameters described below. |\n| `external_id` required | Unique WSI name or ID for easy reference to items, provided by the caller. The `external_id` should be unique across all items of the run.  |\n| `input_artifacts` required | List of provided artifacts for a WSI; at the moment Atlas H&E-TME receives only 1 artifact per slide (the slide itself), but for some other applications this can be a slide and a segmentation map  |\n| `name` required | Type of artifact; Atlas H&E-TME supports only `\"input_slide\"` |\n| `download_url` required | Signed URL to the input file in the S3 or GCS; Should be valid for at least 6 days |\n| `specimen: disease` required | Supported cancer types for Atlas H&E-TME (see full list in Atlas H&E-TME manual) |\n| `specimen: tissue` required | Supported tissue types for Atlas H&E-TME (see full list in Atlas H&E-TME manual) |\n| `staining_method` required | WSI stain bio-marker; Atlas H&E-TME supports only `\"H&E\"` |\n| `width_px` required | Integer value. Number of pixels of the WSI in the X dimension. |\n| `height_px` required | Integer value. Number of pixels of the WSI in the Y dimension. |\n| `resolution_mpp` required | Resolution of WSI in micrometers per pixel; check allowed range in Atlas H&E-TME manual |\n| `media-type` required | Supported media formats; available values are: image/tiff  (for .tiff or .tif WSI), application/dicom (for DICOM ), application/zip (for zipped DICOM), and application/octet-stream  (for .svs WSI) |\n| `checksum_base64_crc32c` required | Base64-encoded big-endian CRC32C checksum of the WSI image |\n\n\n\n### Response\n\nThe endpoint returns the run UUID. After that, the job is scheduled for the execution in the background.\n\nTo check the status of the run, call `GET v1/runs/{run_id}` endpoint with the returned run UUID.\n\n### Rejection\n\nApart from the authentication, authorization, and malformed input error, the request can be\nrejected when specific quota limit is exceeded. More details on quotas is described in the\ndocumentation",
+        "description": "This endpoint initiates a processing run for a selected application and version, and returns a\n`run_id` for tracking purposes.\n\nItem processing occurs asynchronously, allowing you to retrieve results for individual items as\nsoon as they complete processing. The system typically processes items in batches.\n\n### Payload\n\nThe payload includes `application_id`, optional `version_number`, and `items` base fields.\n\n`application_id` is the unique identifier for the application.\n`version_number` is the semantic version to use. If not provided, the latest version available to\nyou will be used.\n\n`items` includes the list of the items to process (slides, in case of the Atlas H&E-TME\napplication). Every item has a set of standard fields defined by the API, plus\n`input_artifacts[].metadata`, whose shape is defined by the chosen application version.\n\nBelow is an example payload for initiating an Atlas H&E-TME (`he-tme`) run:\n\n```json\n{\n  \"application_id\": \"he-tme\",\n  \"items\": [\n    {\n      \"external_id\": \"slide_1\",\n      \"custom_metadata\": {\n        \"case\": \"abc\"\n      },\n      \"input_artifacts\": [\n        {\n          \"name\": \"whole_slide_image\",\n          \"download_url\": \"https://example-bucket.s3.amazonaws.com/slide1.tiff?signature=...\",\n          \"metadata\": {\n            \"checksum_base64_crc32c\": \"64RKKA==\",\n            \"staining_method\": \"H&E\",\n            \"specimen\": {\n              \"disease\": \"LUNG_CANCER\",\n              \"tissue\": \"LUNG\"\n            },\n            \"media_type\": \"image/tiff\",\n            \"width_px\": 136223,\n            \"height_px\": 87761,\n            \"resolution_mpp\": 0.2628238\n          }\n        }\n      ]\n    }\n  ]\n}\n```\n\n> **The example above is a snapshot, not a contract.** Applications are released independently of\n> this API, so the `input_artifacts[].metadata` shape shown here may lag behind the version you are\n> running. The authoritative schema for a version is always `input_artifacts[].metadata_schema`\n> from `GET /v1/applications/{application_id}/versions/{version}`. That schema rejects unknown\n> properties, so a stale field name will fail validation with `400`.\n\n| Parameter | Description |\n| :---- | :---- |\n| `application_id` **required** | Unique ID for the application |\n| `version_number` optional | Semantic version of the application. If not provided, the latest version available to you will be used |\n| `items` **required** | List of submitted items, i.e. whole slide images (WSIs), with the parameters described below |\n| `external_id` **required** | Unique WSI name or ID for easy reference to items, provided by the caller. Must be unique across all items of the run |\n| `custom_metadata` optional | Free-form JSON stored verbatim alongside the run or item. Not processed or validated by the platform, and not application-specific |\n| `input_artifacts` **required** | List of provided artifacts for a WSI. Atlas H&E-TME receives 1 artifact per slide (the slide itself); other applications may take more, e.g. a slide plus a segmentation map |\n| `name` **required** | Name of the artifact as declared by the application version. Atlas H&E-TME accepts only `\"whole_slide_image\"` |\n| `download_url` **required** | Signed URL to the input file in S3 or GCS. Should be valid for at least 6 days |\n\nThe remaining fields below live inside `input_artifacts[].metadata` and are governed by the\napplication version's `metadata_schema`. The following applies to Atlas H&E-TME:\n\n| Metadata field | Description |\n| :---- | :---- |\n| `checksum_base64_crc32c` **required** | Base64-encoded big-endian CRC32C checksum of the WSI image |\n| `staining_method` **required** | WSI stain bio-marker; Atlas H&E-TME supports only `\"H&E\"` |\n| `specimen.disease` **required** | One of `BREAST_CANCER`, `LUNG_CANCER`, `COLORECTAL_CANCER`, `BLADDER_CANCER`, `LIVER_CANCER`, `PROSTATE_CANCER`, `PANCREATIC_CANCER`, `STOMACH_CANCER`, `OVARIAN_CANCER`, or `OTHER` |\n| `specimen.tissue` optional | Tissue of origin. Allowed values depend on `disease`; defaults to `OTHER` when omitted |\n| `media_type` optional | Media format of the WSI: `image/tiff` (.tiff/.tif), `application/dicom` (DICOM), `application/zip` (zipped DICOM), or `application/octet-stream` (.svs) |\n| `resolution_mpp` optional | Resolution of the WSI in micrometers per pixel |\n| `width_px` optional | Number of pixels of the WSI in the X dimension |\n| `height_px` optional | Number of pixels of the WSI in the Y dimension |\n\n### Response\n\nThe endpoint returns the run UUID. After that, the job is scheduled for execution in the\nbackground.\n\nTo check the status of the run, call `GET /v1/runs/{run_id}` with the returned run UUID.\n\n### Rejection\n\nBeyond authentication, authorization, and malformed-input errors, the request is rejected with\n`402 Payment Required` when a quota limit would be exceeded. See the quota documentation for\ndetails.",
         "operationId": "create_run_v1_runs_post",
         "security": [
           {
@@ -731,13 +745,16 @@
             }
           },
           "404": {
-            "description": "Application version not found"
-          },
-          "403": {
-            "description": "Forbidden - You don't have permission to create this run"
+            "description": "Application or application version not found"
           },
           "400": {
             "description": "Bad Request - Input validation failed"
+          },
+          "402": {
+            "description": "Payment Required - A quota limit (slides per run, or monthly slides) would be exceeded by this run"
+          },
+          "403": {
+            "description": "Forbidden - You don't have permission to create this run"
           },
           "422": {
             "description": "Validation Error",
@@ -1318,7 +1335,7 @@
           "Public"
         ],
         "summary": "Delete Run Items",
-        "description": "This endpoint allows the caller to explicitly delete artifacts generated by a run.\nIt can only be invoked when the run has reached a final state, i.e.\n`PROCESSED`, `CANCELED_SYSTEM`, or `CANCELED_USER`.\nNote that by default, all artifacts are automatically deleted 30 days after the run finishes,\nregardless of whether the caller explicitly requests such deletion.",
+        "description": "This endpoint allows the caller to explicitly delete artifacts generated by a run.\n\nIt can only be invoked once the run has reached state `TERMINATED` (as reported by\n`GET /v1/runs/{run_id}`); calling it earlier returns `409`.\n\nNote that by default, all artifacts are automatically deleted\n30 days after the run finishes, regardless of whether the caller\nexplicitly requests such deletion.",
         "operationId": "delete_run_items_v1_runs__run_id__artifacts_delete",
         "security": [
           {
@@ -1350,6 +1367,15 @@
           },
           "404": {
             "description": "Run not found"
+          },
+          "403": {
+            "description": "Forbidden - You don't have permission to delete this run's artifacts"
+          },
+          "409": {
+            "description": "Conflict - The run has not terminated yet"
+          },
+          "410": {
+            "description": "Gone - Run artifacts have already been deleted"
           },
           "422": {
             "description": "Validation Error",
@@ -2845,9 +2871,9 @@
           "name": {
             "type": "string",
             "title": "Name",
-            "description": "Type of artifact. For Atlas H&E-TME, use \"input_slide\"",
+            "description": "Name of the input artifact, as declared by the application version. The valid names for a version are the `input_artifacts[].name` values returned by `GET /v1/applications/{application_id}/versions/{version}`. For Atlas H&E-TME this is `\"whole_slide_image\"`.",
             "examples": [
-              "input_slide"
+              "whole_slide_image"
             ]
           },
           "download_url": {
@@ -2865,14 +2891,19 @@
             "additionalProperties": true,
             "type": "object",
             "title": "Metadata",
-            "description": "The metadata of the artifact, required by the application version. The JSON schema of the metadata can be requested by `/v1/versions/{application_version_id}`. The schema is located in `input_artifacts.[].metadata_schema`",
+            "description": "The metadata of the artifact, as required by the application version. The authoritative JSON schema is `input_artifacts[].metadata_schema` from `GET /v1/applications/{application_id}/versions/{version}`; it rejects unknown properties. The example shown is an Atlas H&E-TME snapshot and may lag behind the version you are running — always validate against the schema endpoint.",
             "examples": [
               {
-                "checksum_base64_crc32c": "752f9554",
-                "height": 2000,
-                "height_mpp": 0.5,
-                "width": 10000,
-                "width_mpp": 0.5
+                "checksum_base64_crc32c": "64RKKA==",
+                "height_px": 87761,
+                "media_type": "image/tiff",
+                "resolution_mpp": 0.2628238,
+                "specimen": {
+                  "disease": "LUNG_CANCER",
+                  "tissue": "LUNG"
+                },
+                "staining_method": "H&E",
+                "width_px": 136223
               }
             ]
           }
@@ -2979,11 +3010,11 @@
             "examples": [
               [
                 {
-                  "download_url": "https://example-bucket.s3.amazonaws.com/slide1.tiff",
+                  "download_url": "https://example-bucket.s3.amazonaws.com/slide1.tiff?signature=...",
                   "metadata": {
                     "checksum_base64_crc32c": "64RKKA==",
                     "height_px": 87761,
-                    "media-type": "image/tiff",
+                    "media_type": "image/tiff",
                     "resolution_mpp": 0.2628238,
                     "specimen": {
                       "disease": "LUNG_CANCER",
@@ -2992,7 +3023,7 @@
                     "staining_method": "H&E",
                     "width_px": 136223
                   },
-                  "name": "input_slide"
+                  "name": "whole_slide_image"
                 }
               ]
             ]
@@ -3545,7 +3576,7 @@
               }
             ],
             "title": "Callback Context",
-            "description": "Opaque JSON object for caller-supplied correlation data. Stored verbatim and echoed in state-change events. Max 1 KB after JSON serialization."
+            "description": "Opaque JSON object for caller-supplied correlation data. Stored verbatim and echoed in state-change events. Max 1024 bytes after JSON serialization."
           },
           "items": {
             "items": {
@@ -3558,6 +3589,9 @@
             "examples": [
               [
                 {
+                  "custom_metadata": {
+                    "case": "abc"
+                  },
                   "external_id": "slide_1",
                   "input_artifacts": [
                     {
@@ -3565,7 +3599,7 @@
                       "metadata": {
                         "checksum_base64_crc32c": "64RKKA==",
                         "height_px": 87761,
-                        "media-type": "image/tiff",
+                        "media_type": "image/tiff",
                         "resolution_mpp": 0.2628238,
                         "specimen": {
                           "disease": "LUNG_CANCER",
@@ -3574,7 +3608,7 @@
                         "staining_method": "H&E",
                         "width_px": 136223
                       },
-                      "name": "input_slide"
+                      "name": "whole_slide_image"
                     }
                   ]
                 }
