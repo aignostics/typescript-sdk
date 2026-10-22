@@ -40,7 +40,7 @@ describe('formatting utils', () => {
         ]
       );
 
-      const output = logSpy.mock.calls[0][0] as string;
+      const output = logSpy.mock.calls[0]?.[0] as string;
       expect(output).toContain('Name');
       expect(output).toContain('Age');
       expect(output).toContain('Alice');

@@ -5,6 +5,7 @@ import { getAppLatestVersion } from '../utils/getAppLatestVersion.js';
 
 describe('SWR Application Execution access', async () => {
   const latestVersion = await getAppLatestVersion('test-app');
+  if (!latestVersion) throw new Error('No versions found for test-app');
 
   it('Should create application runs with specified application version, input items, and item- and run metadata and return a unique run identifier upon successful creation.', async ({
     annotate,

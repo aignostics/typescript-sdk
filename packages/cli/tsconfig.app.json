@@ -1,11 +1,14 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../../dist/out-tsc",
-    "types": ["node"],
-    "incremental": true,
-    "tsBuildInfoFile": "./dist/.tsbuildinfo"
+    "composite": true,
+    "rootDir": "src",
+    "outDir": "out-tsc",
+    "emitDeclarationOnly": true,
+    "tsBuildInfoFile": "out-tsc/tsconfig.app.tsbuildinfo",
+    "types": ["node"]
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts", "e2e/**/*.test.ts"]
+  "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"],
+  "references": [{ "path": "../sdk/tsconfig.lib.json" }]
 }

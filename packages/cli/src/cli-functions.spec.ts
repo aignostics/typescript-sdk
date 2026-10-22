@@ -1038,7 +1038,7 @@ describe('CLI Functions Unit Tests', () => {
   });
 
   describe('resolveItemsInput', () => {
-    let originalIsTTY: boolean | undefined;
+    let originalIsTTY: boolean;
 
     beforeEach(() => {
       originalIsTTY = process.stdin.isTTY;

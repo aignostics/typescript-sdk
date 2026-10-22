@@ -1,14 +1,4 @@
 {
-  "extends": "./tsconfig.lib.json",
-  "compilerOptions": {
-    "types": ["vitest/globals", "node"]
-  },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts",
-    "vite.config.ts",
-    "vitest.setup.ts",
-    "tsdown.config.ts"
-  ]
+  "files": [],
+  "references": [{ "path": "./tsconfig.lib.json" }, { "path": "./tsconfig.spec.json" }]
 }

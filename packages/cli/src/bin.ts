@@ -1,4 +1,4 @@
-import { main } from './cli';
+import { main } from './cli.js';
 
 process.on('unhandledRejection', error => {
   console.error('❌ Unhandled promise rejection:', error);

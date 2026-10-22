@@ -1,4 +1,4 @@
-import { execa, Options } from 'execa';
+import { execa, Options, ResultPromise } from 'execa';
 import path from 'path';
 
 const CLI_BIN = path.resolve(__dirname, '../../dist/bin.cjs');
@@ -11,6 +11,6 @@ const testEnvironment: string = process.env.E2E_TEST_ENVIRONMENT || 'staging';
  * @param options - Additional execa options
  * @returns Promise with the execution result
  */
-export function executeCLI(args: string[] = [], options: Options = {}) {
+export function executeCLI(args: string[] = [], options: Options = {}): ResultPromise {
   return execa('node', [CLI_BIN, ...args, '--environment', testEnvironment], options);
 }

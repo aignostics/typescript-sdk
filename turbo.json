@@ -22,11 +22,11 @@
       ]
     },
     "lint": {
-      "dependsOn": ["^build"],
       "outputs": []
     },
     "typecheck": {
-      "outputs": []
+      "dependsOn": ["^typecheck"],
+      "outputs": ["out-tsc/**"]
     },
     "codegen": {
       "cache": false
