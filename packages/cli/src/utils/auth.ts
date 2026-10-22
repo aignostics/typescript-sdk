@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { Issuer, generators } from 'openid-client';
-import { environmentConfig, EnvironmentKey } from './environment';
+import { environmentConfig, EnvironmentKey } from './environment.js';
 
 /**
  * Authentication utilities for the Aignostics Platform SDK

@@ -1,5 +1,6 @@
 {
   "entryPoints": ["src/index.ts"],
+  "tsconfig": "packages/sdk/tsconfig.lib.json",
   "out": "docs",
   "exclude": ["**/*.test.ts", "**/*.spec.ts", "src/generated/**"],
   "excludePrivate": true,

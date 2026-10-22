@@ -25,7 +25,7 @@ describe('SWR Application Run management', () => {
     const runs = JSON.parse(String(stdout)) as Array<RunReadResponse>;
     expect(Array.isArray(runs)).toBe(true);
 
-    expect(runs[0].application_id).toBe('test-app');
+    expect(runs[0]?.application_id).toBe('test-app');
   });
   it('Should retrieve detailed information for a specific application run by run ID', async ({
     annotate,
@@ -46,7 +46,9 @@ describe('SWR Application Run management', () => {
 
     expect(exitCode).toBe(0);
     const runs = JSON.parse(String(stdout)) as Array<RunReadResponse>;
-    const latestRunId = runs[0].run_id;
+    const [latestRun] = runs;
+    if (!latestRun) throw new Error('Expected at least one run');
+    const latestRunId = latestRun.run_id;
 
     const { stdout: runDetailsStdout, exitCode: runDetailsExitCode } = await executeCLI([
       'runs',

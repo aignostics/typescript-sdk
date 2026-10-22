@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": ".",
+    "outDir": "out-tsc/spec",
+    "emitDeclarationOnly": true,
+    "tsBuildInfoFile": "out-tsc/tsconfig.spec.tsbuildinfo",
+    "types": ["vitest/globals", "node"]
+  },
+  "include": [
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts",
+    "e2e/**/*.ts",
+    "vite.config.ts",
+    "vitest.setup.ts",
+    "tsdown.config.ts"
+  ],
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "../sdk/tsconfig.lib.json" }]
+}

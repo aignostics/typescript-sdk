@@ -22,11 +22,7 @@
     "emitDecoratorMetadata": true,
     "removeComments": false,
     "preserveConstEnums": true,
-    "paths": {
-      "@aignostics/sdk": ["./packages/sdk/src/index.ts"],
-      "@aignostics/sdk/test": ["./packages/sdk/src/test-utils/http-mocks.ts"],
-      "@aignostics/cli": ["./packages/cli/src/index.ts"]
-    }
+    "customConditions": ["@aignostics/source"]
   },
   "exclude": ["node_modules", "tmp"]
 }

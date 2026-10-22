@@ -22,7 +22,9 @@ describe('Application Results Access', () => {
 
     expect(exitCode).toBe(0);
     const runs = JSON.parse(String(stdout)) as Array<RunReadResponse>;
-    const latestRunId = runs[0].run_id;
+    const [latestRun] = runs;
+    if (!latestRun) throw new Error('Expected at least one run');
+    const latestRunId = latestRun.run_id;
 
     const { stdout: runResultsStdout, exitCode: runResultsExitCode } = await executeCLI([
       'runs',
@@ -59,7 +61,9 @@ describe('Application Results Access', () => {
 
     expect(exitCode).toBe(0);
     const runs = JSON.parse(String(stdout)) as Array<RunReadResponse>;
-    const latestRunId = runs[0].run_id;
+    const [latestRun] = runs;
+    if (!latestRun) throw new Error('Expected at least one run');
+    const latestRunId = latestRun.run_id;
 
     const { stdout: runResultsStdout, exitCode: runResultsExitCode } = await executeCLI([
       'runs',

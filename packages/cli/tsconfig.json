@@ -1,16 +1,4 @@
 {
-  "extends": "./tsconfig.app.json",
-  "compilerOptions": {
-    "types": ["vitest/globals", "node"],
-    "rootDir": "."
-  },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts",
-    "e2e/**/*.ts",
-    "vite.config.ts",
-    "vitest.setup.ts",
-    "tsdown.config.ts"
-  ]
+  "files": [],
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.spec.json" }]
 }
