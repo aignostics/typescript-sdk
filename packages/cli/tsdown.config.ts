@@ -4,6 +4,7 @@ export default defineConfig({
   entry: ['src/index.ts', 'src/bin.ts'],
   format: ['esm', 'cjs'],
   target: 'node18',
+  tsconfig: 'tsconfig.app.json',
   dts: true,
   sourcemap: true,
   clean: true,

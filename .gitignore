@@ -50,3 +50,6 @@ test-results/
 # Temporary files
 *.tmp
 *.temp
+
+# TypeScript project-reference output
+out-tsc/

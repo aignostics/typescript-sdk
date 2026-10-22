@@ -66,7 +66,7 @@ describe('CLI Integration Tests', () => {
 
   let originalArgv: string[];
   let originalStdin: typeof process.stdin;
-  let originalStdinIsTTY: boolean | undefined;
+  let originalStdinIsTTY: boolean;
 
   beforeEach(() => {
     // Store original argv
@@ -249,7 +249,8 @@ describe('CLI Integration Tests', () => {
   describe('applications versions get command', () => {
     it('should get application version details successfully', async () => {
       const application = factories.application.build();
-      const version = application.versions[0];
+      const [version] = application.versions;
+      if (!version) throw new Error('Factory built an application without versions');
 
       server.use(
         http.get('*/v1/applications/:applicationId/versions/:versionNumber', () =>
@@ -278,7 +279,8 @@ describe('CLI Integration Tests', () => {
 
     it('should print error responses', async () => {
       const application = factories.application.build();
-      const version = application.versions[0];
+      const [version] = application.versions;
+      if (!version) throw new Error('Factory built an application without versions');
 
       server.use(
         http.get('*/v1/applications/:applicationId/versions/:versionNumber', () =>

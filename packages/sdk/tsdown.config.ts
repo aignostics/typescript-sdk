@@ -4,6 +4,7 @@ export default defineConfig({
   entry: ['src/index.ts', 'src/test-utils/http-mocks.ts'],
   format: ['cjs', 'esm'],
   target: 'node18',
+  tsconfig: 'tsconfig.lib.json',
   dts: true,
   sourcemap: true,
   clean: true,

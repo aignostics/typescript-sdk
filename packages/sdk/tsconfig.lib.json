@@ -1,17 +1,13 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../../dist/out-tsc",
-    "declaration": true,
-    "types": ["node", "vitest"],
-    "incremental": true,
-    "tsBuildInfoFile": "./dist/.tsbuildinfo"
+    "composite": true,
+    "rootDir": "src",
+    "outDir": "out-tsc",
+    "emitDeclarationOnly": true,
+    "tsBuildInfoFile": "out-tsc/tsconfig.lib.tsbuildinfo",
+    "types": ["node", "vitest"]
   },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts"
-  ]
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"]
 }
