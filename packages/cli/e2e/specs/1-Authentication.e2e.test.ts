@@ -108,9 +108,18 @@ describe('Authentication', () => {
         });
 
         await page.fill('input[name="username"], input[type="email"]', adminEmail);
-        await page.fill('input[name="password"], input[type="password"]', adminPassword);
 
+        // Auth0 Universal Login runs identifier-first: the username screen
+        // (/u/login/identifier) only carries a hidden, nameless password
+        // placeholder, and the real password field is on the next screen
+        // (/u/login/password). Submit the username first when no password
+        // field is visible yet.
         const continueButton = page.getByRole('button', { name: 'Continue', exact: true });
+        const passwordInput = page.locator('input[name="password"]');
+        if (!(await passwordInput.isVisible())) {
+          await continueButton.click();
+        }
+        await passwordInput.fill(adminPassword);
         await continueButton.click();
 
         const callbackUrl = /success|authorized|complete|localhost/;
