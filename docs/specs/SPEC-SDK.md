@@ -22,6 +22,7 @@ This specification covers:
 - Application execution operations (create run, validate request)
 - Run management operations (list, get details, cancel)
 - Results retrieval operations
+- Read access to runs shared by link (share token)
 - Error handling with APIError, AuthenticationError, ConfigurationError, UnexpectedError
 - HTTP client configuration (base URL, timeout, headers)
 - Axios-based HTTP transport with error transformation
@@ -49,9 +50,9 @@ This specification excludes:
 | SWR-APP-EXEC-RUN-CREATION | Application Run Creation | createApplicationRun(request) validates RunCreationRequest, calls generated client.createRunV1RunsPost(), returns RunCreationResponse with run ID |
 | SWR-APP-EXEC-REQUEST-VALIDATION | Application Execution Request Validation | Validation errors (422) caught by handleRequestError, parsed with Zod validationErrorSchema, thrown as APIError with validation details in context |
 | SWR-APP-RUN-MGMT-LIST | Application Run List | listApplicationRuns(options) supports filtering by applicationId and applicationVersion; calls generated client.listRunsV1RunsGet() |
-| SWR-APP-RUN-MGMT-DETAILS | Application Run Details | getRun(applicationRunId) calls generated client.getRunV1RunsRunIdGet(); returns RunReadResponse with status, progress, metadata |
+| SWR-APP-RUN-MGMT-DETAILS | Application Run Details | getRun(applicationRunId, options) calls generated client.getRunV1RunsRunIdGet(); returns RunReadResponse with status, progress, metadata; optional options.shareToken is sent as the share_token query parameter |
 | SWR-APP-RUN-MGMT-CANCEL | Application Run Cancellation | cancelApplicationRun(applicationRunId) calls generated client.cancelRunV1RunsRunIdCancelPost(); returns void on success |
-| SWR-APP-RESULTS-RETRIEVE-ITEMS | Application Results Retrieval | listRunResults(applicationRunId) calls generated client.listRunItemsV1RunsRunIdItemsGet(); returns ItemResultReadResponse[] with item status and data |
+| SWR-APP-RESULTS-RETRIEVE-ITEMS | Application Results Retrieval | listRunResults(applicationRunId, options) calls generated client.listRunItemsV1RunsRunIdItemsGet(); returns ItemResultReadResponse[] with item status and data; optional options.shareToken is sent as the share_token query parameter |
 | SWR-ERROR-COMM-CLASSIFICATION | Error Classification | Uses Error Management component; errors thrown as APIError, AuthenticationError, ConfigurationError, or UnexpectedError with appropriate error codes |
 | SWR-ERROR-COMM-MESSAGES | Error Messages | All error constructors accept descriptive message parameter; messages include context (e.g., "API request failed: {axiosMessage}", "Validation error: {axiosMessage}") |
 | SWR-ERROR-COMM-DIAGNOSTIC-CONTEXT | Error Diagnostic Context | APIError includes statusCode property; handleRequestError adds responseBody to error context; originalError preserved for error chaining |
@@ -103,11 +104,37 @@ export interface PlatformSDK {
   
   // Run Management
   listApplicationRuns(options?: { applicationId?: string; applicationVersion?: string }): Promise<RunReadResponse[]>;
-  getRun(applicationRunId: string): Promise<RunReadResponse>;
+  getRun(applicationRunId: string, options?: { shareToken?: string }): Promise<RunReadResponse>;
   cancelApplicationRun(applicationRunId: string): Promise<void>;
   
   // Results Retrieval
-  listRunResults(applicationRunId: string): Promise<ItemResultReadResponse[]>;
+  listRunResults(
+    applicationRunId: string,
+    options?: {
+      page?: number;
+      pageSize?: number;
+      sort?: string[];
+      externalIdIn?: string[];
+      state?: ItemState;
+      terminationReason?: ItemTerminationReason;
+      shareToken?: string;
+    }
+  ): Promise<ItemResultReadResponse[]>;
+  getRunItem(
+    applicationRunId: string,
+    externalId: string,
+    options?: { shareToken?: string }
+  ): Promise<ItemResultReadResponse>;
+  downloadArtifact(
+    runId: string,
+    artifactId: string,
+    options?: { shareToken?: string }
+  ): Promise<ArrayBuffer>;
+  downloadArtifactStream(
+    runId: string,
+    artifactId: string,
+    options?: { shareToken?: string }
+  ): Promise<Readable>;
 }
 
 // SDK Implementation
@@ -426,6 +453,13 @@ Response or Error
 
 #### 3.6.2 Authorization
 Authorization enforced by API server - SDK only provides valid token. API returns 403 Forbidden for unauthorized operations.
+
+**Share Tokens**:
+- getRun, listRunResults, getRunItem, downloadArtifact and downloadArtifactStream accept an optional `shareToken` option
+- The SDK passes it to the generated client, which sends it as the `share_token` query parameter alongside the Authorization header
+- Without the option, the SDK sends no `share_token` parameter
+- The API server decides whether the share token grants access to the run; the SDK does not validate it
+- The share token is part of the request URL, so it can appear in proxy and server access logs
 
 #### 3.6.3 Data Protection
 **Sensitive Data Handling**:
