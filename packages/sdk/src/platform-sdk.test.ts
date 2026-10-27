@@ -793,6 +793,73 @@ describe('PlatformSDK', () => {
     expect(headers.Authorization).toBe('Bearer [redacted]');
   });
 
+  describe('share token on run reads', () => {
+    const runReads: {
+      method: string;
+      path: string;
+      read: (options?: { shareToken?: string }) => Promise<unknown>;
+    }[] = [
+      {
+        method: 'getRun',
+        path: '*/v1/runs/:runId',
+        read: options => sdk.getRun('test-run-id', options),
+      },
+      {
+        method: 'listRunResults',
+        path: '*/v1/runs/:runId/items',
+        read: options => sdk.listRunResults('test-run-id', options),
+      },
+      {
+        method: 'getRunItem',
+        path: '*/v1/runs/:runId/items/:externalId',
+        read: options => sdk.getRunItem('test-run-id', 'ext-1', options),
+      },
+      {
+        method: 'downloadArtifact',
+        path: '*/v1/runs/:runId/artifacts/:artifactId/file',
+        read: options => sdk.downloadArtifact('test-run-id', 'test-artifact-id', options),
+      },
+      {
+        method: 'downloadArtifactStream',
+        path: '*/v1/runs/:runId/artifacts/:artifactId/file',
+        read: options => sdk.downloadArtifactStream('test-run-id', 'test-artifact-id', options),
+      },
+    ];
+
+    const captureRequestUrls = (path: string): URL[] => {
+      const urls: URL[] = [];
+      server.use(
+        http.get(path, ({ request }) => {
+          urls.push(new URL(request.url));
+        })
+      );
+      return urls;
+    };
+
+    beforeEach(() => {
+      mockTokenProvider.mockResolvedValue('mocked-token');
+      setMockScenario('success');
+    });
+
+    it.each(runReads)('$method sends the share token as share_token', async ({ path, read }) => {
+      const urls = captureRequestUrls(path);
+
+      await read({ shareToken: 'share-token-value' });
+
+      expect(urls).toHaveLength(1);
+      expect(urls[0]?.searchParams.get('share_token')).toBe('share-token-value');
+    });
+
+    it.each(runReads)('$method sends no share_token without the option', async ({ path, read }) => {
+      const urls = captureRequestUrls(path);
+
+      await read();
+
+      expect(urls).toHaveLength(1);
+      expect(urls[0]?.searchParams.has('share_token')).toBe(false);
+    });
+  });
+
   describe('grants', () => {
     beforeEach(() => {
       mockTokenProvider.mockResolvedValue('mocked-token');
