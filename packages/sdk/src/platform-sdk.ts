@@ -137,7 +137,7 @@ export interface PlatformSDK {
     sort?: string[];
   }): Promise<RunReadResponse[]>;
   createApplicationRun(request: RunCreationRequest): Promise<RunCreationResponse>;
-  getRun(applicationRunId: string): Promise<RunReadResponse>;
+  getRun(applicationRunId: string, options?: { shareToken?: string }): Promise<RunReadResponse>;
   cancelApplicationRun(applicationRunId: string): Promise<void>;
   listRunResults(
     applicationRunId: string,
@@ -148,9 +148,14 @@ export interface PlatformSDK {
       externalIdIn?: string[];
       state?: ItemState;
       terminationReason?: ItemTerminationReason;
+      shareToken?: string;
     }
   ): Promise<ItemResultReadResponse[]>;
-  getRunItem(applicationRunId: string, externalId: string): Promise<ItemResultReadResponse>;
+  getRunItem(
+    applicationRunId: string,
+    externalId: string,
+    options?: { shareToken?: string }
+  ): Promise<ItemResultReadResponse>;
   updateRunMetadata(
     applicationRunId: string,
     customMetadata: Record<string, unknown> | null,
@@ -167,8 +172,16 @@ export interface PlatformSDK {
     applicationId: string,
     version: string
   ): Promise<VersionReadResponse>;
-  downloadArtifact(runId: string, artifactId: string): Promise<ArrayBuffer>;
-  downloadArtifactStream(runId: string, artifactId: string): Promise<Readable>;
+  downloadArtifact(
+    runId: string,
+    artifactId: string,
+    options?: { shareToken?: string }
+  ): Promise<ArrayBuffer>;
+  downloadArtifactStream(
+    runId: string,
+    artifactId: string,
+    options?: { shareToken?: string }
+  ): Promise<Readable>;
   createGrant(request: GrantCreateRequest): Promise<GrantReadResponse>;
   listGrants(options?: {
     resourceType?: ResourceType;
@@ -507,6 +520,8 @@ export class PlatformSDKHttp implements PlatformSDK {
    * its current status, progress, metadata, and execution information.
    *
    * @param applicationRunId - The unique identifier of the application run
+   * @param options - Optional request options
+   * @param options.shareToken - Share token granting access to a run shared by link
    * @returns A promise that resolves to the run details object
    * @throws {Error} If the request fails due to network issues, authentication problems, invalid run ID, or API errors
    *
@@ -525,11 +540,15 @@ export class PlatformSDKHttp implements PlatformSDK {
    * }
    * ```
    */
-  async getRun(applicationRunId: string): Promise<RunReadResponse> {
+  async getRun(
+    applicationRunId: string,
+    { shareToken }: { shareToken?: string } = {}
+  ): Promise<RunReadResponse> {
     const client = await this.#getClient();
     try {
       const response = await client.getRunV1RunsRunIdGet({
         runId: applicationRunId,
+        shareToken,
       });
 
       return response.data;
@@ -584,6 +603,8 @@ export class PlatformSDKHttp implements PlatformSDK {
    * artifacts from the AI model execution.
    *
    * @param applicationRunId - The unique identifier of the application run
+   * @param options - Optional pagination, sorting and filtering options
+   * @param options.shareToken - Share token granting access to a run shared by link
    * @returns A promise that resolves to an array of result items
    * @throws {Error} If the request fails due to network issues, authentication problems, invalid run ID, or API errors
    *
@@ -615,6 +636,7 @@ export class PlatformSDKHttp implements PlatformSDK {
       externalIdIn,
       state,
       terminationReason,
+      shareToken,
     }: {
       page?: number;
       pageSize?: number;
@@ -622,12 +644,14 @@ export class PlatformSDKHttp implements PlatformSDK {
       externalIdIn?: string[];
       state?: ItemState;
       terminationReason?: ItemTerminationReason;
+      shareToken?: string;
     } = {}
   ): Promise<ItemResultReadResponse[]> {
     const client = await this.#getClient();
     try {
       const response = await client.listRunItemsV1RunsRunIdItemsGet({
         runId: applicationRunId,
+        shareToken,
         page,
         pageSize,
         sort,
@@ -650,6 +674,8 @@ export class PlatformSDKHttp implements PlatformSDK {
    *
    * @param applicationRunId - The unique identifier of the application run
    * @param externalId - The external ID of the item, as supplied when creating the run
+   * @param options - Optional request options
+   * @param options.shareToken - Share token granting access to a run shared by link
    * @returns A promise that resolves to the enriched run item
    * @throws {AuthenticationError} If no valid authentication token is available
    * @throws {APIError} If the request fails (e.g., 404 if the item doesn't exist)
@@ -666,12 +692,17 @@ export class PlatformSDKHttp implements PlatformSDK {
    * }
    * ```
    */
-  async getRunItem(applicationRunId: string, externalId: string): Promise<ItemResultReadResponse> {
+  async getRunItem(
+    applicationRunId: string,
+    externalId: string,
+    { shareToken }: { shareToken?: string } = {}
+  ): Promise<ItemResultReadResponse> {
     const client = await this.#getClient();
     try {
       const response = await client.getItemByRunV1RunsRunIdItemsExternalIdGet({
         runId: applicationRunId,
         externalId,
+        shareToken,
       });
       return response.data;
     } catch (error) {
@@ -863,6 +894,8 @@ export class PlatformSDKHttp implements PlatformSDK {
    *
    * @param runId - The unique identifier of the application run
    * @param artifactId - The unique identifier of the artifact to download
+   * @param options - Optional request options
+   * @param options.shareToken - Share token granting access to a run shared by link
    * @returns A promise that resolves to an ArrayBuffer containing the artifact's binary content
    * @throws {AuthenticationError} If no valid authentication token is available
    * @throws {APIError} If the API request fails (e.g., 403, 404, 410, 422, or other HTTP errors)
@@ -883,7 +916,11 @@ export class PlatformSDKHttp implements PlatformSDK {
    * }
    * ```
    */
-  async downloadArtifact(runId: string, artifactId: string): Promise<ArrayBuffer> {
+  async downloadArtifact(
+    runId: string,
+    artifactId: string,
+    { shareToken }: { shareToken?: string } = {}
+  ): Promise<ArrayBuffer> {
     const client = await this.#getClient();
     try {
       const response = await downloadWithRetry(
@@ -892,6 +929,7 @@ export class PlatformSDKHttp implements PlatformSDK {
             {
               runId,
               artifactId,
+              shareToken,
             },
             {
               responseType: 'arraybuffer',
@@ -918,6 +956,8 @@ export class PlatformSDKHttp implements PlatformSDK {
    *
    * @param runId - The unique identifier of the application run
    * @param artifactId - The unique identifier of the artifact to download
+   * @param options - Optional request options
+   * @param options.shareToken - Share token granting access to a run shared by link
    * @returns A promise that resolves to a Node.js `Readable` stream yielding the artifact's binary content
    * @throws {AuthenticationError} If no valid authentication token is available
    * @throws {APIError} If the API request fails (e.g., 403, 404, 410, 422, or other HTTP errors)
@@ -938,7 +978,11 @@ export class PlatformSDKHttp implements PlatformSDK {
    * streaming, a mid-stream connection drop CANNOT be retried by this method — the consumer must
    * listen for the stream's `error` event and re-download if needed.
    */
-  async downloadArtifactStream(runId: string, artifactId: string): Promise<Readable> {
+  async downloadArtifactStream(
+    runId: string,
+    artifactId: string,
+    { shareToken }: { shareToken?: string } = {}
+  ): Promise<Readable> {
     const client = await this.#getClient();
     try {
       const response = await downloadWithRetry(
@@ -947,6 +991,7 @@ export class PlatformSDKHttp implements PlatformSDK {
             {
               runId,
               artifactId,
+              shareToken,
             },
             {
               responseType: 'stream',
