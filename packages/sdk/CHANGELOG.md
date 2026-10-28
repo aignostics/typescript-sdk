@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.9.0](https://github.com/aignostics/typescript-sdk/compare/sdk-v3.8.1...sdk-v3.9.0) (2026-10-28)
+
+
+### Features
+
+* **sdk:** accept a share token in run, item and artifact reads ([cc53e3a](https://github.com/aignostics/typescript-sdk/commit/cc53e3a77de34f6f44eb7c7d8f259d254749fb2c))
+
 ## [3.8.1](https://github.com/aignostics/typescript-sdk/compare/sdk-v3.8.0...sdk-v3.8.1) (2026-07-29)
 
 
