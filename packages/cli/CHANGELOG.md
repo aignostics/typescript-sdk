@@ -1,5 +1,14 @@
 # Changelog
 
+## [4.0.1](https://github.com/aignostics/typescript-sdk/compare/cli-v4.0.0...cli-v4.0.1) (2026-10-28)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @aignostics/sdk bumped from ^3.6.1 to ^3.9.0
+
 ## [4.0.0](https://github.com/aignostics/typescript-sdk/compare/cli-v3.6.1...cli-v4.0.0) (2026-07-29)
 
 

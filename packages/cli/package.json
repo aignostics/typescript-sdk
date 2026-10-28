@@ -1,6 +1,6 @@
 {
   "name": "@aignostics/cli",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "CLI for Aignostics",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -33,7 +33,7 @@
   "author": "Aignostics",
   "license": "MIT",
   "dependencies": {
-    "@aignostics/sdk": "^3.6.1",
+    "@aignostics/sdk": "^3.9.0",
     "@napi-rs/keyring": "^1.1.8",
     "cli-table3": "^0.6.5",
     "express": "^5.1.0",
