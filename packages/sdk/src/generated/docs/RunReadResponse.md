@@ -24,6 +24,7 @@ Name | Type | Description | Notes
 **num_preceding_items_org** | **number** |  | [optional] [default to undefined]
 **num_preceding_items_platform** | **number** |  | [optional] [default to undefined]
 **scheduling** | [**SchedulingResponse**](SchedulingResponse.md) |  | [optional] [default to undefined]
+**artifacts_expire_at** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -49,6 +50,7 @@ const instance: RunReadResponse = {
     num_preceding_items_org,
     num_preceding_items_platform,
     scheduling,
+    artifacts_expire_at,
 };
 ```
 

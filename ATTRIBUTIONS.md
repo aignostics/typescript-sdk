@@ -7387,7 +7387,7 @@ MIT License
 
 ## @types/node
 
-**Version:** 24.13.3  
+**Version:** 24.19.2  
 **License:** MIT
 
 ```
@@ -19914,7 +19914,7 @@ SOFTWARE.
 
 ## undici-types
 
-**Version:** 7.18.2  
+**Version:** 7.24.6  
 **License:** MIT
 
 ```
