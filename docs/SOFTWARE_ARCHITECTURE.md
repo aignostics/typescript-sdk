@@ -996,7 +996,7 @@ Quality
 **Enforcement:**
 - Vitest coverage reports
 - CI pipeline fails if below threshold
-- Coverage reports uploaded to Codecov
+- Coverage reports uploaded to SonarQube
 
 ---
 
