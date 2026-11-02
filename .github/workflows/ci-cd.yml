@@ -19,7 +19,6 @@ jobs:
       contents: read
     uses: ./.github/workflows/_test.yml
     secrets:
-      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       E2E_REFRESH_TOKEN: ${{ secrets.E2E_REFRESH_TOKEN }}
       E2E_ADMIN_USER_PASSWORD: ${{ secrets.E2E_ADMIN_USER_PASSWORD }}

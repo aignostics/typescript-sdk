@@ -3,9 +3,6 @@ name: 'Test'
 on:
   workflow_call:
     secrets:
-      CODECOV_TOKEN:
-        description: 'Codecov upload token'
-        required: true
       SONAR_TOKEN:
         description: 'SonarQube token'
         required: true
@@ -176,15 +173,6 @@ jobs:
         with:
           name: coverage-reports
           path: packages
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
-        with:
-          files: ./packages/sdk/coverage/lcov.info,./packages/cli/coverage/lcov.info
-          token: ${{ secrets.CODECOV_TOKEN }}
-          flags: unittests
-          name: codecov-umbrella
-          fail_ci_if_error: false
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@22918119ff8e1ca75a623e15c8296b6ea4fbe28f # v8.2.1
