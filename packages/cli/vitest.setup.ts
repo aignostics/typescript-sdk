@@ -4,13 +4,15 @@ import { afterAll, beforeAll, afterEach } from 'vitest';
 // Start the mock server before all tests
 beforeAll(() => {
   server.listen({
-    onUnhandledRequest(request, print) {
+    onUnhandledFrame({ frame, defaults }) {
       // Ignore localhost requests (used by OAuth callback server tests)
-      if (request.url.includes('localhost')) {
+      const request =
+        frame.protocol === 'http' ? (frame.data as { request: Request }).request : null;
+      if (request?.url.includes('localhost')) {
         return;
       }
       // Warn about other unhandled requests
-      print.warning();
+      defaults.warn();
     },
   });
 });

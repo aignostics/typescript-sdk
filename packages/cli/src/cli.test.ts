@@ -1400,4 +1400,36 @@ describe('CLI Integration Tests', () => {
       );
     });
   });
+
+  describe('text output', () => {
+    it.each([
+      ['applications list', ['applications', 'list'], 'Latest Version'],
+      ['applications get', ['applications', 'get', 'app-1'], 'Application ID:'],
+      ['applications versions list', ['applications', 'versions', 'list', 'app-1'], 'Released At'],
+      [
+        'applications versions get',
+        ['applications', 'versions', 'get', 'app-1', '1.0.0'],
+        'Version Number:',
+      ],
+      ['runs list', ['runs', 'list'], 'Submitted At'],
+      ['runs get', ['runs', 'get', 'run-1'], 'Run ID:'],
+      ['runs results list', ['runs', 'results', 'list', 'run-1'], 'External ID'],
+      ['grants list', ['grants', 'list', '--resourceId', 'run-1'], 'Grant ID'],
+      ['grants get', ['grants', 'get', 'grant-1'], 'Grant ID:'],
+      ['share-tokens list', ['share-tokens', 'list', '--runId', 'run-1'], 'Share Token ID'],
+      ['share-tokens get', ['share-tokens', 'get', 'share-token-1'], 'Share Token ID:'],
+      [
+        'share-tokens create',
+        ['share-tokens', 'create', '--expiresAt', '2026-01-01T00:00:00Z'],
+        'Share Token:',
+      ],
+    ])('prints %s as text', async (_name, args, expected) => {
+      process.argv = ['node', 'cli.js', ...args];
+
+      await main();
+
+      expect(mockExit).not.toHaveBeenCalledWith(1);
+      expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining(expected));
+    });
+  });
 });

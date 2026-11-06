@@ -53,3 +53,6 @@ test-results/
 
 # TypeScript project-reference output
 out-tsc/
+
+# agent worktrees
+.claude/worktrees/
