@@ -24,22 +24,24 @@ vi.stubGlobal('process', {
 
 // Mock auth service to avoid real authentication
 vi.mock('./utils/auth.js', () => ({
-  AuthService: vi.fn().mockImplementation(() => ({
-    getValidAccessToken: vi.fn().mockResolvedValue('mock-token'),
-    loginWithCallback: vi.fn().mockResolvedValue(''),
-    completeLogin: vi.fn().mockResolvedValue(undefined),
-    loginWithRefreshToken: vi.fn().mockResolvedValue(undefined),
-    logout: vi.fn().mockResolvedValue(undefined),
-    getAuthState: vi.fn().mockResolvedValue({
-      isAuthenticated: true,
-      token: {
-        type: 'Bearer',
-        scope: 'openid profile email offline_access',
-        expiresAt: new Date('2025-01-01T12:59:59.000Z'),
-        storedAt: new Date('2024-12-01T10:00:00.000Z'),
-      },
-    }),
-  })),
+  AuthService: vi.fn(function () {
+    return {
+      getValidAccessToken: vi.fn().mockResolvedValue('mock-token'),
+      loginWithCallback: vi.fn().mockResolvedValue(''),
+      completeLogin: vi.fn().mockResolvedValue(undefined),
+      loginWithRefreshToken: vi.fn().mockResolvedValue(undefined),
+      logout: vi.fn().mockResolvedValue(undefined),
+      getAuthState: vi.fn().mockResolvedValue({
+        isAuthenticated: true,
+        token: {
+          type: 'Bearer',
+          scope: 'openid profile email offline_access',
+          expiresAt: new Date('2025-01-01T12:59:59.000Z'),
+          storedAt: new Date('2024-12-01T10:00:00.000Z'),
+        },
+      }),
+    };
+  }),
 }));
 
 // Mock OAuth callback server
@@ -686,7 +688,7 @@ describe('CLI Integration Tests', () => {
       // Mock process.argv for yargs
       process.argv = ['node', 'cli.js', '--help'];
 
-      await expect(main()).rejects.toThrow();
+      await main();
 
       expect(consoleSpy.log).toHaveBeenCalledWith(expect.stringContaining('Usage:'));
     });

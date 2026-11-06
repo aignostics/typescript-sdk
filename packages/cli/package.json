@@ -34,19 +34,19 @@
   "license": "MIT",
   "dependencies": {
     "@aignostics/sdk": "^3.6.1",
-    "@napi-rs/keyring": "^1.1.8",
+    "@napi-rs/keyring": "^2.1.2",
     "cli-table3": "^0.6.5",
     "express": "^5.1.0",
     "open": "^11.0.0",
     "openid-client": "^5",
-    "yargs": "^17.7.2",
+    "yargs": "^18.2.0",
     "zod": "^4.0.5"
   },
   "devDependencies": {
     "@types/express": "5.0.6",
     "@types/yargs": "17.0.35",
-    "dotenv": "17.4.2",
-    "playwright": "1.62.0"
+    "dotenv": "18.0.9",
+    "playwright": "1.65.0"
   },
   "engines": {
     "node": ">=18.0.0"

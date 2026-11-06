@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { AuthService } from './auth.js';
+import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
+import { AuthService, type TokenStorage } from './auth.js';
 import { BaseClient, Issuer } from 'openid-client';
 import { ChildProcess } from 'child_process';
 import { environmentConfig } from './environment.js';
@@ -48,12 +48,7 @@ const environment = 'production';
 
 describe('AuthService', () => {
   let authService: AuthService;
-  let mockTokenStorage: {
-    save: ReturnType<typeof vi.fn>;
-    load: ReturnType<typeof vi.fn>;
-    remove: ReturnType<typeof vi.fn>;
-    exists: ReturnType<typeof vi.fn>;
-  };
+  let mockTokenStorage: { [K in keyof TokenStorage]: Mock<TokenStorage[K]> };
   let consoleSpy: {
     log: ReturnType<typeof vi.spyOn>;
     warn: ReturnType<typeof vi.spyOn>;
@@ -63,10 +58,10 @@ describe('AuthService', () => {
   beforeEach(() => {
     // Create mock token storage
     mockTokenStorage = {
-      save: vi.fn(),
-      load: vi.fn(),
-      remove: vi.fn(),
-      exists: vi.fn(),
+      save: vi.fn<TokenStorage['save']>(),
+      load: vi.fn<TokenStorage['load']>(),
+      remove: vi.fn<TokenStorage['remove']>(),
+      exists: vi.fn<TokenStorage['exists']>(),
     };
 
     // Create auth service with mock storage
@@ -269,7 +264,9 @@ describe('AuthService', () => {
         refresh: vi.fn(() => newTokenSet),
       };
       const mockIssuer = {
-        Client: vi.fn(() => mockClient),
+        Client: vi.fn(function () {
+          return mockClient;
+        }),
       };
 
       vi.mocked(Issuer.discover).mockResolvedValue(mockIssuer as unknown as Issuer<BaseClient>);
@@ -314,7 +311,9 @@ describe('AuthService', () => {
         refresh: vi.fn(() => newTokenSetWithoutRefreshToken),
       };
       const mockIssuer = {
-        Client: vi.fn(() => mockClient),
+        Client: vi.fn(function () {
+          return mockClient;
+        }),
       };
       const { Issuer } = await import('openid-client');
 
@@ -359,7 +358,9 @@ describe('AuthService', () => {
         }),
       };
       const mockIssuer = {
-        Client: vi.fn(() => mockClient),
+        Client: vi.fn(function () {
+          return mockClient;
+        }),
       };
       const { Issuer } = await import('openid-client');
 
@@ -382,7 +383,9 @@ describe('AuthService', () => {
         refresh: vi.fn(() => invalidTokenSet),
       };
       const mockIssuer = {
-        Client: vi.fn(() => mockClient),
+        Client: vi.fn(function () {
+          return mockClient;
+        }),
       };
       const { Issuer } = await import('openid-client');
 
@@ -407,7 +410,9 @@ describe('AuthService', () => {
         authorizationUrl: vi.fn(() => 'https://test-auth-url.com'),
       };
       const mockIssuer = {
-        Client: vi.fn(() => mockClient),
+        Client: vi.fn(function () {
+          return mockClient;
+        }),
       };
       const mockOpen = (await import('open')).default;
       const { Issuer } = await import('openid-client');
@@ -467,7 +472,9 @@ describe('AuthService', () => {
         callback: vi.fn(() => mockTokenSet),
       };
       const mockIssuer = {
-        Client: vi.fn(() => mockClient),
+        Client: vi.fn(function () {
+          return mockClient;
+        }),
       };
       const { Issuer } = await import('openid-client');
 
@@ -499,7 +506,9 @@ describe('AuthService', () => {
         }),
       };
       const mockIssuer = {
-        Client: vi.fn(() => mockClient),
+        Client: vi.fn(function () {
+          return mockClient;
+        }),
       };
       const error = new Error('Token exchange failed');
       const { Issuer } = await import('openid-client');
@@ -522,7 +531,9 @@ describe('AuthService', () => {
         callback: vi.fn(() => invalidTokenSet),
       };
       const mockIssuer = {
-        Client: vi.fn(() => mockClient),
+        Client: vi.fn(function () {
+          return mockClient;
+        }),
       };
       const { Issuer } = await import('openid-client');
 
@@ -559,7 +570,9 @@ describe('AuthService', () => {
         refresh: vi.fn(() => newTokenSet),
       };
       const mockIssuer = {
-        Client: vi.fn(() => mockClient),
+        Client: vi.fn(function () {
+          return mockClient;
+        }),
       };
       const { Issuer } = await import('openid-client');
 
@@ -612,7 +625,9 @@ describe('AuthService', () => {
         }),
       };
       const mockIssuer = {
-        Client: vi.fn(() => mockClient),
+        Client: vi.fn(function () {
+          return mockClient;
+        }),
       };
       const { Issuer } = await import('openid-client');
 
@@ -648,7 +663,9 @@ describe('AuthService', () => {
         refresh: vi.fn(() => newTokenSetWithoutRefreshToken),
       };
       const mockIssuer = {
-        Client: vi.fn(() => mockClient),
+        Client: vi.fn(function () {
+          return mockClient;
+        }),
       };
       const { Issuer } = await import('openid-client');
 
