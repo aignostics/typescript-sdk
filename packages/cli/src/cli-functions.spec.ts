@@ -120,7 +120,7 @@ describe('CLI Functions Unit Tests', () => {
       log: vi.spyOn(console, 'log').mockImplementation(() => {}),
       error: vi.spyOn(console, 'error').mockImplementation(() => {}),
     };
-    vi.mocked(PlatformSDKHttp).mockImplementation(config => {
+    vi.mocked(PlatformSDKHttp).mockImplementation(function (config) {
       // Capture and call the tokenProvider to ensure coverage
       if (config?.tokenProvider) {
         // TODO: get rid of this by adding integration tests that actually cover this

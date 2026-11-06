@@ -37,7 +37,9 @@ describe('Token Storage Module', () => {
     };
 
     // Get the mocked Entry constructor
-    vi.mocked(Entry).mockImplementation(() => mockEntry as unknown as Entry);
+    vi.mocked(Entry).mockImplementation(function () {
+      return mockEntry as unknown as Entry;
+    });
 
     // Mock os and path functions
     vi.mocked(os.platform).mockReturnValue('linux');

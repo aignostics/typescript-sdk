@@ -221,7 +221,7 @@ Apache License
 
 ## @babel/helper-string-parser
 
-**Version:** 7.29.7  
+**Version:** 7.29.13  
 **License:** MIT
 
 ```
@@ -285,7 +285,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## @babel/parser
 
-**Version:** 7.29.7  
+**Version:** 7.29.13  
 **License:** MIT
 
 ```
@@ -314,7 +314,7 @@ THE SOFTWARE.
 
 ## @babel/types
 
-**Version:** 7.29.7  
+**Version:** 7.29.11  
 **License:** MIT
 
 ```
@@ -406,7 +406,7 @@ THE SOFTWARE.
 
 ## @emnapi/core
 
-**Version:** 2.0.0-alpha.3  
+**Version:** 2.0.0-beta.2  
 **License:** MIT
 
 ```
@@ -435,7 +435,7 @@ SOFTWARE.
 
 ## @emnapi/runtime
 
-**Version:** 2.0.0-alpha.3  
+**Version:** 2.0.0-beta.2  
 **License:** MIT
 
 ```
@@ -464,7 +464,7 @@ SOFTWARE.
 
 ## @emnapi/wasi-threads
 
-**Version:** 2.0.1  
+**Version:** 2.2.0  
 **License:** MIT
 
 ```
@@ -493,7 +493,7 @@ SOFTWARE.
 
 ## @esbuild/aix-ppc64
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -522,7 +522,7 @@ SOFTWARE.
 
 ## @esbuild/android-arm
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -551,7 +551,7 @@ SOFTWARE.
 
 ## @esbuild/android-arm64
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -580,7 +580,7 @@ SOFTWARE.
 
 ## @esbuild/android-x64
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -609,7 +609,7 @@ SOFTWARE.
 
 ## @esbuild/darwin-arm64
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -638,7 +638,7 @@ SOFTWARE.
 
 ## @esbuild/darwin-x64
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -667,7 +667,7 @@ SOFTWARE.
 
 ## @esbuild/freebsd-arm64
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -696,7 +696,7 @@ SOFTWARE.
 
 ## @esbuild/freebsd-x64
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -725,7 +725,7 @@ SOFTWARE.
 
 ## @esbuild/linux-arm
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -754,7 +754,7 @@ SOFTWARE.
 
 ## @esbuild/linux-arm64
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -783,7 +783,7 @@ SOFTWARE.
 
 ## @esbuild/linux-ia32
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -812,7 +812,7 @@ SOFTWARE.
 
 ## @esbuild/linux-loong64
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -841,7 +841,7 @@ SOFTWARE.
 
 ## @esbuild/linux-mips64el
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -870,7 +870,7 @@ SOFTWARE.
 
 ## @esbuild/linux-ppc64
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -899,7 +899,7 @@ SOFTWARE.
 
 ## @esbuild/linux-riscv64
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -928,7 +928,7 @@ SOFTWARE.
 
 ## @esbuild/linux-s390x
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -957,7 +957,7 @@ SOFTWARE.
 
 ## @esbuild/linux-x64
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -986,7 +986,7 @@ SOFTWARE.
 
 ## @esbuild/netbsd-arm64
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -1015,7 +1015,7 @@ SOFTWARE.
 
 ## @esbuild/netbsd-x64
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -1044,7 +1044,7 @@ SOFTWARE.
 
 ## @esbuild/openbsd-arm64
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -1073,7 +1073,7 @@ SOFTWARE.
 
 ## @esbuild/openbsd-x64
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -1102,7 +1102,7 @@ SOFTWARE.
 
 ## @esbuild/openharmony-arm64
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -1131,7 +1131,7 @@ SOFTWARE.
 
 ## @esbuild/sunos-x64
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -1160,7 +1160,7 @@ SOFTWARE.
 
 ## @esbuild/win32-arm64
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -1189,7 +1189,7 @@ SOFTWARE.
 
 ## @esbuild/win32-ia32
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -1218,7 +1218,7 @@ SOFTWARE.
 
 ## @esbuild/win32-x64
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -1247,7 +1247,7 @@ SOFTWARE.
 
 ## @faker-js/faker
 
-**Version:** 10.5.0  
+**Version:** 10.6.0  
 **License:** MIT
 
 ```
@@ -1379,7 +1379,7 @@ SOFTWARE.
 
 ## @inquirer/ansi
 
-**Version:** 2.0.7  
+**Version:** 2.0.10  
 **License:** MIT
 
 ```
@@ -1411,7 +1411,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ## @inquirer/confirm
 
-**Version:** 6.1.1  
+**Version:** 6.3.5  
 **License:** MIT
 
 ```
@@ -1443,7 +1443,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ## @inquirer/core
 
-**Version:** 11.2.1  
+**Version:** 12.0.6  
 **License:** MIT
 
 ```
@@ -1475,7 +1475,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ## @inquirer/figures
 
-**Version:** 2.0.7  
+**Version:** 2.0.10  
 **License:** MIT
 
 ```
@@ -1507,7 +1507,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ## @inquirer/type
 
-**Version:** 4.0.7  
+**Version:** 4.2.1  
 **License:** MIT
 
 ```
@@ -1702,7 +1702,7 @@ SOFTWARE.
 
 ## @jridgewell/sourcemap-codec
 
-**Version:** 1.5.5  
+**Version:** 1.6.0  
 **License:** MIT
 
 ```
@@ -1779,7 +1779,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## @napi-rs/keyring
 
-**Version:** 1.3.0  
+**Version:** 2.1.2  
 **License:** MIT
 
 ```
@@ -1810,7 +1810,7 @@ SOFTWARE.
 
 ## @napi-rs/keyring-darwin-arm64
 
-**Version:** 1.3.0  
+**Version:** 2.1.2  
 **License:** MIT
 
 ```
@@ -1839,7 +1839,7 @@ SOFTWARE.
 
 ## @napi-rs/keyring-darwin-x64
 
-**Version:** 1.3.0  
+**Version:** 2.1.2  
 **License:** MIT
 
 ```
@@ -1868,7 +1868,7 @@ SOFTWARE.
 
 ## @napi-rs/keyring-freebsd-x64
 
-**Version:** 1.3.0  
+**Version:** 2.1.2  
 **License:** MIT
 
 ```
@@ -1897,7 +1897,7 @@ SOFTWARE.
 
 ## @napi-rs/keyring-linux-arm-gnueabihf
 
-**Version:** 1.3.0  
+**Version:** 2.1.2  
 **License:** MIT
 
 ```
@@ -1926,7 +1926,7 @@ SOFTWARE.
 
 ## @napi-rs/keyring-linux-arm64-gnu
 
-**Version:** 1.3.0  
+**Version:** 2.1.2  
 **License:** MIT
 
 ```
@@ -1955,7 +1955,7 @@ SOFTWARE.
 
 ## @napi-rs/keyring-linux-arm64-musl
 
-**Version:** 1.3.0  
+**Version:** 2.1.2  
 **License:** MIT
 
 ```
@@ -1984,7 +1984,7 @@ SOFTWARE.
 
 ## @napi-rs/keyring-linux-riscv64-gnu
 
-**Version:** 1.3.0  
+**Version:** 2.1.2  
 **License:** MIT
 
 ```
@@ -2013,7 +2013,7 @@ SOFTWARE.
 
 ## @napi-rs/keyring-linux-x64-gnu
 
-**Version:** 1.3.0  
+**Version:** 2.1.2  
 **License:** MIT
 
 ```
@@ -2042,7 +2042,7 @@ SOFTWARE.
 
 ## @napi-rs/keyring-linux-x64-musl
 
-**Version:** 1.3.0  
+**Version:** 2.1.2  
 **License:** MIT
 
 ```
@@ -2071,7 +2071,7 @@ SOFTWARE.
 
 ## @napi-rs/keyring-win32-arm64-msvc
 
-**Version:** 1.3.0  
+**Version:** 2.1.2  
 **License:** MIT
 
 ```
@@ -2100,7 +2100,7 @@ SOFTWARE.
 
 ## @napi-rs/keyring-win32-ia32-msvc
 
-**Version:** 1.3.0  
+**Version:** 2.1.2  
 **License:** MIT
 
 ```
@@ -2129,7 +2129,7 @@ SOFTWARE.
 
 ## @napi-rs/keyring-win32-x64-msvc
 
-**Version:** 1.3.0  
+**Version:** 2.1.2  
 **License:** MIT
 
 ```
@@ -2158,7 +2158,7 @@ SOFTWARE.
 
 ## @napi-rs/wasm-runtime
 
-**Version:** 1.2.0  
+**Version:** 1.2.6  
 **License:** MIT
 
 ```
@@ -2637,7 +2637,7 @@ SOFTWARE.
 
 ## @oxc-project/types
 
-**Version:** 0.140.0  
+**Version:** 0.157.0  
 **License:** MIT
 
 ```
@@ -2669,7 +2669,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-android-arm-eabi
 
-**Version:** 0.61.0  
+**Version:** 0.77.0  
 **License:** MIT
 
 ```
@@ -2698,7 +2698,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-android-arm64
 
-**Version:** 0.61.0  
+**Version:** 0.77.0  
 **License:** MIT
 
 ```
@@ -2727,7 +2727,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-darwin-arm64
 
-**Version:** 0.61.0  
+**Version:** 0.77.0  
 **License:** MIT
 
 ```
@@ -2756,7 +2756,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-darwin-x64
 
-**Version:** 0.61.0  
+**Version:** 0.77.0  
 **License:** MIT
 
 ```
@@ -2785,7 +2785,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-freebsd-x64
 
-**Version:** 0.61.0  
+**Version:** 0.77.0  
 **License:** MIT
 
 ```
@@ -2814,7 +2814,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-linux-arm-gnueabihf
 
-**Version:** 0.61.0  
+**Version:** 0.77.0  
 **License:** MIT
 
 ```
@@ -2843,7 +2843,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-linux-arm-musleabihf
 
-**Version:** 0.61.0  
+**Version:** 0.77.0  
 **License:** MIT
 
 ```
@@ -2872,7 +2872,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-linux-arm64-gnu
 
-**Version:** 0.61.0  
+**Version:** 0.77.0  
 **License:** MIT
 
 ```
@@ -2901,7 +2901,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-linux-arm64-musl
 
-**Version:** 0.61.0  
+**Version:** 0.77.0  
 **License:** MIT
 
 ```
@@ -2930,7 +2930,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-linux-ppc64-gnu
 
-**Version:** 0.61.0  
+**Version:** 0.77.0  
 **License:** MIT
 
 ```
@@ -2959,7 +2959,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-linux-riscv64-gnu
 
-**Version:** 0.61.0  
+**Version:** 0.77.0  
 **License:** MIT
 
 ```
@@ -2988,7 +2988,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-linux-riscv64-musl
 
-**Version:** 0.61.0  
+**Version:** 0.77.0  
 **License:** MIT
 
 ```
@@ -3017,7 +3017,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-linux-s390x-gnu
 
-**Version:** 0.61.0  
+**Version:** 0.77.0  
 **License:** MIT
 
 ```
@@ -3046,7 +3046,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-linux-x64-gnu
 
-**Version:** 0.61.0  
+**Version:** 0.77.0  
 **License:** MIT
 
 ```
@@ -3075,7 +3075,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-linux-x64-musl
 
-**Version:** 0.61.0  
+**Version:** 0.77.0  
 **License:** MIT
 
 ```
@@ -3104,7 +3104,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-openharmony-arm64
 
-**Version:** 0.61.0  
+**Version:** 0.77.0  
 **License:** MIT
 
 ```
@@ -3133,7 +3133,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-win32-arm64-msvc
 
-**Version:** 0.61.0  
+**Version:** 0.77.0  
 **License:** MIT
 
 ```
@@ -3162,7 +3162,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-win32-ia32-msvc
 
-**Version:** 0.61.0  
+**Version:** 0.77.0  
 **License:** MIT
 
 ```
@@ -3191,7 +3191,7 @@ SOFTWARE.
 
 ## @oxfmt/binding-win32-x64-msvc
 
-**Version:** 0.61.0  
+**Version:** 0.77.0  
 **License:** MIT
 
 ```
@@ -3220,94 +3220,7 @@ SOFTWARE.
 
 ## @oxlint-tsgolint/darwin-arm64
 
-**Version:** 7.0.2001  
-**License:** MIT
-
-```
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## @oxlint-tsgolint/darwin-x64
-
-**Version:** 7.0.2001  
-**License:** MIT
-
-```
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## @oxlint-tsgolint/linux-arm64
-
-**Version:** 7.0.2001  
-**License:** MIT
-
-```
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## @oxlint-tsgolint/linux-x64
-
-**Version:** 7.0.2001  
+**Version:** 7.0.2006  
 **License:** MIT
 
 ```
@@ -3337,9 +3250,96 @@ SOFTWARE.
 
 ---
 
+## @oxlint-tsgolint/darwin-x64
+
+**Version:** 7.0.2006  
+**License:** MIT
+
+```
+MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+---
+
+## @oxlint-tsgolint/linux-arm64
+
+**Version:** 7.0.2006  
+**License:** MIT
+
+```
+MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+---
+
+## @oxlint-tsgolint/linux-x64
+
+**Version:** 7.0.2006  
+**License:** MIT
+
+```
+MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+---
+
 ## @oxlint-tsgolint/win32-arm64
 
-**Version:** 7.0.2001  
+**Version:** 7.0.2006  
 **License:** MIT
 
 ```
@@ -3368,7 +3368,7 @@ SOFTWARE.
 
 ## @oxlint-tsgolint/win32-x64
 
-**Version:** 7.0.2001  
+**Version:** 7.0.2006  
 **License:** MIT
 
 ```
@@ -3397,7 +3397,7 @@ SOFTWARE.
 
 ## @oxlint/binding-android-arm-eabi
 
-**Version:** 1.76.0  
+**Version:** 1.92.0  
 **License:** MIT
 
 ```
@@ -3426,7 +3426,7 @@ SOFTWARE.
 
 ## @oxlint/binding-android-arm64
 
-**Version:** 1.76.0  
+**Version:** 1.92.0  
 **License:** MIT
 
 ```
@@ -3455,7 +3455,7 @@ SOFTWARE.
 
 ## @oxlint/binding-darwin-arm64
 
-**Version:** 1.76.0  
+**Version:** 1.92.0  
 **License:** MIT
 
 ```
@@ -3484,7 +3484,7 @@ SOFTWARE.
 
 ## @oxlint/binding-darwin-x64
 
-**Version:** 1.76.0  
+**Version:** 1.92.0  
 **License:** MIT
 
 ```
@@ -3513,7 +3513,7 @@ SOFTWARE.
 
 ## @oxlint/binding-freebsd-x64
 
-**Version:** 1.76.0  
+**Version:** 1.92.0  
 **License:** MIT
 
 ```
@@ -3542,7 +3542,7 @@ SOFTWARE.
 
 ## @oxlint/binding-linux-arm-gnueabihf
 
-**Version:** 1.76.0  
+**Version:** 1.92.0  
 **License:** MIT
 
 ```
@@ -3571,7 +3571,7 @@ SOFTWARE.
 
 ## @oxlint/binding-linux-arm-musleabihf
 
-**Version:** 1.76.0  
+**Version:** 1.92.0  
 **License:** MIT
 
 ```
@@ -3600,7 +3600,7 @@ SOFTWARE.
 
 ## @oxlint/binding-linux-arm64-gnu
 
-**Version:** 1.76.0  
+**Version:** 1.92.0  
 **License:** MIT
 
 ```
@@ -3629,7 +3629,7 @@ SOFTWARE.
 
 ## @oxlint/binding-linux-arm64-musl
 
-**Version:** 1.76.0  
+**Version:** 1.92.0  
 **License:** MIT
 
 ```
@@ -3658,7 +3658,7 @@ SOFTWARE.
 
 ## @oxlint/binding-linux-ppc64-gnu
 
-**Version:** 1.76.0  
+**Version:** 1.92.0  
 **License:** MIT
 
 ```
@@ -3687,7 +3687,7 @@ SOFTWARE.
 
 ## @oxlint/binding-linux-riscv64-gnu
 
-**Version:** 1.76.0  
+**Version:** 1.92.0  
 **License:** MIT
 
 ```
@@ -3716,7 +3716,7 @@ SOFTWARE.
 
 ## @oxlint/binding-linux-riscv64-musl
 
-**Version:** 1.76.0  
+**Version:** 1.92.0  
 **License:** MIT
 
 ```
@@ -3745,7 +3745,7 @@ SOFTWARE.
 
 ## @oxlint/binding-linux-s390x-gnu
 
-**Version:** 1.76.0  
+**Version:** 1.92.0  
 **License:** MIT
 
 ```
@@ -3774,7 +3774,7 @@ SOFTWARE.
 
 ## @oxlint/binding-linux-x64-gnu
 
-**Version:** 1.76.0  
+**Version:** 1.92.0  
 **License:** MIT
 
 ```
@@ -3803,7 +3803,7 @@ SOFTWARE.
 
 ## @oxlint/binding-linux-x64-musl
 
-**Version:** 1.76.0  
+**Version:** 1.92.0  
 **License:** MIT
 
 ```
@@ -3832,7 +3832,7 @@ SOFTWARE.
 
 ## @oxlint/binding-openharmony-arm64
 
-**Version:** 1.76.0  
+**Version:** 1.92.0  
 **License:** MIT
 
 ```
@@ -3861,7 +3861,7 @@ SOFTWARE.
 
 ## @oxlint/binding-win32-arm64-msvc
 
-**Version:** 1.76.0  
+**Version:** 1.92.0  
 **License:** MIT
 
 ```
@@ -3890,7 +3890,7 @@ SOFTWARE.
 
 ## @oxlint/binding-win32-ia32-msvc
 
-**Version:** 1.76.0  
+**Version:** 1.92.0  
 **License:** MIT
 
 ```
@@ -3919,7 +3919,7 @@ SOFTWARE.
 
 ## @oxlint/binding-win32-x64-msvc
 
-**Version:** 1.76.0  
+**Version:** 1.92.0  
 **License:** MIT
 
 ```
@@ -4217,9 +4217,38 @@ SOFTWARE.
 
 ---
 
+## @rolldown/binding-android-arm-eabi
+
+**Version:** 1.3.0  
+**License:** MIT
+
+```
+MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+---
+
 ## @rolldown/binding-android-arm64
 
-**Version:** 1.2.0  
+**Version:** 1.3.0  
 **License:** MIT
 
 ```
@@ -4248,7 +4277,7 @@ SOFTWARE.
 
 ## @rolldown/binding-darwin-arm64
 
-**Version:** 1.2.0  
+**Version:** 1.3.0  
 **License:** MIT
 
 ```
@@ -4277,7 +4306,7 @@ SOFTWARE.
 
 ## @rolldown/binding-darwin-x64
 
-**Version:** 1.2.0  
+**Version:** 1.3.0  
 **License:** MIT
 
 ```
@@ -4306,7 +4335,7 @@ SOFTWARE.
 
 ## @rolldown/binding-freebsd-x64
 
-**Version:** 1.2.0  
+**Version:** 1.3.0  
 **License:** MIT
 
 ```
@@ -4335,7 +4364,7 @@ SOFTWARE.
 
 ## @rolldown/binding-linux-arm-gnueabihf
 
-**Version:** 1.2.0  
+**Version:** 1.3.0  
 **License:** MIT
 
 ```
@@ -4364,7 +4393,7 @@ SOFTWARE.
 
 ## @rolldown/binding-linux-arm64-gnu
 
-**Version:** 1.2.0  
+**Version:** 1.3.0  
 **License:** MIT
 
 ```
@@ -4393,7 +4422,7 @@ SOFTWARE.
 
 ## @rolldown/binding-linux-arm64-musl
 
-**Version:** 1.2.0  
+**Version:** 1.3.0  
 **License:** MIT
 
 ```
@@ -4422,7 +4451,7 @@ SOFTWARE.
 
 ## @rolldown/binding-linux-ppc64-gnu
 
-**Version:** 1.2.0  
+**Version:** 1.3.0  
 **License:** MIT
 
 ```
@@ -4451,7 +4480,7 @@ SOFTWARE.
 
 ## @rolldown/binding-linux-s390x-gnu
 
-**Version:** 1.2.0  
+**Version:** 1.3.0  
 **License:** MIT
 
 ```
@@ -4480,7 +4509,7 @@ SOFTWARE.
 
 ## @rolldown/binding-linux-x64-gnu
 
-**Version:** 1.2.0  
+**Version:** 1.3.0  
 **License:** MIT
 
 ```
@@ -4509,7 +4538,7 @@ SOFTWARE.
 
 ## @rolldown/binding-linux-x64-musl
 
-**Version:** 1.2.0  
+**Version:** 1.3.0  
 **License:** MIT
 
 ```
@@ -4538,7 +4567,7 @@ SOFTWARE.
 
 ## @rolldown/binding-openharmony-arm64
 
-**Version:** 1.2.0  
+**Version:** 1.3.0  
 **License:** MIT
 
 ```
@@ -4567,7 +4596,7 @@ SOFTWARE.
 
 ## @rolldown/binding-wasm32-wasi
 
-**Version:** 1.2.0  
+**Version:** 1.3.0  
 **License:** MIT
 
 ```
@@ -4596,7 +4625,7 @@ SOFTWARE.
 
 ## @rolldown/binding-win32-arm64-msvc
 
-**Version:** 1.2.0  
+**Version:** 1.3.0  
 **License:** MIT
 
 ```
@@ -4625,7 +4654,7 @@ SOFTWARE.
 
 ## @rolldown/binding-win32-x64-msvc
 
-**Version:** 1.2.0  
+**Version:** 1.3.0  
 **License:** MIT
 
 ```
@@ -4685,7 +4714,7 @@ SOFTWARE.
 
 ## @rollup/rollup-android-arm-eabi
 
-**Version:** 4.62.3  
+**Version:** 4.67.5  
 **License:** MIT
 
 ```
@@ -4714,7 +4743,36 @@ SOFTWARE.
 
 ## @rollup/rollup-android-arm64
 
-**Version:** 4.62.3  
+**Version:** 4.67.5  
+**License:** MIT
+
+```
+MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+---
+
+## @rollup/rollup-android-x64
+
+**Version:** 4.67.5  
 **License:** MIT
 
 ```
@@ -4743,7 +4801,7 @@ SOFTWARE.
 
 ## @rollup/rollup-darwin-arm64
 
-**Version:** 4.62.3  
+**Version:** 4.67.5  
 **License:** MIT
 
 ```
@@ -4772,7 +4830,7 @@ SOFTWARE.
 
 ## @rollup/rollup-darwin-x64
 
-**Version:** 4.62.3  
+**Version:** 4.67.5  
 **License:** MIT
 
 ```
@@ -4801,7 +4859,7 @@ SOFTWARE.
 
 ## @rollup/rollup-freebsd-arm64
 
-**Version:** 4.62.3  
+**Version:** 4.67.5  
 **License:** MIT
 
 ```
@@ -4830,7 +4888,7 @@ SOFTWARE.
 
 ## @rollup/rollup-freebsd-x64
 
-**Version:** 4.62.3  
+**Version:** 4.67.5  
 **License:** MIT
 
 ```
@@ -4859,7 +4917,7 @@ SOFTWARE.
 
 ## @rollup/rollup-linux-arm-gnueabihf
 
-**Version:** 4.62.3  
+**Version:** 4.67.5  
 **License:** MIT
 
 ```
@@ -4888,7 +4946,7 @@ SOFTWARE.
 
 ## @rollup/rollup-linux-arm-musleabihf
 
-**Version:** 4.62.3  
+**Version:** 4.67.5  
 **License:** MIT
 
 ```
@@ -4917,7 +4975,7 @@ SOFTWARE.
 
 ## @rollup/rollup-linux-arm64-gnu
 
-**Version:** 4.62.3  
+**Version:** 4.67.5  
 **License:** MIT
 
 ```
@@ -4946,7 +5004,7 @@ SOFTWARE.
 
 ## @rollup/rollup-linux-arm64-musl
 
-**Version:** 4.62.3  
+**Version:** 4.67.5  
 **License:** MIT
 
 ```
@@ -4975,7 +5033,7 @@ SOFTWARE.
 
 ## @rollup/rollup-linux-loong64-gnu
 
-**Version:** 4.62.3  
+**Version:** 4.67.5  
 **License:** MIT
 
 ```
@@ -5004,7 +5062,7 @@ SOFTWARE.
 
 ## @rollup/rollup-linux-loong64-musl
 
-**Version:** 4.62.3  
+**Version:** 4.67.5  
 **License:** MIT
 
 ```
@@ -5033,7 +5091,7 @@ SOFTWARE.
 
 ## @rollup/rollup-linux-ppc64-gnu
 
-**Version:** 4.62.3  
+**Version:** 4.67.5  
 **License:** MIT
 
 ```
@@ -5062,7 +5120,7 @@ SOFTWARE.
 
 ## @rollup/rollup-linux-ppc64-musl
 
-**Version:** 4.62.3  
+**Version:** 4.67.5  
 **License:** MIT
 
 ```
@@ -5091,7 +5149,7 @@ SOFTWARE.
 
 ## @rollup/rollup-linux-riscv64-gnu
 
-**Version:** 4.62.3  
+**Version:** 4.67.5  
 **License:** MIT
 
 ```
@@ -5120,7 +5178,7 @@ SOFTWARE.
 
 ## @rollup/rollup-linux-riscv64-musl
 
-**Version:** 4.62.3  
+**Version:** 4.67.5  
 **License:** MIT
 
 ```
@@ -5149,7 +5207,7 @@ SOFTWARE.
 
 ## @rollup/rollup-linux-s390x-gnu
 
-**Version:** 4.62.3  
+**Version:** 4.67.5  
 **License:** MIT
 
 ```
@@ -5178,7 +5236,7 @@ SOFTWARE.
 
 ## @rollup/rollup-linux-x64-gnu
 
-**Version:** 4.62.3  
+**Version:** 4.67.5  
 **License:** MIT
 
 ```
@@ -5207,7 +5265,7 @@ SOFTWARE.
 
 ## @rollup/rollup-linux-x64-musl
 
-**Version:** 4.62.3  
+**Version:** 4.67.5  
 **License:** MIT
 
 ```
@@ -5236,7 +5294,7 @@ SOFTWARE.
 
 ## @rollup/rollup-openbsd-x64
 
-**Version:** 4.62.3  
+**Version:** 4.67.5  
 **License:** MIT
 
 ```
@@ -5265,7 +5323,7 @@ SOFTWARE.
 
 ## @rollup/rollup-openharmony-arm64
 
-**Version:** 4.62.3  
+**Version:** 4.67.5  
 **License:** MIT
 
 ```
@@ -5294,7 +5352,7 @@ SOFTWARE.
 
 ## @rollup/rollup-win32-arm64-msvc
 
-**Version:** 4.62.3  
+**Version:** 4.67.5  
 **License:** MIT
 
 ```
@@ -5323,7 +5381,7 @@ SOFTWARE.
 
 ## @rollup/rollup-win32-ia32-msvc
 
-**Version:** 4.62.3  
+**Version:** 4.67.5  
 **License:** MIT
 
 ```
@@ -5352,7 +5410,7 @@ SOFTWARE.
 
 ## @rollup/rollup-win32-x64-gnu
 
-**Version:** 4.62.3  
+**Version:** 4.67.5  
 **License:** MIT
 
 ```
@@ -5381,7 +5439,7 @@ SOFTWARE.
 
 ## @rollup/rollup-win32-x64-msvc
 
-**Version:** 4.62.3  
+**Version:** 4.67.5  
 **License:** MIT
 
 ```
@@ -6917,7 +6975,7 @@ SOFTWARE.
 
 ## @turbo/darwin-64
 
-**Version:** 2.10.7  
+**Version:** 2.11.10  
 **License:** MIT
 
 ```
@@ -6946,7 +7004,24 @@ SOFTWARE.
 
 ## @turbo/darwin-arm64
 
-**Version:** 2.10.7  
+**Version:** 2.11.10  
+**License:** MIT
+
+```
+Copyright (c) 2026 Vercel, Inc
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+```
+
+---
+
+## @turbo/linux-64
+
+**Version:** 2.11.10  
 **License:** MIT
 
 ```
@@ -6973,26 +7048,9 @@ SOFTWARE.
 
 ---
 
-## @turbo/linux-64
-
-**Version:** 2.10.7  
-**License:** MIT
-
-```
-Copyright (c) 2026 Vercel, Inc
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-```
-
----
-
 ## @turbo/linux-arm64
 
-**Version:** 2.10.7  
+**Version:** 2.11.10  
 **License:** MIT
 
 ```
@@ -7021,7 +7079,7 @@ SOFTWARE.
 
 ## @turbo/windows-64
 
-**Version:** 2.10.7  
+**Version:** 2.11.10  
 **License:** MIT
 
 ```
@@ -7050,7 +7108,7 @@ SOFTWARE.
 
 ## @turbo/windows-arm64
 
-**Version:** 2.10.7  
+**Version:** 2.11.10  
 **License:** MIT
 
 ```
@@ -7079,7 +7137,7 @@ SOFTWARE.
 
 ## @tybys/wasm-util
 
-**Version:** 0.10.3  
+**Version:** 0.10.4  
 **License:** MIT
 
 ```
@@ -7232,7 +7290,7 @@ MIT License
 
 ## @types/estree
 
-**Version:** 1.0.9  
+**Version:** 1.0.10  
 **License:** MIT
 
 ```
@@ -7387,7 +7445,7 @@ MIT License
 
 ## @types/node
 
-**Version:** 24.13.3  
+**Version:** 26.6.6  
 **License:** MIT
 
 ```
@@ -7974,9 +8032,9 @@ SOFTWARE.
 
 ---
 
-## @yuku-codegen/binding-darwin-arm64
+## @yuku-toolchain/darwin-arm64
 
-**Version:** 0.8.1  
+**Version:** 0.27.0  
 **License:** MIT
 
 ```
@@ -8003,9 +8061,9 @@ SOFTWARE.
 
 ---
 
-## @yuku-codegen/binding-darwin-x64
+## @yuku-toolchain/darwin-x64
 
-**Version:** 0.8.1  
+**Version:** 0.27.0  
 **License:** MIT
 
 ```
@@ -8032,9 +8090,9 @@ SOFTWARE.
 
 ---
 
-## @yuku-codegen/binding-freebsd-x64
+## @yuku-toolchain/linux-arm64
 
-**Version:** 0.8.1  
+**Version:** 0.27.0  
 **License:** MIT
 
 ```
@@ -8061,9 +8119,9 @@ SOFTWARE.
 
 ---
 
-## @yuku-codegen/binding-linux-arm-gnu
+## @yuku-toolchain/linux-x64
 
-**Version:** 0.8.1  
+**Version:** 0.27.0  
 **License:** MIT
 
 ```
@@ -8090,9 +8148,9 @@ SOFTWARE.
 
 ---
 
-## @yuku-codegen/binding-linux-arm-musl
+## @yuku-toolchain/win32-arm64
 
-**Version:** 0.8.1  
+**Version:** 0.27.0  
 **License:** MIT
 
 ```
@@ -8119,502 +8177,9 @@ SOFTWARE.
 
 ---
 
-## @yuku-codegen/binding-linux-arm64-gnu
+## @yuku-toolchain/win32-x64
 
-**Version:** 0.8.1  
-**License:** MIT
-
-```
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## @yuku-codegen/binding-linux-arm64-musl
-
-**Version:** 0.8.1  
-**License:** MIT
-
-```
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## @yuku-codegen/binding-linux-x64-gnu
-
-**Version:** 0.8.1  
-**License:** MIT
-
-```
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## @yuku-codegen/binding-linux-x64-musl
-
-**Version:** 0.8.1  
-**License:** MIT
-
-```
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## @yuku-codegen/binding-win32-arm64
-
-**Version:** 0.8.1  
-**License:** MIT
-
-```
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## @yuku-codegen/binding-win32-x64
-
-**Version:** 0.8.1  
-**License:** MIT
-
-```
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## @yuku-parser/binding-darwin-arm64
-
-**Version:** 0.8.1  
-**License:** MIT
-
-```
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## @yuku-parser/binding-darwin-x64
-
-**Version:** 0.8.1  
-**License:** MIT
-
-```
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## @yuku-parser/binding-freebsd-x64
-
-**Version:** 0.8.1  
-**License:** MIT
-
-```
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## @yuku-parser/binding-linux-arm-gnu
-
-**Version:** 0.8.1  
-**License:** MIT
-
-```
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## @yuku-parser/binding-linux-arm-musl
-
-**Version:** 0.8.1  
-**License:** MIT
-
-```
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## @yuku-parser/binding-linux-arm64-gnu
-
-**Version:** 0.8.1  
-**License:** MIT
-
-```
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## @yuku-parser/binding-linux-arm64-musl
-
-**Version:** 0.8.1  
-**License:** MIT
-
-```
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## @yuku-parser/binding-linux-x64-gnu
-
-**Version:** 0.8.1  
-**License:** MIT
-
-```
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## @yuku-parser/binding-linux-x64-musl
-
-**Version:** 0.8.1  
-**License:** MIT
-
-```
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## @yuku-parser/binding-win32-arm64
-
-**Version:** 0.8.1  
-**License:** MIT
-
-```
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## @yuku-parser/binding-win32-x64
-
-**Version:** 0.8.1  
-**License:** MIT
-
-```
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## @yuku-toolchain/types
-
-**Version:** 0.8.1  
+**Version:** 0.27.0  
 **License:** MIT
 
 ```
@@ -8796,31 +8361,6 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-```
-
----
-
-## ansis
-
-**Version:** 4.3.1  
-**License:** ISC
-
-```
-ISC License
-
-Copyright (c) 2026, webdiscus
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ```
 
 ---
@@ -9215,7 +8755,7 @@ SOFTWARE.
 
 ## axios
 
-**Version:** 1.18.1  
+**Version:** 1.21.0  
 **License:** MIT
 
 ```
@@ -9226,6 +8766,39 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+```
+
+---
+
+## balanced-match
+
+**Version:** 4.0.4  
+**License:** MIT
+
+```
+(MIT)
+
+Original code Copyright Julian Gruber <julian@juliangruber.com>
+
+Port to TypeScript Copyright Isaac Z. Schlueter <i@izs.me>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 ```
 
 ---
@@ -9288,6 +8861,39 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
+## brace-expansion
+
+**Version:** 5.0.12  
+**License:** MIT
+
+```
+MIT License
+
+Copyright Julian Gruber <julian@juliangruber.com>
+
+TypeScript port Copyright Isaac Z. Schlueter <i@izs.me>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+---
+
 ## bundle-name
 
 **Version:** 4.1.0  
@@ -9342,7 +8948,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## cac
 
-**Version:** 6.7.14  
+**Version:** 7.1.0  
 **License:** MIT
 
 ```
@@ -9492,7 +9098,7 @@ SOFTWARE.
 
 ## chalk
 
-**Version:** 6.0.0  
+**Version:** 6.0.1  
 **License:** MIT
 
 ```
@@ -9667,7 +9273,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ## cliui
 
-**Version:** 8.0.1  
+**Version:** 9.0.1  
 **License:** ISC
 
 ```
@@ -9768,7 +9374,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 **License:** MIT
 
 ```
-MIT License
+Copyright (c) 2011 Debuggable Limited <felix@debuggable.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -9777,16 +9383,16 @@ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 ```
 
 ---
@@ -10197,7 +9803,7 @@ SOFTWARE.
 **License:** MIT
 
 ```
-MIT License
+Copyright (c) 2011 Debuggable Limited <felix@debuggable.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -10206,16 +9812,16 @@ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 ```
 
 ---
@@ -10254,7 +9860,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## dotenv
 
-**Version:** 17.4.2  
+**Version:** 18.0.9  
 **License:** BSD-2-Clause
 
 ```
@@ -10438,7 +10044,7 @@ SOFTWARE.
 
 ## empathic
 
-**Version:** 2.0.1  
+**Version:** 2.1.0  
 **License:** MIT
 
 ```
@@ -10673,7 +10279,7 @@ SOFTWARE.
 
 ## esbuild
 
-**Version:** 0.27.7  
+**Version:** 0.28.2  
 **License:** MIT
 
 ```
@@ -10806,7 +10412,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## execa
 
-**Version:** 10.0.0  
+**Version:** 10.2.1  
 **License:** MIT
 
 ```
@@ -11494,7 +11100,7 @@ THE SOFTWARE.
 
 ## flatted
 
-**Version:** 3.4.3  
+**Version:** 3.4.4  
 **License:** ISC
 
 ```
@@ -11576,25 +11182,25 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 **License:** MIT
 
 ```
-MIT License
+Copyright (c) 2012 Felix Geisendörfer (felix@debuggable.com) and contributors
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
 ```
 
 ---
@@ -11666,7 +11272,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## fs-extra
 
-**Version:** 11.4.0  
+**Version:** 11.4.1  
 **License:** MIT
 
 ```
@@ -11721,6 +11327,9 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ```
 MIT License
+-----------
+
+Copyright (C) 2010-2020 by Philipp Dunkel, Ben Noordhuis, Elan Shankar, Paul Miller
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -11729,16 +11338,16 @@ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 ```
 
 ---
@@ -11784,6 +11393,25 @@ Copyright 2018 Stefan Penner
 Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.
 
 THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+```
+
+---
+
+## get-east-asian-width
+
+**Version:** 1.7.0  
+**License:** MIT
+
+```
+MIT License
+
+Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 
 ---
@@ -11871,7 +11499,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## get-tsconfig
 
-**Version:** 5.0.0-beta.5  
+**Version:** 5.0.0-beta.6  
 **License:** MIT
 
 ```
@@ -12031,7 +11659,7 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ## graphql
 
-**Version:** 16.14.2  
+**Version:** 16.15.0  
 **License:** MIT
 
 ```
@@ -12193,7 +11821,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## hookable
 
-**Version:** 6.1.1  
+**Version:** 6.1.2  
 **License:** MIT
 
 ```
@@ -12688,7 +12316,7 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ## import-without-cache
 
-**Version:** 0.4.0  
+**Version:** 0.4.1  
 **License:** MIT
 
 ```
@@ -12769,7 +12397,7 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ## ip-address
 
-**Version:** 10.3.1  
+**Version:** 10.7.6  
 **License:** MIT
 
 ```
@@ -13910,7 +13538,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ## markdown-it
 
-**Version:** 14.3.0  
+**Version:** 14.3.3  
 **License:** MIT
 
 ```
@@ -14141,6 +13769,71 @@ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
 CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+```
+
+---
+
+## minimatch
+
+**Version:** 10.2.6  
+**License:** BlueOak-1.0.0
+
+```
+# Blue Oak Model License
+
+Version 1.0.0
+
+## Purpose
+
+This license gives everyone as much permission to work with
+this software as possible, while protecting contributors
+from liability.
+
+## Acceptance
+
+In order to receive this license, you must agree to its
+rules. The rules of this license are both obligations
+under that agreement and conditions to your license.
+You must not do anything with this software that triggers
+a rule that you cannot or will not follow.
+
+## Copyright
+
+Each contributor licenses you to do everything with this
+software that would otherwise infringe that contributor's
+copyright in it.
+
+## Notices
+
+You must ensure that everyone who gets a copy of
+any part of this software from you, with or without
+changes, also gets the text of this license or a link to
+<https://blueoakcouncil.org/license/1.0.0>.
+
+## Excuse
+
+If anyone notifies you in writing that you have not
+complied with [Notices](#notices), you can keep your
+license by taking all practical steps to comply within 30
+days after the notice. If you do not do so, your license
+ends immediately.
+
+## Patent
+
+Each contributor licenses you to do everything with this
+software that would otherwise infringe any patent claims
+they can license or become able to license.
+
+## Reliability
+
+No contributor can revoke this license.
+
+## No Liability
+
+**_As far as the law allows, this software comes as is,
+without any warranty or condition, and no contributor
+will be liable to anyone for any damages related to this
+software or this license, under any kind of legal claim._**
 ```
 
 ---
@@ -14575,7 +14268,7 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ## nanoid
 
-**Version:** 3.3.16  
+**Version:** 3.3.20  
 **License:** MIT
 
 ```
@@ -14972,7 +14665,7 @@ SOFTWARE.
 
 ## obug
 
-**Version:** 2.1.4  
+**Version:** 3.0.0  
 **License:** MIT
 
 ```
@@ -15163,7 +14856,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## oxfmt
 
-**Version:** 0.61.0  
+**Version:** 0.77.0  
 **License:** MIT
 
 ```
@@ -15195,7 +14888,7 @@ SOFTWARE.
 
 ## oxlint
 
-**Version:** 1.76.0  
+**Version:** 1.92.0  
 **License:** MIT
 
 ```
@@ -15227,7 +14920,7 @@ SOFTWARE.
 
 ## oxlint-tsgolint
 
-**Version:** 7.0.2001  
+**Version:** 7.0.2006  
 **License:** MIT
 
 ```
@@ -15278,7 +14971,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## p-retry
 
-**Version:** 8.0.0  
+**Version:** 9.0.0  
 **License:** MIT
 
 ```
@@ -15723,7 +15416,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ## picomatch
 
-**Version:** 4.0.5  
+**Version:** 4.0.7  
 **License:** MIT
 
 ```
@@ -15754,7 +15447,7 @@ THE SOFTWARE.
 
 ## playwright
 
-**Version:** 1.62.0  
+**Version:** 1.65.0  
 **License:** Apache-2.0
 
 ```
@@ -15966,7 +15659,7 @@ Apache License
 
 ## playwright-core
 
-**Version:** 1.62.0  
+**Version:** 1.65.0  
 **License:** Apache-2.0
 
 ```
@@ -16178,7 +15871,7 @@ Apache License
 
 ## postcss
 
-**Version:** 8.5.23  
+**Version:** 8.5.32  
 **License:** MIT
 
 ```
@@ -16256,7 +15949,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## pretty-ms
 
-**Version:** 9.3.0  
+**Version:** 9.3.1  
 **License:** MIT
 
 ```
@@ -16466,7 +16159,7 @@ SOFTWARE.
 
 ## qs
 
-**Version:** 6.15.3  
+**Version:** 6.17.1  
 **License:** BSD-3-Clause
 
 ```
@@ -16687,7 +16380,7 @@ SOFTWARE.
 
 ## rettime
 
-**Version:** 0.11.11  
+**Version:** 0.11.12  
 **License:** MIT
 
 ```
@@ -16706,7 +16399,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## rolldown
 
-**Version:** 1.2.0  
+**Version:** 1.3.0  
 **License:** MIT
 
 ```
@@ -16741,7 +16434,7 @@ The licenses of externally maintained libraries from which parts of the Software
 
 ## rolldown-plugin-dts
 
-**Version:** 0.27.14  
+**Version:** 0.30.0  
 **License:** MIT
 
 ```
@@ -16772,7 +16465,7 @@ SOFTWARE.
 
 ## rollup
 
-**Version:** 4.62.3  
+**Version:** 4.67.5  
 **License:** MIT
 
 ```
@@ -17637,7 +17330,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## set-cookie-parser
 
-**Version:** 3.1.2  
+**Version:** 3.2.2  
 **License:** MIT
 
 ```
@@ -18234,7 +17927,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## source-map-js
 
-**Version:** 1.2.1  
+**Version:** 1.2.2  
 **License:** BSD-3-Clause
 
 ```
@@ -19036,7 +18729,7 @@ SOFTWARE.
 
 ## tinyexec
 
-**Version:** 0.3.2  
+**Version:** 1.3.1  
 **License:** MIT
 
 ```
@@ -19098,7 +18791,7 @@ SOFTWARE.
 
 ## tinypool
 
-**Version:** 1.1.1  
+**Version:** 2.2.0  
 **License:** MIT
 
 ```
@@ -19108,6 +18801,37 @@ Copyright (c) 2020 James M Snell and the Piscina contributors
 
 Piscina contributors listed at https://github.com/jasnell/piscina#the-team and
 in the README file.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+---
+
+## tinyps
+
+**Version:** 0.5.1  
+**License:** MIT
+
+```
+MIT License
+
+Copyright (c) 2026 Tinylibs
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19163,7 +18887,7 @@ SOFTWARE.
 
 ## tinyspy
 
-**Version:** 4.0.4  
+**Version:** 4.0.6  
 **License:** MIT
 
 ```
@@ -19194,7 +18918,7 @@ SOFTWARE.
 
 ## tldts
 
-**Version:** 7.4.9  
+**Version:** 7.4.19  
 **License:** MIT
 
 ```
@@ -19217,7 +18941,7 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTH
 
 ## tldts-core
 
-**Version:** 7.4.9  
+**Version:** 7.4.20  
 **License:** MIT
 
 ```
@@ -19322,37 +19046,6 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 ---
 
-## tree-kill
-
-**Version:** 1.2.2  
-**License:** MIT
-
-```
-MIT License
-
-Copyright (c) 2018 Peter Krumins
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
 ## treeify
 
 **Version:** 1.1.0  
@@ -19411,7 +19104,7 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ## tsdown
 
-**Version:** 0.22.14  
+**Version:** 0.23.7  
 **License:** MIT
 
 ```
@@ -19443,7 +19136,7 @@ SOFTWARE.
 
 ## tslib
 
-**Version:** 2.8.1  
+**Version:** 2.9.1  
 **License:** 0BSD
 
 ```
@@ -19485,7 +19178,7 @@ SOFTWARE.
 
 ## turbo
 
-**Version:** 2.10.7  
+**Version:** 2.11.10  
 **License:** MIT
 
 ```
@@ -19502,7 +19195,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## type-fest
 
-**Version:** 5.8.0  
+**Version:** 5.10.0  
 **License:** (MIT OR CC0-1.0)
 
 ```
@@ -19914,7 +19607,7 @@ SOFTWARE.
 
 ## undici-types
 
-**Version:** 7.18.2  
+**Version:** 8.9.0  
 **License:** MIT
 
 ```
@@ -20139,7 +19832,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## verkit
 
-**Version:** 0.3.1  
+**Version:** 0.5.0  
 **License:** MIT
 
 ```
@@ -20170,7 +19863,7 @@ SOFTWARE.
 
 ## vite
 
-**Version:** 7.3.6  
+**Version:** 7.3.7  
 **License:** MIT
 
 ```
@@ -23148,7 +22841,7 @@ THE SOFTWARE.
 
 ## wrap-ansi
 
-**Version:** 7.0.0  
+**Version:** 9.0.2  
 **License:** MIT
 
 ```
@@ -23364,7 +23057,7 @@ THIS SOFTWARE.
 
 ## yargs
 
-**Version:** 17.7.3  
+**Version:** 18.2.0  
 **License:** MIT
 
 ```
@@ -23395,7 +23088,7 @@ THE SOFTWARE.
 
 ## yargs-parser
 
-**Version:** 21.1.1  
+**Version:** 22.0.0  
 **License:** ISC
 
 ```
@@ -23436,67 +23129,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-## yuku-ast
+## yuku
 
-**Version:** 0.8.1  
-**License:** MIT
-
-```
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## yuku-codegen
-
-**Version:** 0.8.1  
-**License:** MIT
-
-```
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## yuku-parser
-
-**Version:** 0.8.1  
+**Version:** 0.27.0  
 **License:** MIT
 
 ```

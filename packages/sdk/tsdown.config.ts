@@ -12,6 +12,6 @@ export default defineConfig({
   fixedExtension: false,
   deps: {
     alwaysBundle: ['p-retry'],
-    neverBundle: ['msw', 'fishery', '@faker-js/faker'],
+    neverBundle: [/^msw(\/|$)/, 'fishery', '@faker-js/faker'],
   },
 });

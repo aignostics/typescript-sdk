@@ -1,17 +1,17 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi, type Mock } from 'vitest';
 import { http, HttpResponse } from 'msw';
 import { isAxiosError, type AxiosError } from 'axios';
-import { PlatformSDKHttp } from './platform-sdk.js';
+import { PlatformSDKHttp, type TokenProvider } from './platform-sdk.js';
 import { APIError, AuthenticationError } from './errors.js';
 import { setMockScenario, server } from './test-utils/http-mocks.js';
 import { ItemState, ItemTerminationReason } from './generated/api.js';
 
 describe('PlatformSDK', () => {
   let sdk: PlatformSDKHttp;
-  let mockTokenProvider: ReturnType<typeof vi.fn>;
+  let mockTokenProvider: Mock<TokenProvider>;
 
   beforeEach(() => {
-    mockTokenProvider = vi.fn();
+    mockTokenProvider = vi.fn<TokenProvider>();
     sdk = new PlatformSDKHttp({
       tokenProvider: mockTokenProvider,
     });
@@ -77,7 +77,7 @@ describe('PlatformSDK', () => {
 
   it('should handle undefined token correctly', async () => {
     // Mock token provider to return undefined (indicating no token available)
-    mockTokenProvider.mockResolvedValue(undefined);
+    mockTokenProvider.mockResolvedValue(undefined as never);
 
     await expect(sdk.testConnection()).rejects.toThrow(AuthenticationError);
     await expect(sdk.testConnection()).rejects.toThrow(
