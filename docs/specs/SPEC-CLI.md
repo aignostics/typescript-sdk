@@ -253,9 +253,8 @@ flowchart TD
 **Token Refresh Algorithm**:
 ```mermaid
 flowchart TD
-    Start([Start: refreshToken]) --> Discover[issuer = await<br/>Issuer.discover<br/>config.issuerURL]
-    Discover --> CreateClient[client = new<br/>issuer.Client<br/>config]
-    CreateClient --> TryRefresh[Try: tokenSet = await<br/>client.refresh<br/>tokenData.refresh_token]
+    Start([Start: refreshToken]) --> Discover[oidcConfig = await<br/>client.discovery<br/>config.issuerURL, clientID, None]
+    Discover --> TryRefresh[Try: tokenSet = await<br/>client.refreshTokenGrant<br/>oidcConfig, tokenData.refresh_token]
     TryRefresh --> Success{Success?}
     Success -->|No| LogWarn[console.warn<br/>Token refresh failed]
     LogWarn --> ReturnNull[Return null]

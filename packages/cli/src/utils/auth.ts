@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Issuer, generators } from 'openid-client';
+import * as client from 'openid-client';
 import { environmentConfig, EnvironmentKey } from './environment.js';
 
 /**
@@ -33,10 +33,26 @@ export const tokenSchema = z.object({
 export const tokenSetValidationSchema = z.object({
   access_token: z.string(),
   refresh_token: z.string().optional(),
-  expires_at: z.number(),
-  token_type: z.literal('Bearer'),
+  expires_in: z.number(),
+  // openid-client v6 lowercases token_type; 'Bearer' is still what gets stored
+  token_type: z.string().toLowerCase().pipe(z.literal('bearer')),
   scope: z.string(),
 });
+
+const discover = (oauthConfig: { issuerURL: string; clientID: string }) =>
+  client.discovery(new URL(oauthConfig.issuerURL), oauthConfig.clientID, undefined, client.None());
+
+const toStoredToken = (
+  tokenSet: z.infer<typeof tokenSetValidationSchema>,
+  fallbackRefreshToken?: string
+): Omit<TokenData, 'stored_at'> =>
+  tokenSchema.omit({ stored_at: true }).parse({
+    access_token: tokenSet.access_token,
+    refresh_token: tokenSet.refresh_token || fallbackRefreshToken, // Keep old refresh token if not renewed
+    expires_at_ms: Date.now() + tokenSet.expires_in * 1000,
+    token_type: 'Bearer',
+    scope: tokenSet.scope,
+  });
 
 export type TokenData = z.infer<typeof tokenSchema>;
 
@@ -84,29 +100,13 @@ export class AuthService {
     const oauthConfig = environmentConfig[environment];
 
     try {
-      const issuer = await Issuer.discover(oauthConfig.issuerURL);
-      const client = new issuer.Client({
-        client_id: oauthConfig.clientID,
-        redirect_uris: [], // Not needed for refresh
-        response_types: ['code'],
-        scope: oauthConfig.scope || 'openid profile email offline_access',
-        audience: oauthConfig.audience || 'https://aignostics-platform-samia',
-        token_endpoint_auth_method: 'none',
-      });
-
-      const tokenSet = tokenSetValidationSchema.parse(await client.refresh(refreshToken));
+      const config = await discover(oauthConfig);
+      const tokenSet = tokenSetValidationSchema.parse(
+        await client.refreshTokenGrant(config, refreshToken)
+      );
 
       // Save the new token securely
-      await this.saveToken(
-        environment,
-        tokenSchema.omit({ stored_at: true }).parse({
-          access_token: tokenSet.access_token,
-          refresh_token: tokenSet.refresh_token || refreshToken, // Keep old refresh token if not renewed
-          expires_at_ms: tokenSet.expires_at * 1000,
-          token_type: tokenSet.token_type,
-          scope: tokenSet.scope,
-        })
-      );
+      await this.saveToken(environment, toStoredToken(tokenSet, refreshToken));
 
       console.log('🎉 Login with refresh token successful! Token saved securely.');
     } catch (error) {
@@ -126,24 +126,15 @@ export class AuthService {
     const open = (await import('open')).default;
 
     try {
-      const issuer = await Issuer.discover(oauthConfig.issuerURL);
-      const client = new issuer.Client({
-        client_id: oauthConfig.clientID,
-        redirect_uris: [config.redirectUri],
-        response_types: ['code'],
+      const oidcConfig = await discover(oauthConfig);
+
+      const authorizationUrl = client.buildAuthorizationUrl(oidcConfig, {
+        redirect_uri: config.redirectUri,
         scope: oauthConfig.scope,
         audience: oauthConfig.audience,
-        token_endpoint_auth_method: 'none',
-      });
-
-      const codeChallenge = generators.codeChallenge(config.codeVerifier);
-
-      const authorizationUrl = client.authorizationUrl({
-        scope: oauthConfig.scope,
-        audience: oauthConfig.audience,
-        code_challenge: codeChallenge,
+        code_challenge: await client.calculatePKCECodeChallenge(config.codeVerifier),
         code_challenge_method: 'S256',
-      });
+      }).href;
 
       await open(authorizationUrl);
 
@@ -164,36 +155,19 @@ export class AuthService {
   ): Promise<void> {
     const oauthConfig = environmentConfig[environment];
     try {
-      const issuer = await Issuer.discover(oauthConfig.issuerURL);
-      const client = new issuer.Client({
-        client_id: oauthConfig.clientID,
-        redirect_uris: [config.redirectUri],
-        response_types: ['code'],
-        scope: oauthConfig.scope,
-        audience: oauthConfig.audience,
-        token_endpoint_auth_method: 'none',
-      });
+      const oidcConfig = await discover(oauthConfig);
 
       // Exchange authorization code for tokens
+      const callbackUrl = new URL(config.redirectUri);
+      callbackUrl.searchParams.set('code', authCode);
       const tokenSet = tokenSetValidationSchema.parse(
-        await client.callback(
-          config.redirectUri,
-          { code: authCode },
-          { code_verifier: config.codeVerifier }
-        )
+        await client.authorizationCodeGrant(oidcConfig, callbackUrl, {
+          pkceCodeVerifier: config.codeVerifier,
+        })
       );
 
       // Save the token securely
-      await this.saveToken(
-        environment,
-        tokenSchema.omit({ stored_at: true }).parse({
-          access_token: tokenSet.access_token,
-          refresh_token: tokenSet.refresh_token,
-          expires_at_ms: tokenSet.expires_at * 1000,
-          token_type: tokenSet.token_type,
-          scope: tokenSet.scope,
-        })
-      );
+      await this.saveToken(environment, toStoredToken(tokenSet));
     } catch (error) {
       console.error('❌ Token exchange failed:', error);
       throw error;
@@ -263,29 +237,12 @@ export class AuthService {
     }
 
     try {
-      const issuer = await Issuer.discover(config.issuerURL);
-      const client = new issuer.Client({
-        client_id: config.clientID,
-        redirect_uris: [], // Not needed for refresh
-        response_types: ['code'],
-        scope: config.scope || 'openid profile email offline_access',
-        audience: config.audience || 'https://aignostics-platform-samia',
-        token_endpoint_auth_method: 'none',
-      });
-
+      const oidcConfig = await discover(config);
       const tokenSet = tokenSetValidationSchema.parse(
-        await client.refresh(tokenData.refresh_token)
+        await client.refreshTokenGrant(oidcConfig, tokenData.refresh_token)
       );
 
-      const newTokenData: Omit<TokenData, 'stored_at'> = {
-        access_token: tokenSet.access_token,
-        refresh_token: tokenSet.refresh_token || tokenData.refresh_token, // Keep old refresh token if not renewed
-        expires_at_ms: tokenSet.expires_at * 1000,
-        token_type: tokenSet.token_type,
-        scope: tokenSet.scope,
-      };
-
-      return this.saveToken(environment, newTokenData);
+      return this.saveToken(environment, toStoredToken(tokenSet, tokenData.refresh_token));
     } catch (error) {
       console.warn(`Warning: Token refresh failed: ${String(error)}`);
       return null;
