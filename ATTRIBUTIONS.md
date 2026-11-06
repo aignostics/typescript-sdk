@@ -12910,7 +12910,7 @@ software or this license, under any kind of legal claim._**
 
 ## jose
 
-**Version:** 4.15.9  
+**Version:** 6.2.15  
 **License:** MIT
 
 ```
@@ -14601,15 +14601,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-## object-hash
+## oauth4webapi
 
-**Version:** 2.2.0  
+**Version:** 3.8.8  
 **License:** MIT
 
 ```
 The MIT License (MIT)
 
-Copyright (c) 2014 object-hash contributors
+Copyright (c) 2022 Filip Skokan
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -14674,37 +14674,6 @@ The MIT License (MIT)
 Copyright © 2025-PRESENT Kevin Deng (https://github.com/sxzz)
 Copyright (c) 2014-2017 TJ Holowaychuk <tj@vision-media.ca>
 Copyright (c) 2018-2021 Josh Junon
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## oidc-token-hash
-
-**Version:** 5.2.0  
-**License:** MIT
-
-```
-The MIT License (MIT)
-
-Copyright (c) 2015 Filip Skokan
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -14806,7 +14775,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## openid-client
 
-**Version:** 5.7.1  
+**Version:** 6.8.9  
 **License:** MIT
 
 ```

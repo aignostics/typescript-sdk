@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from 'vitest';
 import { AuthService, type TokenStorage } from './auth.js';
-import { BaseClient, Issuer } from 'openid-client';
+import * as client from 'openid-client';
 import { ChildProcess } from 'child_process';
 import { environmentConfig } from './environment.js';
 
@@ -11,12 +11,12 @@ vi.mock('open', () => ({
 }));
 
 vi.mock('openid-client', () => ({
-  Issuer: {
-    discover: vi.fn(),
-  },
-  generators: {
-    codeChallenge: vi.fn(() => 'mock-code-challenge'),
-  },
+  discovery: vi.fn(),
+  None: vi.fn(() => 'none-auth'),
+  refreshTokenGrant: vi.fn(),
+  authorizationCodeGrant: vi.fn(),
+  buildAuthorizationUrl: vi.fn(),
+  calculatePKCECodeChallenge: vi.fn(() => Promise.resolve('mock-code-challenge')),
 }));
 
 vi.mock('node:http', () => ({
@@ -45,6 +45,10 @@ vi.mock('./environment.js', () => ({
   },
 }));
 const environment = 'production';
+const NOW = 1_700_000_000_000;
+const noneAuth = 'none-auth' as unknown as ReturnType<typeof client.None>;
+const mockConfig = { id: 'mock-config' } as unknown as client.Configuration;
+type TokenResponse = Awaited<ReturnType<typeof client.refreshTokenGrant>>;
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -56,6 +60,9 @@ describe('AuthService', () => {
   };
 
   beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(NOW);
+
     // Create mock token storage
     mockTokenStorage = {
       save: vi.fn<TokenStorage['save']>(),
@@ -72,6 +79,10 @@ describe('AuthService', () => {
       warn: vi.spyOn(console, 'warn').mockImplementation(() => {}),
       error: vi.spyOn(console, 'error').mockImplementation(() => {}),
     };
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   describe('getValidAccessToken', () => {
@@ -255,40 +266,31 @@ describe('AuthService', () => {
       const newTokenSet = {
         access_token: 'new-access-token',
         refresh_token: 'new-refresh-token',
-        expires_at: Math.floor((Date.now() + 3600000) / 1000), // 1 hour from now
-        token_type: 'Bearer' as const,
+        expires_in: 3600,
+        token_type: 'bearer' as const,
         scope: 'openid profile email',
       };
 
-      const mockClient = {
-        refresh: vi.fn(() => newTokenSet),
-      };
-      const mockIssuer = {
-        Client: vi.fn(function () {
-          return mockClient;
-        }),
-      };
-
-      vi.mocked(Issuer.discover).mockResolvedValue(mockIssuer as unknown as Issuer<BaseClient>);
+      vi.mocked(client.discovery).mockResolvedValue(mockConfig);
+      vi.mocked(client.refreshTokenGrant).mockResolvedValue(
+        newTokenSet as unknown as TokenResponse
+      );
       mockTokenStorage.save.mockResolvedValue(undefined);
 
       await authService.loginWithRefreshToken(environment, refreshToken);
 
-      expect(Issuer.discover).toHaveBeenCalledWith(environmentConfig.production.issuerURL);
-      expect(mockIssuer.Client).toHaveBeenCalledWith({
-        client_id: environmentConfig.production.clientID,
-        redirect_uris: [],
-        response_types: ['code'],
-        scope: environmentConfig.production.scope || 'openid profile email offline_access',
-        audience: environmentConfig.production.audience || 'https://aignostics-platform-samia',
-        token_endpoint_auth_method: 'none',
-      });
-      expect(mockClient.refresh).toHaveBeenCalledWith(refreshToken);
+      expect(client.discovery).toHaveBeenCalledWith(
+        new URL(environmentConfig.production.issuerURL),
+        environmentConfig.production.clientID,
+        undefined,
+        noneAuth
+      );
+      expect(client.refreshTokenGrant).toHaveBeenCalledWith(mockConfig, refreshToken);
       expect(mockTokenStorage.save).toHaveBeenCalledWith(environment, {
         access_token: newTokenSet.access_token,
         refresh_token: newTokenSet.refresh_token,
-        expires_at_ms: newTokenSet.expires_at * 1000,
-        token_type: newTokenSet.token_type,
+        expires_at_ms: NOW + newTokenSet.expires_in * 1000,
+        token_type: 'Bearer',
         scope: newTokenSet.scope,
         stored_at: expect.any(Number) as number,
       });
@@ -302,22 +304,15 @@ describe('AuthService', () => {
       const newTokenSetWithoutRefreshToken = {
         access_token: 'new-access-token',
         // No refresh_token in response
-        expires_at: Math.floor((Date.now() + 3600000) / 1000),
-        token_type: 'Bearer' as const,
+        expires_in: 3600,
+        token_type: 'bearer' as const,
         scope: 'openid profile email',
       };
 
-      const mockClient = {
-        refresh: vi.fn(() => newTokenSetWithoutRefreshToken),
-      };
-      const mockIssuer = {
-        Client: vi.fn(function () {
-          return mockClient;
-        }),
-      };
-      const { Issuer } = await import('openid-client');
-
-      vi.mocked(Issuer.discover).mockResolvedValue(mockIssuer as unknown as Issuer<BaseClient>);
+      vi.mocked(client.discovery).mockResolvedValue(mockConfig);
+      vi.mocked(client.refreshTokenGrant).mockResolvedValue(
+        newTokenSetWithoutRefreshToken as unknown as TokenResponse
+      );
       mockTokenStorage.save.mockResolvedValue(undefined);
 
       await authService.loginWithRefreshToken(environment, refreshToken);
@@ -325,7 +320,7 @@ describe('AuthService', () => {
       expect(mockTokenStorage.save).toHaveBeenCalledWith(environment, {
         access_token: 'new-access-token',
         refresh_token: 'original-refresh-token', // Should keep original
-        expires_at_ms: newTokenSetWithoutRefreshToken.expires_at * 1000,
+        expires_at_ms: NOW + newTokenSetWithoutRefreshToken.expires_in * 1000,
         token_type: 'Bearer',
         scope: 'openid profile email',
         stored_at: expect.any(Number) as number,
@@ -338,9 +333,8 @@ describe('AuthService', () => {
     it('should handle issuer discovery errors', async () => {
       const refreshToken = 'valid-refresh-token';
       const error = new Error('Issuer discovery failed');
-      const { Issuer } = await import('openid-client');
 
-      vi.mocked(Issuer.discover).mockRejectedValue(error);
+      vi.mocked(client.discovery).mockRejectedValue(error);
 
       await expect(authService.loginWithRefreshToken(environment, refreshToken)).rejects.toThrow(
         'Issuer discovery failed'
@@ -352,19 +346,8 @@ describe('AuthService', () => {
       const refreshToken = 'invalid-refresh-token';
       const error = new Error('Token refresh failed');
 
-      const mockClient = {
-        refresh: vi.fn(() => {
-          throw error;
-        }),
-      };
-      const mockIssuer = {
-        Client: vi.fn(function () {
-          return mockClient;
-        }),
-      };
-      const { Issuer } = await import('openid-client');
-
-      vi.mocked(Issuer.discover).mockResolvedValue(mockIssuer as unknown as Issuer<BaseClient>);
+      vi.mocked(client.discovery).mockResolvedValue(mockConfig);
+      vi.mocked(client.refreshTokenGrant).mockRejectedValue(error);
 
       await expect(authService.loginWithRefreshToken(environment, refreshToken)).rejects.toThrow(
         'Token refresh failed'
@@ -376,20 +359,13 @@ describe('AuthService', () => {
       const refreshToken = 'valid-refresh-token';
       const invalidTokenSet = {
         access_token: 'new-access-token',
-        // Missing required fields like expires_at, token_type
+        // Missing required fields like expires_in, token_type
       };
 
-      const mockClient = {
-        refresh: vi.fn(() => invalidTokenSet),
-      };
-      const mockIssuer = {
-        Client: vi.fn(function () {
-          return mockClient;
-        }),
-      };
-      const { Issuer } = await import('openid-client');
-
-      vi.mocked(Issuer.discover).mockResolvedValue(mockIssuer as unknown as Issuer<BaseClient>);
+      vi.mocked(client.discovery).mockResolvedValue(mockConfig);
+      vi.mocked(client.refreshTokenGrant).mockResolvedValue(
+        invalidTokenSet as unknown as TokenResponse
+      );
 
       await expect(authService.loginWithRefreshToken(environment, refreshToken)).rejects.toThrow();
       expect(consoleSpy.error).toHaveBeenCalledWith(
@@ -400,53 +376,45 @@ describe('AuthService', () => {
   });
 
   describe('loginWithCallback', () => {
-    const mockConfig = {
+    const callbackConfig = {
       redirectUri: 'http://localhost:3000/callback',
       codeVerifier: 'test-code-verifier',
     };
 
-    it('should discover issuer, create client, and open authorization URL', async () => {
-      const mockClient = {
-        authorizationUrl: vi.fn(() => 'https://test-auth-url.com'),
-      };
-      const mockIssuer = {
-        Client: vi.fn(function () {
-          return mockClient;
-        }),
-      };
+    it('should discover issuer, build the authorization URL, and open it', async () => {
       const mockOpen = (await import('open')).default;
-      const { Issuer } = await import('openid-client');
 
-      vi.mocked(Issuer.discover).mockResolvedValue(mockIssuer as unknown as Issuer<BaseClient>);
+      vi.mocked(client.discovery).mockResolvedValue(mockConfig);
+      vi.mocked(client.buildAuthorizationUrl).mockReturnValue(
+        new URL('https://test-auth-url.com/')
+      );
       vi.mocked(mockOpen).mockResolvedValue(null as unknown as ChildProcess);
 
-      const result = await authService.loginWithCallback('production', mockConfig);
+      const result = await authService.loginWithCallback('production', callbackConfig);
 
-      expect(Issuer.discover).toHaveBeenCalledWith(environmentConfig.production.issuerURL);
-      expect(mockIssuer.Client).toHaveBeenCalledWith({
-        client_id: environmentConfig.production.clientID,
-        redirect_uris: [mockConfig.redirectUri],
-        response_types: ['code'],
-        scope: environmentConfig.production.scope,
-        audience: environmentConfig.production.audience,
-        token_endpoint_auth_method: 'none',
-      });
-      expect(mockClient.authorizationUrl).toHaveBeenCalledWith({
+      expect(client.discovery).toHaveBeenCalledWith(
+        new URL(environmentConfig.production.issuerURL),
+        environmentConfig.production.clientID,
+        undefined,
+        noneAuth
+      );
+      expect(client.calculatePKCECodeChallenge).toHaveBeenCalledWith(callbackConfig.codeVerifier);
+      expect(client.buildAuthorizationUrl).toHaveBeenCalledWith(mockConfig, {
+        redirect_uri: callbackConfig.redirectUri,
         scope: environmentConfig.production.scope,
         audience: environmentConfig.production.audience,
         code_challenge: 'mock-code-challenge',
         code_challenge_method: 'S256',
       });
-      expect(mockOpen).toHaveBeenCalledWith('https://test-auth-url.com');
-      expect(result).toBe('https://test-auth-url.com');
+      expect(mockOpen).toHaveBeenCalledWith('https://test-auth-url.com/');
+      expect(result).toBe('https://test-auth-url.com/');
     });
 
     it('should handle issuer discovery errors', async () => {
       const error = new Error('Issuer discovery failed');
-      const { Issuer } = await import('openid-client');
-      vi.mocked(Issuer.discover).mockRejectedValue(error);
+      vi.mocked(client.discovery).mockRejectedValue(error);
 
-      await expect(authService.loginWithCallback(environment, mockConfig)).rejects.toThrow(
+      await expect(authService.loginWithCallback(environment, callbackConfig)).rejects.toThrow(
         'Issuer discovery failed'
       );
       expect(consoleSpy.error).toHaveBeenCalledWith('❌ Authentication setup failed:', error);
@@ -454,7 +422,7 @@ describe('AuthService', () => {
   });
 
   describe('completeLogin', () => {
-    const mockConfig = {
+    const callbackConfig = {
       redirectUri: 'http://localhost:3000/callback',
       codeVerifier: 'test-code-verifier',
     };
@@ -463,60 +431,48 @@ describe('AuthService', () => {
       const mockTokenSet = {
         access_token: 'new-access-token',
         refresh_token: 'new-refresh-token',
-        expires_at: Math.floor((Date.now() + 3600000) / 1000), // 1 hour from now
-        token_type: 'Bearer' as const,
+        expires_in: 3600,
+        token_type: 'bearer' as const,
         scope: 'openid profile email',
       };
 
-      const mockClient = {
-        callback: vi.fn(() => mockTokenSet),
-      };
-      const mockIssuer = {
-        Client: vi.fn(function () {
-          return mockClient;
-        }),
-      };
-      const { Issuer } = await import('openid-client');
-
-      vi.mocked(Issuer.discover).mockResolvedValue(mockIssuer as unknown as Issuer<BaseClient>);
+      vi.mocked(client.discovery).mockResolvedValue(mockConfig);
+      vi.mocked(client.authorizationCodeGrant).mockResolvedValue(
+        mockTokenSet as unknown as TokenResponse
+      );
       mockTokenStorage.save.mockResolvedValue(undefined);
 
-      await authService.completeLogin(environment, mockConfig, 'auth-code-123');
+      await authService.completeLogin(environment, callbackConfig, 'auth-code-123');
 
-      expect(Issuer.discover).toHaveBeenCalledWith(environmentConfig.production.issuerURL);
-      expect(mockClient.callback).toHaveBeenCalledWith(
-        mockConfig.redirectUri,
-        { code: 'auth-code-123' },
-        { code_verifier: mockConfig.codeVerifier }
+      expect(client.discovery).toHaveBeenCalledWith(
+        new URL(environmentConfig.production.issuerURL),
+        environmentConfig.production.clientID,
+        undefined,
+        noneAuth
+      );
+      expect(client.authorizationCodeGrant).toHaveBeenCalledWith(
+        mockConfig,
+        new URL('http://localhost:3000/callback?code=auth-code-123'),
+        { pkceCodeVerifier: callbackConfig.codeVerifier }
       );
       expect(mockTokenStorage.save).toHaveBeenCalledWith(environment, {
         access_token: mockTokenSet.access_token,
         refresh_token: mockTokenSet.refresh_token,
-        expires_at_ms: mockTokenSet.expires_at * 1000,
-        token_type: mockTokenSet.token_type,
+        expires_at_ms: NOW + mockTokenSet.expires_in * 1000,
+        token_type: 'Bearer',
         scope: mockTokenSet.scope,
         stored_at: expect.any(Number) as number,
       });
     });
 
     it('should handle token exchange errors', async () => {
-      const mockClient = {
-        callback: vi.fn(() => {
-          throw new Error('Token exchange failed');
-        }),
-      };
-      const mockIssuer = {
-        Client: vi.fn(function () {
-          return mockClient;
-        }),
-      };
       const error = new Error('Token exchange failed');
-      const { Issuer } = await import('openid-client');
 
-      vi.mocked(Issuer.discover).mockResolvedValue(mockIssuer as unknown as Issuer<BaseClient>);
+      vi.mocked(client.discovery).mockResolvedValue(mockConfig);
+      vi.mocked(client.authorizationCodeGrant).mockRejectedValue(error);
 
       await expect(
-        authService.completeLogin(environment, mockConfig, 'invalid-code')
+        authService.completeLogin(environment, callbackConfig, 'invalid-code')
       ).rejects.toThrow('Token exchange failed');
       expect(consoleSpy.error).toHaveBeenCalledWith('❌ Token exchange failed:', error);
     });
@@ -527,20 +483,13 @@ describe('AuthService', () => {
         // Missing required fields
       };
 
-      const mockClient = {
-        callback: vi.fn(() => invalidTokenSet),
-      };
-      const mockIssuer = {
-        Client: vi.fn(function () {
-          return mockClient;
-        }),
-      };
-      const { Issuer } = await import('openid-client');
-
-      vi.mocked(Issuer.discover).mockResolvedValue(mockIssuer as unknown as Issuer<BaseClient>);
+      vi.mocked(client.discovery).mockResolvedValue(mockConfig);
+      vi.mocked(client.authorizationCodeGrant).mockResolvedValue(
+        invalidTokenSet as unknown as TokenResponse
+      );
 
       await expect(
-        authService.completeLogin(environment, mockConfig, 'auth-code-123')
+        authService.completeLogin(environment, callbackConfig, 'auth-code-123')
       ).rejects.toThrow();
       expect(consoleSpy.error).toHaveBeenCalledWith('❌ Token exchange failed:', expect.any(Error));
     });
@@ -552,42 +501,35 @@ describe('AuthService', () => {
       const expiredTokenData = {
         access_token: 'expired-token',
         refresh_token: 'valid-refresh-token',
-        expires_at_ms: Date.now() - 3600000, // expired 1 hour ago
+        expires_at_ms: NOW - 3600000, // expired 1 hour ago
         token_type: 'Bearer',
         scope: 'openid profile email',
-        stored_at: Date.now() - 7200000, // stored 2 hours ago
+        stored_at: NOW - 7200000, // stored 2 hours ago
       };
 
       const newTokenSet = {
         access_token: 'new-access-token',
         refresh_token: 'new-refresh-token',
-        expires_at: Math.floor((Date.now() + 3600000) / 1000), // 1 hour from now
-        token_type: 'Bearer' as const,
+        expires_in: 3600,
+        token_type: 'bearer' as const,
         scope: 'openid profile email',
       };
 
-      const mockClient = {
-        refresh: vi.fn(() => newTokenSet),
-      };
-      const mockIssuer = {
-        Client: vi.fn(function () {
-          return mockClient;
-        }),
-      };
-      const { Issuer } = await import('openid-client');
-
       mockTokenStorage.load.mockResolvedValue(expiredTokenData);
-      vi.mocked(Issuer.discover).mockResolvedValue(mockIssuer as unknown as Issuer<BaseClient>);
+      vi.mocked(client.discovery).mockResolvedValue(mockConfig);
+      vi.mocked(client.refreshTokenGrant).mockResolvedValue(
+        newTokenSet as unknown as TokenResponse
+      );
       mockTokenStorage.save.mockResolvedValue(undefined);
 
       const result = await authService.getValidAccessToken(environment);
 
       expect(result).toBe('new-access-token');
-      expect(mockClient.refresh).toHaveBeenCalledWith('valid-refresh-token');
+      expect(client.refreshTokenGrant).toHaveBeenCalledWith(mockConfig, 'valid-refresh-token');
       expect(mockTokenStorage.save).toHaveBeenCalledWith(environment, {
         access_token: 'new-access-token',
         refresh_token: 'new-refresh-token',
-        expires_at_ms: newTokenSet.expires_at * 1000,
+        expires_at_ms: NOW + newTokenSet.expires_in * 1000,
         token_type: 'Bearer',
         scope: 'openid profile email',
         stored_at: expect.any(Number) as number,
@@ -600,8 +542,8 @@ describe('AuthService', () => {
       const expiredTokenData = {
         access_token: 'expired-token',
         refresh_token: null,
-        expires_at_ms: Date.now() - 3600000, // expired 1 hour ago
-        stored_at: Date.now() - 7200000,
+        expires_at_ms: NOW - 3600000, // expired 1 hour ago
+        stored_at: NOW - 7200000,
       };
 
       mockTokenStorage.load.mockResolvedValue(expiredTokenData);
@@ -615,24 +557,13 @@ describe('AuthService', () => {
       const expiredTokenData = {
         access_token: 'expired-token',
         refresh_token: 'invalid-refresh-token',
-        expires_at_ms: Date.now() - 3600000,
-        stored_at: Date.now() - 7200000,
+        expires_at_ms: NOW - 3600000,
+        stored_at: NOW - 7200000,
       };
-
-      const mockClient = {
-        refresh: vi.fn(() => {
-          throw new Error('Refresh failed');
-        }),
-      };
-      const mockIssuer = {
-        Client: vi.fn(function () {
-          return mockClient;
-        }),
-      };
-      const { Issuer } = await import('openid-client');
 
       mockTokenStorage.load.mockResolvedValue(expiredTokenData);
-      vi.mocked(Issuer.discover).mockResolvedValue(mockIssuer as unknown as Issuer<BaseClient>);
+      vi.mocked(client.discovery).mockResolvedValue(mockConfig);
+      vi.mocked(client.refreshTokenGrant).mockRejectedValue(new Error('Refresh failed'));
 
       const result = await authService.getValidAccessToken(environment);
 
@@ -647,30 +578,23 @@ describe('AuthService', () => {
       const expiredTokenData = {
         access_token: 'expired-token',
         refresh_token: 'original-refresh-token',
-        expires_at_ms: Date.now() - 3600000,
-        stored_at: Date.now() - 7200000,
+        expires_at_ms: NOW - 3600000,
+        stored_at: NOW - 7200000,
       };
 
       const newTokenSetWithoutRefreshToken = {
         access_token: 'new-access-token',
         // No refresh_token in response
-        expires_at: Math.floor((Date.now() + 3600000) / 1000),
-        token_type: 'Bearer' as const,
+        expires_in: 3600,
+        token_type: 'bearer' as const,
         scope: 'openid profile email',
       };
 
-      const mockClient = {
-        refresh: vi.fn(() => newTokenSetWithoutRefreshToken),
-      };
-      const mockIssuer = {
-        Client: vi.fn(function () {
-          return mockClient;
-        }),
-      };
-      const { Issuer } = await import('openid-client');
-
       mockTokenStorage.load.mockResolvedValue(expiredTokenData);
-      vi.mocked(Issuer.discover).mockResolvedValue(mockIssuer as unknown as Issuer<BaseClient>);
+      vi.mocked(client.discovery).mockResolvedValue(mockConfig);
+      vi.mocked(client.refreshTokenGrant).mockResolvedValue(
+        newTokenSetWithoutRefreshToken as unknown as TokenResponse
+      );
       mockTokenStorage.save.mockResolvedValue(undefined);
 
       const result = await authService.getValidAccessToken(environment);
@@ -679,7 +603,7 @@ describe('AuthService', () => {
       expect(mockTokenStorage.save).toHaveBeenCalledWith(environment, {
         access_token: 'new-access-token',
         refresh_token: 'original-refresh-token', // Should keep original
-        expires_at_ms: newTokenSetWithoutRefreshToken.expires_at * 1000,
+        expires_at_ms: NOW + newTokenSetWithoutRefreshToken.expires_in * 1000,
         token_type: 'Bearer',
         scope: 'openid profile email',
         stored_at: expect.any(Number) as number,
