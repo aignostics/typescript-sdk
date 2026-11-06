@@ -63,7 +63,7 @@
     "fs-extra": "11.4.1",
     "husky": "9.1.7",
     "license-checker-rseidelsohn": "5.0.1",
-    "msw": "2.15.0",
+    "msw": "3.0.4",
     "oxfmt": "0.77.0",
     "oxlint": "1.92.0",
     "oxlint-tsgolint": "7.0.2006",
