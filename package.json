@@ -71,7 +71,7 @@
     "turbo": "2.10.7",
     "typedoc": "0.28.20",
     "typescript": "5.9.3",
-    "vitest": "3.2.7"
+    "vitest": "4.1.11"
   },
   "engines": {
     "node": ">=18.0.0"
