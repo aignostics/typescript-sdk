@@ -25,6 +25,7 @@ docs/ItemOutput.md
 docs/ItemResultReadResponse.md
 docs/ItemState.md
 docs/ItemTerminationReason.md
+docs/MePolicyResponse.md
 docs/MeReadResponse.md
 docs/OrganizationReadResponse.md
 docs/OutputArtifact.md
@@ -49,6 +50,7 @@ docs/SubjectType.md
 docs/UserReadResponse.md
 docs/ValidationError.md
 docs/ValidationErrorLocInner.md
+docs/Value.md
 docs/VersionDocumentResponse.md
 docs/VersionDocumentVisibility.md
 docs/VersionReadResponse.md
