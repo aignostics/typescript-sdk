@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { executeCLI } from '../utils/command.js';
 import { generateInputArtifactsForTest } from '../utils/getAppInputArtifacts.js';
 import { getAppLatestVersion } from '../utils/getAppLatestVersion.js';
+import { NON_EXISTENT_VERSION } from '../utils/nonExistentVersion.js';
 
 describe('SWR Application Execution access', async () => {
   const latestVersion = await getAppLatestVersion('test-app');
@@ -20,7 +21,7 @@ describe('SWR Application Execution access', async () => {
       'runs',
       'create',
       'test-app',
-      '1.0.0',
+      latestVersion,
       '--items',
       JSON.stringify(items),
       '--format',
@@ -42,7 +43,7 @@ describe('SWR Application Execution access', async () => {
     const items = await generateInputArtifactsForTest('test-app', latestVersion, 2);
 
     const { stderr, exitCode } = await executeCLI(
-      ['runs', 'create', 'test-app', '2.0.0', '--items', JSON.stringify(items)],
+      ['runs', 'create', 'test-app', NON_EXISTENT_VERSION, '--items', JSON.stringify(items)],
       { reject: false }
     );
 

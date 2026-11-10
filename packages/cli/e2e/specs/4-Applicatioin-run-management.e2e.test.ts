@@ -1,8 +1,17 @@
 import { describe, it, expect } from 'vitest';
 import { executeCLI } from '../utils/command.js';
+import { createTestAppRun } from '../utils/createTestAppRun.js';
+import { getAppLatestVersion } from '../utils/getAppLatestVersion.js';
 import { RunReadResponse } from '@aignostics/sdk';
 
-describe('SWR Application Run management', () => {
+describe('SWR Application Run management', async () => {
+  const latestVersion = await getAppLatestVersion('test-app');
+  if (!latestVersion) throw new Error('No versions found for test-app');
+
+  // The tests in this file run in order: the run is listed and read before the last test
+  // cancels it.
+  const runId = await createTestAppRun(latestVersion);
+
   it('Should retrieve a list of application runs with optional filtering by application ID and application version.', async ({
     annotate,
   }) => {
@@ -15,7 +24,7 @@ describe('SWR Application Run management', () => {
       '--applicationId',
       'test-app',
       '--applicationVersion',
-      '1.0.0',
+      latestVersion,
       '--format',
       'json',
     ]);
@@ -24,36 +33,24 @@ describe('SWR Application Run management', () => {
 
     const runs = JSON.parse(String(stdout)) as Array<RunReadResponse>;
     expect(Array.isArray(runs)).toBe(true);
+    expect(runs.length).toBeGreaterThan(0);
 
-    expect(runs[0]?.application_id).toBe('test-app');
+    runs.forEach(run => {
+      expect(run.application_id).toBe('test-app');
+      expect(run.version_number).toBe(latestVersion);
+    });
   });
+
   it('Should retrieve detailed information for a specific application run by run ID', async ({
     annotate,
   }) => {
     await annotate('SWR-APP-RUN-MGMT-DETAILS', 'tests');
     await annotate('TC-RUN-DETAILS', 'id');
 
-    const { stdout, exitCode } = await executeCLI([
-      'runs',
-      'list',
-      '--applicationId',
-      'test-app',
-      '--applicationVersion',
-      '1.0.0',
-      '--format',
-      'json',
-    ]);
-
-    expect(exitCode).toBe(0);
-    const runs = JSON.parse(String(stdout)) as Array<RunReadResponse>;
-    const [latestRun] = runs;
-    if (!latestRun) throw new Error('Expected at least one run');
-    const latestRunId = latestRun.run_id;
-
     const { stdout: runDetailsStdout, exitCode: runDetailsExitCode } = await executeCLI([
       'runs',
       'get',
-      latestRunId,
+      runId,
       '--format',
       'json',
     ]);
@@ -61,7 +58,7 @@ describe('SWR Application Run management', () => {
     expect(runDetailsExitCode).toBe(0);
 
     const runDetails = JSON.parse(String(runDetailsStdout)) as RunReadResponse;
-    expect(runDetails.run_id).toBe(latestRunId);
+    expect(runDetails.run_id).toBe(runId);
     expect(runDetails.application_id).toBe('test-app');
   });
 
@@ -69,33 +66,14 @@ describe('SWR Application Run management', () => {
     await annotate('SWR-APP-RUN-MGMT-CANCEL', 'tests');
     await annotate('TC-RUN-CANCEL', 'id');
 
-    const { stdout, exitCode } = await executeCLI([
-      'runs',
-      'list',
-      '--applicationId',
-      'test-app',
-      '--applicationVersion',
-      '1.0.0',
-      '--format',
-      'json',
-    ]);
-
-    expect(exitCode).toBe(0);
-    const runs = JSON.parse(String(stdout)) as Array<RunReadResponse>;
-    const pendingRunId = runs.find(run => run.state === 'PENDING')?.run_id;
-
-    if (!pendingRunId) {
-      console.warn('No PENDING runs found to cancel. Skipping runs cancel test.');
-      return;
-    }
     const { stdout: cancelRunStdout, exitCode: cancelRunExitCode } = await executeCLI([
       'runs',
       'cancel',
-      pendingRunId,
+      runId,
     ]);
 
     expect(cancelRunExitCode).toBe(0);
 
-    expect(cancelRunStdout).toContain(`✅ Successfully cancelled application run: ${pendingRunId}`);
+    expect(cancelRunStdout).toContain(`✅ Successfully cancelled application run: ${runId}`);
   });
 });

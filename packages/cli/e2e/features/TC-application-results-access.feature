@@ -5,13 +5,12 @@ Feature: Application Results Access
 
   Background:
     Given I am authenticated as an admin
-    And application "test-app" exists with version "1.0.0"
+    And <newest_version> is the first version listed by "applications versions list test-app"
+    And I created a run of "test-app" version "<newest_version>" with 2 valid input items
 
   @id:TC-RESULTS-RETRIEVE
   @tests:SWR-APP-RESULTS-RETRIEVE-ITEMS
   Scenario: Retrieve items and output artifacts for a run
-    Given I have a list of runs for "test-app" version "1.0.0"
-    And I select the latest run ID from the list
     When I run the CLI command "runs results list <run_id>"
     Then the exit code should be 0
     And I should see "Run results for <run_id>:" in the output
@@ -21,8 +20,6 @@ Feature: Application Results Access
   @tests:SWR-APP-RESULTS-ITEM-STATUS
   @tests:SWR-APP-RESULTS-ARTIFACT-STATUS
   Scenario: View execution state and status details for items
-    Given I have a list of runs for "test-app" version "1.0.0"
-    And I select the latest run ID from the list
     When I run the CLI command "runs results list <run_id>"
     Then the exit code should be 0
     And each result should have property "state"
