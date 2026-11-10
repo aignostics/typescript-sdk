@@ -5,22 +5,22 @@ Feature: Application Run Management
 
   Background:
     Given I am authenticated as an admin
-    And application "test-app" exists with version "1.0.0"
+    And <newest_version> is the first version listed by "applications versions list test-app"
+    And I created a run of "test-app" version "<newest_version>" with 2 valid input items
 
   @id:TC-RUN-LIST
   @tests:SWR-APP-RUN-MGMT-LIST
   Scenario: List application runs with filtering
-    When I run the CLI command "runs list --applicationId test-app --applicationVersion 1.0.0"
+    When I run the CLI command "runs list --applicationId test-app --applicationVersion <newest_version>"
     Then the exit code should be 0
     And I should see "Application runs:" in the output
-    And the output should contain a valid JSON array of runs
+    And the output should contain a non-empty JSON array of runs
     And each run should have property "application_id" with value "test-app"
+    And each run should have property "version_number" with value "<newest_version>"
 
   @id:TC-RUN-DETAILS
   @tests:SWR-APP-RUN-MGMT-DETAILS
   Scenario: Retrieve detailed information for a specific run
-    Given I have a list of runs for "test-app" version "1.0.0"
-    And I select the latest run ID from the list
     When I run the CLI command "runs get <run_id>"
     Then the exit code should be 0
     And I should see "Run details for <run_id>:" in the output
@@ -30,8 +30,6 @@ Feature: Application Run Management
   @id:TC-RUN-CANCEL
   @tests:SWR-APP-RUN-MGMT-CANCEL
   Scenario: Cancel a pending application run
-    Given I have a list of runs for "test-app" version "1.0.0"
-    And there is a run with state "PENDING"
-    When I run the CLI command "runs cancel <pending_run_id>"
+    When I run the CLI command "runs cancel <run_id>"
     Then the exit code should be 0
-    And I should see "Successfully cancelled application run: <pending_run_id>" in the output
+    And I should see "Successfully cancelled application run: <run_id>" in the output

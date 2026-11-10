@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { describe, it, expect } from 'vitest';
 import { executeCLI } from '../utils/command.js';
+import { getAppLatestVersion } from '../utils/getAppLatestVersion.js';
+import { NON_EXISTENT_VERSION } from '../utils/nonExistentVersion.js';
 
 type Application = {
   application_id: string;
@@ -104,7 +106,10 @@ describe('SWR Version List Retrieval', () => {
   });
 });
 
-describe('SWR Specific Version Details', () => {
+describe('SWR Specific Version Details', async () => {
+  const latestVersion = await getAppLatestVersion('test-app');
+  if (!latestVersion) throw new Error('No versions found for test-app');
+
   it('should provide details for a specific application version', async ({ annotate }) => {
     await annotate('SWR-APP-DISCOVERY-VERSION-DETAILS', 'tests');
     await annotate('TC-VERSION-DETAILS', 'id');
@@ -114,7 +119,7 @@ describe('SWR Specific Version Details', () => {
       'versions',
       'get',
       'test-app',
-      '1.0.0',
+      latestVersion,
       '--format',
       'json',
     ]);
@@ -123,7 +128,7 @@ describe('SWR Specific Version Details', () => {
 
     const versionDetails = JSON.parse(String(stdout));
     expect(versionDetails).toMatchObject({
-      version_number: '1.0.0',
+      version_number: latestVersion,
       changelog: expect.any(String),
       input_artifacts: expect.any(Array),
     });
@@ -134,9 +139,12 @@ describe('SWR Specific Version Details', () => {
     await annotate('SWR-ERROR-COMM-CLASSIFICATION', 'tests');
     await annotate('TC-VERSION-DETAILS-NOT-FOUND', 'id');
 
-    const { stderr } = await executeCLI(['applications', 'versions', 'get', 'test-app', '2.0.0'], {
-      reject: false,
-    });
+    const { stderr } = await executeCLI(
+      ['applications', 'versions', 'get', 'test-app', NON_EXISTENT_VERSION],
+      {
+        reject: false,
+      }
+    );
     expect(stderr).toMatch(/API_ERROR/);
     expect(stderr).toMatch(/Application version not found/);
   });

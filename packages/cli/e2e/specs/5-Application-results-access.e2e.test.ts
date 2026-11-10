@@ -1,36 +1,26 @@
 import { describe, it, expect } from 'vitest';
 import { executeCLI } from '../utils/command.js';
+import { createTestAppRun } from '../utils/createTestAppRun.js';
+import { getAppLatestVersion } from '../utils/getAppLatestVersion.js';
 import { ItemResultReadResponse, RunReadResponse } from '@aignostics/sdk';
 
-describe('Application Results Access', () => {
+describe('Application Results Access', async () => {
+  const latestVersion = await getAppLatestVersion('test-app');
+  if (!latestVersion) throw new Error('No versions found for test-app');
+
+  const runId = await createTestAppRun(latestVersion);
+
   it('Should retrieve items and their associated output artifacts for a specified application run by run ID', async ({
     annotate,
   }) => {
     await annotate('SWR-APP-RESULTS-RETRIEVE-ITEMS', 'tests');
     await annotate('TC-RESULTS-RETRIEVE', 'id');
 
-    const { stdout, exitCode } = await executeCLI([
-      'runs',
-      'list',
-      '--applicationId',
-      'test-app',
-      '--applicationVersion',
-      '1.0.0',
-      '--format',
-      'json',
-    ]);
-
-    expect(exitCode).toBe(0);
-    const runs = JSON.parse(String(stdout)) as Array<RunReadResponse>;
-    const [latestRun] = runs;
-    if (!latestRun) throw new Error('Expected at least one run');
-    const latestRunId = latestRun.run_id;
-
     const { stdout: runResultsStdout, exitCode: runResultsExitCode } = await executeCLI([
       'runs',
       'results',
       'list',
-      latestRunId,
+      runId,
       '--format',
       'json',
     ]);
@@ -48,28 +38,11 @@ describe('Application Results Access', () => {
     await annotate('SWR-APP-RESULTS-ARTIFACT-STATUS', 'tests');
     await annotate('TC-RESULTS-STATUS', 'id');
 
-    const { stdout, exitCode } = await executeCLI([
-      'runs',
-      'list',
-      '--applicationId',
-      'test-app',
-      '--applicationVersion',
-      '1.0.0',
-      '--format',
-      'json',
-    ]);
-
-    expect(exitCode).toBe(0);
-    const runs = JSON.parse(String(stdout)) as Array<RunReadResponse>;
-    const [latestRun] = runs;
-    if (!latestRun) throw new Error('Expected at least one run');
-    const latestRunId = latestRun.run_id;
-
     const { stdout: runResultsStdout, exitCode: runResultsExitCode } = await executeCLI([
       'runs',
       'results',
       'list',
-      latestRunId,
+      runId,
       '--format',
       'json',
     ]);
