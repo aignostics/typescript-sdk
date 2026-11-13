@@ -27,7 +27,7 @@ workflows:
     '.github/workflows/update-openapi-spec.yml':
         - 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1'
         - 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1'
-        - 'peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1'
+        - 'peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1'
 dependencies:
     'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1':
         ref: 'v7.0.1'
@@ -69,9 +69,9 @@ dependencies:
         commit: 'sha1-84c30a85c19949d7eee79c4ff27748b70285e453'
         owner_id: 30958501
         repo_id: 187915200
-    'peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1':
-        ref: 'v8.1.1'
-        commit: 'sha1-5f6978faf089d4d20b00c7766989d076bb2fc7f1'
+    'peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1':
+        ref: 'v8.1.3'
+        commit: 'sha1-3ffccacd46053766916f087ce41d627c0b8cf2d1'
         owner_id: 18365890
         repo_id: 197176365
     'sonarsource/sonarqube-scan-action@e805d875275f728fac1885b413934be6d7c63f65':
