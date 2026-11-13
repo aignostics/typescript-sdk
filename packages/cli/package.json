@@ -1,6 +1,6 @@
 {
   "name": "@aignostics/cli",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "CLI for Aignostics",
   "type": "module",
   "main": "./dist/index.cjs",
