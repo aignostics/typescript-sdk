@@ -65,7 +65,7 @@
     "license-checker-rseidelsohn": "5.0.1",
     "msw": "3.0.4",
     "oxfmt": "0.77.0",
-    "oxlint": "1.92.0",
+    "oxlint": "1.93.0",
     "oxlint-tsgolint": "7.0.2006",
     "tsdown": "0.23.7",
     "turbo": "2.11.10",
