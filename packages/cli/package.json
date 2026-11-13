@@ -45,8 +45,8 @@
   "devDependencies": {
     "@types/express": "5.0.6",
     "@types/yargs": "17.0.35",
-    "dotenv": "18.0.9",
-    "playwright": "1.65.0"
+    "dotenv": "18.0.10",
+    "playwright": "1.65.1"
   },
   "engines": {
     "node": ">=18.0.0"
