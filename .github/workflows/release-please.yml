@@ -38,6 +38,7 @@ jobs:
   publish-sdk:
     permissions:
       contents: read
+      id-token: write # npm publish with trusted publishing (OIDC)
     runs-on: ubuntu-latest
     needs: [release-please, gate]
     if: needs.release-please.outputs.sdk-release-created == 'true'
@@ -67,12 +68,11 @@ jobs:
       - name: Publish SDK to npm
         working-directory: packages/sdk
         run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   publish-cli:
     permissions:
       contents: read
+      id-token: write # npm publish with trusted publishing (OIDC)
     runs-on: ubuntu-latest
     needs: [release-please, gate]
     if: needs.release-please.outputs.cli-release-created == 'true'
@@ -102,5 +102,3 @@ jobs:
       - name: Publish CLI to npm
         working-directory: packages/cli
         run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
