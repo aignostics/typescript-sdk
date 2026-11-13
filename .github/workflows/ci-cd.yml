@@ -2,6 +2,10 @@ name: CI/CD Pipeline
 
 permissions: {}
 
+concurrency:
+  group: ci-cd-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 on:
   schedule:
     # run every day at 7:00 AM UTC
@@ -17,13 +21,14 @@ jobs:
   test:
     permissions:
       contents: read
-    uses: ./.github/workflows/_test.yml
+    uses: $/.github/workflows/_test.yml
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       E2E_REFRESH_TOKEN: ${{ secrets.E2E_REFRESH_TOKEN }}
       E2E_ADMIN_USER_PASSWORD: ${{ secrets.E2E_ADMIN_USER_PASSWORD }}
 
   check-generated:
+    name: check-generated
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -31,6 +36,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -52,6 +59,7 @@ jobs:
           fi
 
   build-docs:
+    name: build-docs
     permissions:
       contents: write # peaceiris/actions-gh-pages pushes to gh-pages
     runs-on: ubuntu-latest
@@ -61,6 +69,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -87,7 +97,7 @@ jobs:
   run-ketryx-report:
     needs: test
     if: github.ref == 'refs/heads/main'
-    uses: ./.github/workflows/_report-to-ketryx.yml
+    uses: $/.github/workflows/_report-to-ketryx.yml
     with:
       build-name: 'pre-release'
     secrets:
@@ -95,7 +105,7 @@ jobs:
 
   codeql:
     if: (!contains(github.event.head_commit.message, 'skip:ci'))
-    uses: ./.github/workflows/_codeql.yml
+    uses: $/.github/workflows/_codeql.yml
     permissions:
       contents: read
       security-events: write # github/codeql-action/analyze uploads SARIF

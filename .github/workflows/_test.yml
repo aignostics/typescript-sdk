@@ -13,14 +13,19 @@ on:
         description: 'Admin user password used for CLI E2E auth'
         required: true
 
+permissions: {}
+
 jobs:
   typecheck:
+    name: typecheck
     permissions:
       contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -35,12 +40,15 @@ jobs:
         run: npm run typecheck
 
   lint:
+    name: lint
     permissions:
       contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -55,12 +63,15 @@ jobs:
         run: npm run lint
 
   format-check:
+    name: format-check
     permissions:
       contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -75,6 +86,7 @@ jobs:
         run: npm run format:check
 
   unit-test:
+    name: unit-test
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -82,6 +94,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -116,6 +130,7 @@ jobs:
             packages/cli/coverage/lcov.info
 
   e2e-test:
+    name: e2e-test
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -123,6 +138,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -156,6 +173,7 @@ jobs:
           if-no-files-found: ignore
 
   coverage-report:
+    name: coverage-report
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -164,6 +182,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
           # Sonarcloud requires the full history to be able to compare branches 
           # and compute coverage diff correctly.
           fetch-depth: 0
