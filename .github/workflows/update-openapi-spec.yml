@@ -11,8 +11,8 @@ on:
 jobs:
   update-spec:
     permissions:
-      contents: write
-      pull-requests: write
+      contents: write # peter-evans/create-pull-request pushes chore/update-openapi-spec
+      pull-requests: write # peter-evans/create-pull-request opens the PR
     runs-on: ubuntu-latest
 
     steps:

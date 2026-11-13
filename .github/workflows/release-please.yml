@@ -9,8 +9,8 @@ on:
 jobs:
   release-please:
     permissions:
-      contents: write
-      pull-requests: write
+      contents: write # release-please pushes the release branch, tags and creates the GitHub release
+      pull-requests: write # release-please opens and updates the release PR
     runs-on: ubuntu-latest
     outputs:
       sdk-release-created: ${{ steps.release.outputs['packages/sdk--release_created'] }}
@@ -33,7 +33,10 @@ jobs:
     needs: release-please
     if: needs.release-please.outputs.sdk-release-created == 'true' || needs.release-please.outputs.cli-release-created == 'true'
     uses: ./.github/workflows/_test.yml
-    secrets: inherit
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      E2E_REFRESH_TOKEN: ${{ secrets.E2E_REFRESH_TOKEN }}
+      E2E_ADMIN_USER_PASSWORD: ${{ secrets.E2E_ADMIN_USER_PASSWORD }}
 
   publish-sdk:
     permissions:
