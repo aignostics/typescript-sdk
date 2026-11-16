@@ -20,6 +20,13 @@ export const environmentConfig = {
     audience: 'https://dev-8ouohmmrbuh2h4vu-samia',
     scope: 'openid profile email offline_access',
   },
+  test: {
+    endpoint: 'https://platform-test.aignostics.ai',
+    issuerURL: 'https://dev-8ouohmmrbuh2h4vu.eu.auth0.com/',
+    clientID: 'gqduveFvx7LX90drQPGzr4JGUYdh24gA',
+    audience: 'https://dev-8ouohmmrbuh2h4vu-samia',
+    scope: 'openid profile email offline_access',
+  },
 };
 
 export type EnvironmentKey = keyof typeof environmentConfig;

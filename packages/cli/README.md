@@ -10,7 +10,7 @@ npm install -g @aignostics/cli
 
 ## Usage
 
-All commands accept a global `--environment` option (`production` [default], `staging`, `develop`).
+All commands accept a global `--environment` option (`production` [default], `staging`, `develop`, `test`).
 
 All commands also accept a global `--format` option (`text` [default], `json`). `text` prints a
 human-friendly table or summary showing the most relevant fields; `json` prints the full raw

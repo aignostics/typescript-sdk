@@ -174,6 +174,17 @@ describe('CLI Functions Unit Tests', () => {
       expect(mockExit).toHaveBeenCalledWith(1);
     });
 
+    it('should send requests for the test environment to platform-test.aignostics.ai', async () => {
+      platformSDKMock.testConnection.mockResolvedValue(true);
+
+      await testApi('test', mockAuthService);
+
+      expect(PlatformSDKHttp).toHaveBeenCalledWith(
+        expect.objectContaining({ baseURL: 'https://platform-test.aignostics.ai' })
+      );
+      expect(mockAuthService.getValidAccessToken).toHaveBeenCalledWith('test');
+    });
+
     it('should handle network errors', async () => {
       // Set up mock server for network error
       platformSDKMock.testConnection.mockRejectedValue(new Error('Network error'));
