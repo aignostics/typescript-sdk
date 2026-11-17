@@ -614,7 +614,7 @@ graph TB
 - **Primary:** OS-native secure storage via `@napi-rs/keyring`
 - **Fallback:** Encrypted JSON file with restricted permissions (0o600)
 - **Service Name:** `aignostics-platform`
-- **Entry Name:** Environment key (`production`, `staging`, `develop`)
+- **Entry Name:** Environment key (`production`, `staging`, `develop`, `test`)
 
 ### 7.3 Code Generation Workflow
 
@@ -757,7 +757,8 @@ Environment-specific settings in `utils/environment.ts`:
 {
   production: { endpoint, issuerURL, clientID, scope, audience },
   staging: { ... },
-  develop: { ... }
+  develop: { ... },
+  test: { ... }
 }
 ```
 

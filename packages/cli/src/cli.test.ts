@@ -785,6 +785,15 @@ describe('CLI Integration Tests', () => {
       expect(consoleSpy.log).toHaveBeenCalledWith('Aignostics Platform SDK');
       expect(consoleSpy.error).not.toHaveBeenCalled();
     });
+
+    it('should accept test environment', async () => {
+      process.argv = ['node', 'cli.js', 'info', '--environment', 'test'];
+
+      await main();
+
+      expect(consoleSpy.log).toHaveBeenCalledWith('Aignostics Platform SDK');
+      expect(consoleSpy.error).not.toHaveBeenCalled();
+    });
   });
 
   describe('auth logout command', () => {
