@@ -1,18 +1,8 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
 
-  // This repo is public. Mend does not apply the org config (aignostics/renovate-config,
-  // org-inherited-config.json) to public repos, so this file holds the parts of it that this repo
-  // needs. Copied from aignostics/renovate-config@535179e727a1. Left out:
-  //   - onboardingPrTitle: a global option. A repo config cannot set it.
-  //   - hostRules: they use {{ secrets.* }} from the Mend org settings. If a secret is not found,
-  //     Renovate stops with a config error. This repo uses no private registry.
-  //   - customManagers: no file in this repo has a "# renovate:" or "_renovate" annotation.
-  //   - pre-commit: this repo has no .pre-commit-config.yaml.
-  //   - packageRules for the custom managers, kustomize, registry mirrors, git-tags, Terraform,
-  //     Cloud SQL and registries without release timestamps: no dependency here matches them.
-  // The rules of this repo are in the two sections marked "Repo rules". To update the copy, compare
-  // everything else with the new org config.
+  // Public repo: Mend does not apply the org config (aignostics/renovate-config) here, so this
+  // file copies the parts of it that this repo needs.
   "extends": ["config:best-practices"],
   "timezone": "Europe/Berlin",
   "minimumReleaseAge": "5 days",
