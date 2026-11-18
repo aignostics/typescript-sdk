@@ -1,28 +1,122 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
+
+  // This repo is public. Mend does not apply the org config (aignostics/renovate-config,
+  // org-inherited-config.json) to public repos, so this file holds the parts of it that this repo
+  // needs. Copied from aignostics/renovate-config@535179e727a1. Left out:
+  //   - onboardingPrTitle: a global option. A repo config cannot set it.
+  //   - hostRules: they use {{ secrets.* }} from the Mend org settings. If a secret is not found,
+  //     Renovate stops with a config error. This repo uses no private registry.
+  //   - customManagers: no file in this repo has a "# renovate:" or "_renovate" annotation.
+  //   - pre-commit: this repo has no .pre-commit-config.yaml.
+  //   - packageRules for the custom managers, kustomize, registry mirrors, git-tags, Terraform,
+  //     Cloud SQL and registries without release timestamps: no dependency here matches them.
+  // The rules of this repo are in the two sections marked "Repo rules". To update the copy, compare
+  // everything else with the new org config.
+  "extends": ["config:best-practices"],
+  "timezone": "Europe/Berlin",
+  "minimumReleaseAge": "5 days",
+
+  // Org rulesets reject a PR whose commits are not Conventional Commits, and a squash merge uses
+  // the PR title as the commit message.
+  "semanticCommits": "enabled",
+
+  // Query osv.dev for CVEs in all tracked dependencies and open fix PRs at once. The Dependency
+  // Dashboard lists all known CVEs, including ones that already have an open Renovate PR.
+  // https://docs.renovatebot.com/configuration-options/#osvvulnerabilityalerts
+  "osvVulnerabilityAlerts": true,
+  "dependencyDashboard": { "osvVulnerabilitySummary": "all" },
+
+  // A vulnerability fix PR skips the 5-day wait by design, so the fixed version can be hours old.
+  // Label it, say so in the body, and keep automerge off, so a person checks the fix before the merge.
+  // The note goes in prHeader, not prBodyNotes: Renovate applies vulnerabilityAlerts as `force`,
+  // which replaces keys, so a prBodyNotes here drops the advisory text Renovate puts there.
+  // https://docs.renovatebot.com/configuration-options/#vulnerabilityalerts
+  "vulnerabilityAlerts": {
+    "addLabels": ["security"],
+    "automerge": false,
+    "prHeader": "> [!IMPORTANT]\n> **Security fix, opened without the 5-day wait**\n>\n> Renovate opened this PR because a published advisory affects the current version. It skipped the [**minimum release age** (`minimumReleaseAge`)](https://docs.renovatebot.com/key-concepts/minimum-release-age/) check, so the fixed version might be younger than 5 days. Read the advisory below, check the release age and the upstream release, then merge by hand.\n>\n> This exception is configured in [renovate.json](https://github.com/aignostics/typescript-sdk/blob/main/renovate.json)."
+  },
+
+  // Release-age wait. Every update waits minimumReleaseAge (above) before its PR exists, so a
+  // compromised release is caught by others first. The three keys below open the PR on the day
+  // the wait is over and hold releases Renovate cannot date.
+  //
+  // CI runs on pull_request only, so a fresh Renovate branch never becomes "not pending".
+  // https://docs.renovatebot.com/configuration-options/#prcreation
+  "prCreation": "immediate",
+
+  // Create the branch only once a release has passed minimumReleaseAge, with the newest such
+  // release. The PR never moves down to an older release.
+  // https://docs.renovatebot.com/configuration-options/#internalchecksfilter
+  "internalChecksFilter": "strict",
+
+  // A release without a registry timestamp counts as too young and gets no PR.
+  // https://docs.renovatebot.com/configuration-options/#minimumreleaseagebehaviour
+  "minimumReleaseAgeBehaviour": "timestamp-required",
+
+  // Label every Renovate PR with "renovate" plus its manager. addLabels merges with the labels
+  // that packageRules set.
+  // https://docs.renovatebot.com/configuration-options/#addlabels
+  "addLabels": ["renovate", "{{{manager}}}"],
+
+  // GitHub native auto-merge. GitHub merges once the rulesets of main are met: checks green and
+  // one approval.
+  // https://docs.renovatebot.com/configuration-options/#platformautomerge
+  "automerge": true,
+  "automergeStrategy": "squash",
+
+  // The default ("auto") force-pushes every open Renovate branch whenever main advances, which
+  // resets CI on PRs that main did not touch. Rebase only on a conflict.
+  // https://docs.renovatebot.com/configuration-options/#rebasewhen
+  "rebaseWhen": "conflicted",
+
+  // ---- Repo rules: they deviate from the org config ----
+
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 3am on Monday"]
+  },
+  "postUpdateOptions": ["npmDedupe"],
+  "semanticCommitType": "chore",
+  "semanticCommitScope": "deps",
+  "prConcurrentLimit": 10,
+  "prHourlyLimit": 1,
+
   "packageRules": [
+    {
+      // Inline comments always show the full vX.Y.Z tag ('# v5.0.0'), not the shortest matching
+      // tag ('# v5'). Derived from helpers:pinGitHubActionDigestsToSemver.
+      // https://docs.renovatebot.com/presets-helpers/#helperspingithubactiondigeststosemver
+      "description": ["Ensure github-actions inline comments always use full vX.Y.Z semver tags"],
+      "matchManagers": ["github-actions"],
+      "matchDepTypes": ["action"],
+      "extractVersion": "^(?<version>v?\\d+\\.\\d+\\.\\d+)$",
+      "versioning": "regex:^v?(?<major>\\d+)(\\.(?<minor>\\d+)\\.(?<patch>\\d+))?$"
+    },
+
+    // Under timestamp-required, Renovate keeps these update types pending forever, because they
+    // carry no release timestamp (renovatebot/renovate#45236).
+    // Remove this rule when renovatebot/renovate#46645 is released.
+    {
+      "description": ["Pin, digest, pinDigest and lock file maintenance updates have no release timestamp: do not hold them"],
+      "matchUpdateTypes": ["pin", "digest", "pinDigest", "lockFileMaintenance"],
+      "minimumReleaseAgeBehaviour": "timestamp-optional"
+    },
+    {
+      "description": ["npm: the org release age, not the 3 days of security:minimumReleaseAgeNpm"],
+      "matchDatasources": ["npm"],
+      "matchUpdateTypes": ["major", "minor", "patch"],
+      "minimumReleaseAge": "5 days"
+    },
+
+    // ---- Repo rules: they deviate from the org config ----
     {
       "description": "Group patch updates",
       "matchManagers": ["npm"],
       "matchUpdateTypes": ["patch"],
       "groupName": "patch updates",
       "groupSlug": "patch"
-    },
-    {
-      "description": "Pin dev dependencies",
-      "matchDepTypes": ["devDependencies"],
-      "rangeStrategy": "pin"
     }
-  ],
-  "lockFileMaintenance": {
-    "enabled": true,
-    "schedule": ["before 3am on Monday"]
-  },
-  "postUpdateOptions": ["npmDedupe"],
-  "semanticCommits": "enabled",
-  "semanticCommitType": "chore",
-  "semanticCommitScope": "deps",
-  "prConcurrentLimit": 10,
-  "prHourlyLimit": 1
+  ]
 }
