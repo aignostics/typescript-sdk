@@ -1,14 +1,9 @@
 import { executeCLI } from './utils/command.js';
-
-const refreshToken = process.env.E2E_REFRESH_TOKEN;
+import { loginWithBrowser } from './utils/loginWithBrowser.js';
 
 export async function setup() {
-  if (!refreshToken) {
-    throw new Error('E2E_REFRESH_TOKEN environment variable is not set.');
-  }
-
   console.log('🔐 Logging in...');
-  await executeCLI(['auth', 'login', '--refreshToken', refreshToken]);
+  await loginWithBrowser('global-setup-login-failure');
   console.log('✅ Logged in.');
 
   return async () => {

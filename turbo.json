@@ -15,7 +15,6 @@
       "outputs": ["test-results/**"],
       "cache": false,
       "env": [
-        "E2E_REFRESH_TOKEN",
         "E2E_TEST_ENVIRONMENT",
         "E2E_ADMIN_USER_EMAIL",
         "E2E_ADMIN_USER_PASSWORD"
