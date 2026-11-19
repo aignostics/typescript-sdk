@@ -92,12 +92,3 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs
           cname: aignostics-platform-sdk.github.io
-
-  run-ketryx-report:
-    needs: test
-    if: github.ref == 'refs/heads/main'
-    uses: $/.github/workflows/_report-to-ketryx.yml
-    with:
-      build-name: 'pre-release'
-    secrets:
-      KETRYX_API_KEY: ${{ secrets.KETRYX_API_KEY }}
