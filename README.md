@@ -21,6 +21,15 @@ For general information about the Aignostics Platform [check this documentation 
 
 ## Installation
 
+Both packages are published to GitHub Packages, and only members of the aignostics GitHub organisation can install them. Add the registry and a GitHub token with the `read:packages` scope to your user-level `~/.npmrc`:
+
+```ini
+@aignostics:registry=https://npm.pkg.github.com/
+//npm.pkg.github.com/:_authToken=<github-token>
+```
+
+With the GitHub CLI, `gh auth refresh -s read:packages` adds the scope to your login and `gh auth token` prints the token.
+
 ### SDK Package
 
 ```bash

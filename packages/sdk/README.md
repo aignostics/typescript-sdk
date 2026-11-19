@@ -4,6 +4,8 @@ The TypeScript SDK for the Aignostics Platform.
 
 ## Installation
 
+The package is published to GitHub Packages. Set up the registry and a token first, as described in the [repository README](https://github.com/aignostics/typescript-sdk#installation).
+
 ```bash
 npm install @aignostics/sdk
 ```

@@ -56,7 +56,7 @@ The Aignostics TypeScript SDK Repository provides TypeScript developers with too
 | **CLI Users** | Interactive tool for platform operations without coding |
 | **Platform Engineers** | Maintainable codebase aligned with API evolution |
 | **Security Teams** | Secure token management and authentication flows |
-| **DevOps** | Reliable testing, clear build pipeline, npm publishing |
+| **DevOps** | Reliable testing, clear build pipeline, package publishing |
 
 ---
 
@@ -70,7 +70,7 @@ The Aignostics TypeScript SDK Repository provides TypeScript developers with too
 | **TypeScript Strict Mode** | Enforces type safety across codebase |
 | **OpenAPI Specification** | External dependency from Platform API (staging endpoint) |
 | **Docker** | Required for OpenAPI code generation (v7.14.0) |
-| **npm Registry** | Packages published to public npm registry |
+| **GitHub Packages** | Packages published to the aignostics organisation's npm registry on GitHub Packages, readable only by organisation members |
 | **Turborepo** | Workspace orchestration and build caching |
 
 ### 2.2 Organizational Constraints
@@ -102,7 +102,7 @@ graph LR
     subgraph "External Systems"
         API[Aignostics Platform API]
         AUTH[Auth0 OIDC Provider]
-        NPM[npm Registry]
+        NPM[GitHub Packages npm registry]
         KEYCHAIN[OS Keychain/Credential Manager]
     end
     
@@ -133,7 +133,7 @@ graph LR
 | **Aignostics Platform API** | REST (JSON/HTTP) | AI model execution, data retrieval |
 | **Auth0** | OAuth2/OIDC | User authentication, token issuance |
 | **OS Keychain** | Native API | Secure token storage |
-| **npm Registry** | HTTP | Package distribution |
+| **GitHub Packages** | HTTP (npm registry) | Package distribution |
 
 ### 3.2 Technical Context
 
@@ -549,7 +549,7 @@ graph TB
         CLI_DIST[cli/dist/]
     end
     
-    subgraph "npm Registry"
+    subgraph "GitHub Packages"
         SDK_PKG[SDK Package]
         CLI_PKG[CLI Package]
     end
@@ -818,7 +818,7 @@ graph LR
 - Release PR opened per package (`sdk`, `cli`), kept up to date as commits land
 - Version bumped, `CHANGELOG.md` generated, and `package.json` updated on PR merge
 - Git tags and GitHub Releases created (independent package versions)
-- npm publish (independent package versions)
+- npm publish to GitHub Packages (independent package versions)
 
 ---
 
