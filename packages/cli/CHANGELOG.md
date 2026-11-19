@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.1.0](https://github.com/aignostics/typescript-sdk/compare/cli-v4.0.0...cli-v4.1.0) (2026-11-19)
+
+
+### Features
+
+* **cli:** add the test environment ([#213](https://github.com/aignostics/typescript-sdk/issues/213)) ([492c007](https://github.com/aignostics/typescript-sdk/commit/492c007677b799d7ea39265877c5d2006bd0f55e))
+
+
+### Bug Fixes
+
+* **deps:** update openid-client to v6 ([#195](https://github.com/aignostics/typescript-sdk/issues/195)) ([89edc48](https://github.com/aignostics/typescript-sdk/commit/89edc482346a48fe36b3e22f329ac96890b73a6b))
+
 ## [4.0.0](https://github.com/aignostics/typescript-sdk/compare/cli-v3.6.1...cli-v4.0.0) (2026-07-29)
 
 
