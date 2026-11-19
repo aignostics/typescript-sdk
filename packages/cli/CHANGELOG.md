@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.1](https://github.com/aignostics/typescript-sdk/compare/cli-v4.1.0...cli-v4.1.1) (2026-11-19)
+
+
+### Bug Fixes
+
+* **deps:** bump zod from 4.4.3 to 4.6.7 ([#199](https://github.com/aignostics/typescript-sdk/issues/199)) ([2379c97](https://github.com/aignostics/typescript-sdk/commit/2379c9784df77d63db0969734cbc4c6af9491f91))
+
 ## [4.1.0](https://github.com/aignostics/typescript-sdk/compare/cli-v4.0.0...cli-v4.1.0) (2026-11-19)
 
 
