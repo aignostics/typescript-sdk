@@ -104,6 +104,21 @@ npm install
 npm run build
 ```
 
+### Dependency install scripts
+
+`npm install` and `npm ci` fail when a dependency has an install script
+(`preinstall`, `install`, `postinstall`) that the `allowScripts` field in
+`package.json` does not cover. Review the script, then record the decision:
+
+```bash
+npm install-scripts ls             # list dependencies with unreviewed install scripts
+npm install-scripts approve <pkg>  # allow the installed version to run its scripts
+npm install-scripts deny <pkg>     # never run its scripts
+```
+
+Approvals are pinned to the reviewed version, so an update of an approved
+package needs a fresh review.
+
 ### npm Commands
 
 ```bash
