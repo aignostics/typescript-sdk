@@ -6,9 +6,9 @@ Input artifact containing the slide image and associated metadata.
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**name** | **string** | Type of artifact. For Atlas H&amp;E-TME, use \&quot;input_slide\&quot; | [default to undefined]
-**download_url** | **string** | [Signed URL](https://cloud.google.com/cdn/docs/using-signed-urls) to the input artifact file. The URL should be valid for at least 6 days from the payload submission time. | [default to undefined]
-**metadata** | **{ [key: string]: any; }** | The metadata of the artifact, required by the application version. The JSON schema of the metadata can be requested by &#x60;/v1/versions/{application_version_id}&#x60;. The schema is located in &#x60;input_artifacts.[].metadata_schema&#x60; | [default to undefined]
+**name** | **string** | Name of the input artifact, as declared by the application version. The valid names for a version are the &#x60;input_artifacts[].name&#x60; values returned by &#x60;GET /v1/applications/{application_id}/versions/{version}&#x60;. For HETA this is &#x60;\&quot;whole_slide_image\&quot;&#x60;. | [default to undefined]
+**download_url** | **string** | [Signed URL](https://cloud.google.com/cdn/docs/using-signed-urls) to the input artifact file. The URL should be valid for at least 6 days from the payload submission time. The URL must use &#x60;https&#x60;, must name a public host (no IP address, no &#x60;localhost&#x60;, no &#x60;.internal&#x60; or &#x60;.local&#x60; name), and must not contain user info. The URL may contain only the characters &#x60;A-Za-z0-9&#x60; and &#x60;-._~%/?&amp;&#x3D;:+&#x60;. | [default to undefined]
+**metadata** | **{ [key: string]: any; }** | The metadata of the artifact, as required by the application version. The authoritative JSON schema is &#x60;input_artifacts[].metadata_schema&#x60; from &#x60;GET /v1/applications/{application_id}/versions/{version}&#x60;; it rejects unknown properties. The example shown is an HETA snapshot and may lag behind the version you are running — always validate against the schema endpoint. | [default to undefined]
 
 ## Example
 

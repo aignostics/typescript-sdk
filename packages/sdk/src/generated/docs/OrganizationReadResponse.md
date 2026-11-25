@@ -1,6 +1,6 @@
 # OrganizationReadResponse
 
-Part of response schema for Organization object in `Get current user` endpoint. This model corresponds to the response schema returned from Auth0 GET /v2/organizations/{id} endpoint, flattens out the metadata out and doesn\'t return branding or token_quota objects. For details, see: https://auth0.com/docs/api/management/v2/organizations/get-organizations-by-id  #### Configuration for integrating with Aignostics Platform services.  The Aignostics Platform API requires signed URLs for input artifacts (slide images). To simplify this process, Aignostics provides a dedicated storage bucket. The HMAC credentials below grant read and write access to this bucket, allowing you to upload files and generate the signed URLs needed for API calls.  Additionally, logging and error reporting tokens enable Aignostics to provide better support and monitor system performance for your integration.
+Part of response schema for Organization object in `Get current user` endpoint. This model corresponds to the response schema returned from Auth0 GET /v2/organizations/{id} endpoint, flattens out the metadata out and doesn\'t return branding or token_quota objects. For details, see: https://auth0.com/docs/api/management/v2/organizations/get-organizations-by-id  #### Configuration for integrating with Aignostics Platform services.  The Aignostics Platform API requires signed URLs for input artifacts (slide images). To simplify this process, Aignostics provides a dedicated storage bucket. The HMAC credentials below grant read and write access to this bucket, allowing you to upload files and generate the signed URLs needed for API calls.  The fields `aignostics_logfire_token` and `aignostics_sentry_dsn` are deprecated, always empty, and will be removed.
 
 ## Properties
 
@@ -13,8 +13,8 @@ Name | Type | Description | Notes
 **aignostics_bucket_hmac_secret_access_key** | **string** | HMAC secret access key paired with the access key ID. Keep this credential secure. | [default to undefined]
 **aignostics_bucket_name** | **string** | Name of the bucket provided by Aignostics for storing input artifacts (slide images) | [default to undefined]
 **aignostics_bucket_protocol** | **string** | Protocol to use for bucket access. Defines the URL scheme for connecting to the storage service | [default to undefined]
-**aignostics_logfire_token** | **string** | Authentication token for Logfire observability service. Enables sending application logs and performance metrics to Aignostics for monitoring and support | [default to undefined]
-**aignostics_sentry_dsn** | **string** | Data Source Name (DSN) for Sentry error tracking service. Allows automatic reporting of errors and exceptions to Aignostics support team | [default to undefined]
+**aignostics_logfire_token** | **string** | Deprecated. Always an empty string. Will be removed. | [default to undefined]
+**aignostics_sentry_dsn** | **string** | Deprecated. Always an empty string. Will be removed. | [default to undefined]
 
 ## Example
 
