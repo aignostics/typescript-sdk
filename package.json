@@ -4,7 +4,7 @@
   "description": "Monorepo for Aignostics Platform TypeScript SDK and CLI",
   "type": "module",
   "private": true,
-  "packageManager": "npm@12.2.2",
+  "packageManager": "npm@12.2.3",
   "workspaces": [
     "packages/*"
   ],
@@ -55,23 +55,23 @@
   "devDependencies": {
     "@faker-js/faker": "10.6.0",
     "@types/node": "26.6.6",
-    "@vitest/coverage-v8": "5.1.0",
-    "@vitest/ui": "5.1.0",
+    "@vitest/coverage-v8": "5.1.1",
+    "@vitest/ui": "5.1.1",
     "chalk": "6.0.1",
     "execa": "10.2.1",
     "fishery": "2.4.0",
     "fs-extra": "11.4.1",
     "husky": "9.1.7",
     "license-checker-rseidelsohn": "5.0.1",
-    "msw": "3.0.4",
+    "msw": "3.0.7",
     "oxfmt": "0.77.0",
     "oxlint": "1.92.0",
-    "oxlint-tsgolint": "7.0.2006",
+    "oxlint-tsgolint": "7.0.2008",
     "tsdown": "0.23.7",
-    "turbo": "2.11.10",
+    "turbo": "2.11.13",
     "typedoc": "0.28.20",
     "typescript": "5.9.3",
-    "vitest": "5.1.0"
+    "vitest": "5.1.1"
   },
   "engines": {
     "node": ">=18.0.0"
